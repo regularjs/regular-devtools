@@ -1,0 +1,21 @@
+.devtoolsInject {
+	width: 100%;
+	height: 200px;
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	background-color: #333;
+}
+
+.regualrDevtools{
+	height: 100%;
+	font-size: 0;
+}
+
+.elementView, .stateView{
+	display: inline-block;
+	width: 50%;
+	font-size: 20px;
+	color: #fff;
+	vertical-align: top;
+}

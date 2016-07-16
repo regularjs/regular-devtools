@@ -1255,9 +1255,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  // children is not required;
 	  
-	  // register regular devtools global hook
-	  if (window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__) {
-	    window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.register(this);
+	  // register regular devtools global hook(aka:window.__RDGH__)
+	  if (window.__RDGH__) {
+	    window.__RDGH__.push(this);
+	  }else {
+			window.__RDGH__ = [];
+			window.__RDGH__.push(this);
 	  }
 	}
 

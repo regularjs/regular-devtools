@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>regular-todo</title>
+  <link rel="stylesheet" href="/index.css">
 </head>
 <body>
   <!--引入todomvc.css-->
- <link rel="stylesheet" href="https://rawgit.com/tastejs/todomvc-common/v0.1.11/base.css">
+ 
 <div id="todoapp"></div>
 
 <footer id="info">
@@ -17,6 +18,31 @@
     <a href="http://todomvc.com">TodoMVC</a>
   </p>
 </footer>
+<div id="devtoolsInject" class="devtoolsInject"></div>
+
+<script type='template/regular' id='devtoolsView'>
+<div class='regualrDevtools'>
+        <div class='elementView'>
+          {#list nodes as node}
+              <element node={node} level={0}></element>
+          {/list}
+        </div>
+        <div class='stateView'>
+        <div>{currentNode}</div>
+         <div>{JSON.stringify(currentData)}</div>
+        </div>
+</div>
+</script>
+
+<script type='template/regular' id='elementView'>
+  <div class="element" style="padding-left:{level*20}px" on-click={this.onClick(node)}>{node.name}</div>
+  {#if node.childNodes.length > 0}
+      {#list node.childNodes as n}
+          <element node={n} level={level+1} on-click={this.onClick(1, $event)}></element>
+      {/list}
+  {/if}
+</script>
+
 <script type='template/regular' id='todo'>
 <li  r-class={ {'completed': todo.completed, 'editing': todo.editing} }>
   <div class="view">
@@ -68,7 +94,7 @@
 </script>
 <!-- 引入regularjs -->
 <script src="/regular.js"></script>
-<script src="/devtools.js"></script>
 <script src="/index.js"></script>
+<script src="/devtools.js"></script>
 </body>
 </html>
