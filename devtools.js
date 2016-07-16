@@ -1,6 +1,7 @@
 var devtoolsModel = (function() {
     var ins = window.__RDGH__;
     var store = [];
+    var length = ins.length;
     var treeWalker = function(parentNode, children) {
         for (var i = 0; i < children.length; i++) {
             var node = {
@@ -22,8 +23,9 @@ var devtoolsModel = (function() {
             return ins;
         },
         storeGen: function() {
+            store = [];
             for (var i = 0; i < ins.length; i++) {
-                if (ins[i].parentNode) {
+                if (ins[i].parentNode && (ins[i].$root != devtools)) {
                     var node = {
                         name: "root",
                         data: ins[i].data,
@@ -33,18 +35,56 @@ var devtoolsModel = (function() {
                     treeWalker(node, ins[i]._children)
                 }
             }
-            console.log(store)
             return store;
         },
         getStore: function() {
             return store;
         },
+        remove: function(i) {
+            console.log("before remove", ins.length);
+            ins.splice(ins.indexOf(i), 1);
+            console.log("after remove", ins.length)
+            devtools.$emit("reRender");
+        },
         addEvent: function() {
+            var self = this;
             for (var i = 0; i < ins.length; i++) {
-                ins[i].$on("update", function() {
-                    devtools.$emit("dataUpdate");
-                })
+                if (ins[i].$root != devtools) {
+                    ins[i].$off("update");
+                    ins[i].$off("$destory");
+
+                    ins[i].$on("update", function() {
+                        devtools.$emit("dataUpdate");
+                    })
+
+                    ins[i].$on("$destroy", function() {
+                        self.remove(this);
+                    })
+                }
             }
+        },
+        ifChanged: function() {
+            var l = 0;
+            for (var i = 0; i < ins.length; i++) {
+                if (ins[i].$root != devtools) {
+                    l += 1;
+                }
+            }
+            if (l === length) {
+                return false;
+            } else {
+                length = l;
+                return true;
+            }
+        },
+        cleanUp: function() {
+            var newIns = [];
+            for (var i = 0; i < ins.length; i++) {
+                if (ins[i].$root != devtools) {
+                    newIns.push(ins[i]);
+                }
+            }
+            ins = newIns;
         }
     }
 })();
@@ -58,6 +98,7 @@ var element = Regular.extend({
     name: "element",
     template: "#elementView",
     onClick: function(node) {
+        this.data.selected = true;
         this.$root.$emit("clickElement", node)
     }
 })
@@ -71,13 +112,27 @@ var devtools = new devtoolsView({
 }).$inject("#devtoolsInject")
 
 devtools.$on("clickElement", function(node) {
-    this.data.currentNode = node.name
-    this.data.currentData = node.data;
+    this.data.currentNode = node
     this.$update();
 })
 
 devtoolsModel.addEvent();
 
 devtools.$on("dataUpdate", function(node) {
+    if (devtoolsModel.ifChanged) {
+        this.$emit("reRender");
+    }
     this.$update();
+})
+
+devtools.$on("reRender", function() {
+    devtoolsModel.addEvent();
+    this.data.nodes = devtoolsModel.storeGen();
+    console.log(this.data.nodes.length)
+    if (!(devtoolsModel.get().indexOf(this.data.currentNode))) {
+        this.data.currentNode = null;
+        this.data.currentData = this.data.node[0]
+    }
+    this.$update();
+    devtoolsModel.cleanUp();
 })

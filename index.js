@@ -60,3 +60,5 @@ var todos = [
 var app = new TodoMVC({
     data: {todos: todos}
 }).$inject("#todoapp")
+
+console.log(app.data.todo)

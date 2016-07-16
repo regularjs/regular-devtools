@@ -24,18 +24,18 @@
 <div class='regualrDevtools'>
         <div class='elementView'>
           {#list nodes as node}
-              <element node={node} level={0}></element>
+              <element node={node} level={0} selected={false}></element>
           {/list}
         </div>
         <div class='stateView'>
-        <div>{currentNode}</div>
-         <div>{JSON.stringify(currentData)}</div>
+        <div>{currentNode.name}</div>
+         <div>{JSON.stringify(currentNode.data)}</div>
         </div>
 </div>
 </script>
 
 <script type='template/regular' id='elementView'>
-  <div class="element" style="padding-left:{level*20}px" on-click={this.onClick(node)}>{node.name}</div>
+  <div class="element" style="padding-left:{level*20}px;{selected? 'background-color:#666' : null}" on-click={this.onClick(node)}>{node.name}</div>
   {#if node.childNodes.length > 0}
       {#list node.childNodes as n}
           <element node={n} level={level+1} on-click={this.onClick(1, $event)}></element>
