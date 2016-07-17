@@ -1,10 +1,11 @@
 .devtoolsInject {
 	width: 100%;
-	height: 200px;
+	height: 250px;
 	position: fixed;
 	left: 0;
 	bottom: 0;
-	background-color: #333;
+	font-family: Menlo, monospace;
+	background-color: #f3f3f3;
 }
 
 .regualrDevtools{
@@ -12,10 +13,69 @@
 	font-size: 0;
 }
 
+.devtoolsHeader{
+	height: 15%;
+	font-size: 20px;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	box-sizing: border-box;
+}
+
+.devtoolsHeader-img{
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.devtoolsHeader-title{
+	display: inline-block;
+	vertical-align: middle;
+}
+
 .elementView, .stateView{
+	box-sizing: border-box;
 	display: inline-block;
 	width: 50%;
 	font-size: 20px;
-	color: #fff;
+	color: #000;
 	vertical-align: top;
+	height: 85%;
+	padding:10px;
+	overflow-y: scroll;
+}
+
+.elementView{
+	border-right: 1px solid #333;
+}
+
+.stateView-title{
+	font-size: 18px;
+	padding-bottom: 10px;
+}
+
+.stateView-state{
+	font-size: 16px;
+	word-wrap:break-word;
+	padding-bottom:5px;
+}
+
+.purple{
+	color: purple;
+}
+
+.gray{
+	color: gray;
+}
+
+.blue{
+	color: blue;
+}
+
+.bold{
+
+font-weight: bold;
+}
+
+.element{
+	font-size: 18px;
 }

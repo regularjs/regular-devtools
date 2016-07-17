@@ -22,20 +22,30 @@
 
 <script type='template/regular' id='devtoolsView'>
 <div class='regualrDevtools'>
+        <div class='devtoolsHeader'>
+          <img src='https://camo.githubusercontent.com/2aa58d95573a7ea723774da778072ee580a4776f/687474703a2f2f726567756c61726a732e6769746875622e696f2f696d6167652f726567756c61722d69636f6e2d3130302e706e67' class='devtoolsHeader-img'/>
+          <span class='devtoolsHeader-title'>Regular Devtools</span>
+        </div>
         <div class='elementView'>
           {#list nodes as node}
               <element node={node} level={0} selected={false}></element>
           {/list}
         </div>
         <div class='stateView'>
-        <div>{currentNode.name}</div>
-         <div>{JSON.stringify(currentNode.data)}</div>
+        <div class='stateView-title purple'>{'<' + currentNode.name + '>'}</div>
+        <div>data</div>
+         {#list Object.keys(currentNode.data) as key}
+            <div class='stateView-state gray'>
+              <span class='bold'>{key + ': '} </span>
+               <span class='blue'>{JSON.stringify(currentNode.data[key])}</span>
+            </div>
+         {/list}
         </div>
 </div>
 </script>
 
 <script type='template/regular' id='elementView'>
-  <div class="element" style="padding-left:{level*20}px;{selected? 'background-color:#666' : null}" on-click={this.onClick(node)}>{node.name}</div>
+  <div class="element purple" style="padding-left:{level*20}px;}" on-click={this.onClick(node)}>{'<' + node.name + '>' }</div>
   {#if node.childNodes.length > 0}
       {#list node.childNodes as n}
           <element node={n} level={level+1} on-click={this.onClick(1, $event)}></element>

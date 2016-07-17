@@ -41,9 +41,7 @@ var devtoolsModel = (function() {
             return store;
         },
         remove: function(i) {
-            console.log("before remove", ins.length);
             ins.splice(ins.indexOf(i), 1);
-            console.log("after remove", ins.length)
             devtools.$emit("reRender");
         },
         addEvent: function() {
@@ -98,7 +96,6 @@ var element = Regular.extend({
     name: "element",
     template: "#elementView",
     onClick: function(node) {
-        this.data.selected = true;
         this.$root.$emit("clickElement", node)
     }
 })
@@ -106,17 +103,21 @@ var element = Regular.extend({
 var devtools = new devtoolsView({
     data: {
         nodes: devtoolsModel.storeGen(),
-        currentNode: "",
-        currentData: {}
+        currentNode: {
+            data: {}
+        },
     },
 }).$inject("#devtoolsInject")
 
 devtools.$on("clickElement", function(node) {
-    this.data.currentNode = node
+    this.data.currentNode = node;
     this.$update();
 })
 
+// init logic
 devtoolsModel.addEvent();
+devtools.data.currentNode =  devtools.data.nodes[0];
+
 
 devtools.$on("dataUpdate", function(node) {
     if (devtoolsModel.ifChanged) {
@@ -128,11 +129,12 @@ devtools.$on("dataUpdate", function(node) {
 devtools.$on("reRender", function() {
     devtoolsModel.addEvent();
     this.data.nodes = devtoolsModel.storeGen();
-    console.log(this.data.nodes.length)
     if (!(devtoolsModel.get().indexOf(this.data.currentNode))) {
         this.data.currentNode = null;
-        this.data.currentData = this.data.node[0]
+        this.data.currentNode = this.data.node[0];
     }
     this.$update();
     devtoolsModel.cleanUp();
 })
+
+devtools.$emit("dataUpdate");
