@@ -21,7 +21,10 @@
         </div>
         <div class='stateView'>
         <div class='stateView-title purple'>{'<' + currentNode.name + '>'}</div>
-        <div>data</div>
+        <div>
+          <span>data</span>
+          <span on-click={this.onInspectNode()}>inspect</span>
+        </div>
          {#list Object.keys(currentNode.data) as key}
             <div class='stateView-state gray'>
               <span class='bold'>{key + ': '} </span>
