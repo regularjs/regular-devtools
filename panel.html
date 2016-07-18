@@ -16,7 +16,7 @@
         </div>
         <div class='elementView'>
           {#list nodes as node}
-              <element node={node} level={0} selected={false}></element>
+              <element node={node} level={0} selected={false} opened={false}></element>
           {/list}
         </div>
         <div class='stateView'>
@@ -36,11 +36,34 @@
 </script>
 
 <script type='template/regular' id='elementView'>
-  <div class="element purple" style="padding-left:{level*20}px;}" on-click={this.onClick(node)}>{'<' + node.name + '>' }</div>
+  <div class="element purple" style="padding-left:{level*20}px;}" on-click={this.onClick(node)}>
+    <svg on-click={opened = !opened} 
+    class="arrow ele-item {opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}" 
+    viewBox="0 0 200 200" version="1.1" 
+    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g class="transform-group">
+            <g transform="scale(0.1953125, 0.1953125)">
+                <path d="M191.485661 130.1185 191.485661 896.024304 829.998029 512Z" fill="#272636"></path>
+            </g>
+        </g>
+    </svg> 
+    <span class="tag ele-item"><</span>
+    <span class="tagname ele-item">{node.name}</span>
+    <span class="tag ele-item">></span>
+  </div>
   {#if node.childNodes.length > 0}
       {#list node.childNodes as n}
+        <div style={opened ? null : "display:none;"}>
           <element node={n} level={level+1} on-click={this.onClick(1, $event)}></element>
+        </div>
       {/list}
+  {/if}
+  {#if node.childNodes.length > 0}
+  <div class="element purple" style="padding-left:{level*20}px;{opened ? null : 'display:none;'}">
+    <span class="tag ele-item"><</span>
+    <span class="tagname ele-item">{node.name}</span>
+    <span class="tag ele-item">/></span>
+  </div>
   {/if}
 </script>
 

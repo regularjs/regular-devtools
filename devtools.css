@@ -4,7 +4,6 @@ html{
 body{
 	margin: 0;
 	height: 100%;
-	background-color: #f3f3f3;
 }
 .devtoolsInject {
 	box-sizing: border-box;
@@ -55,7 +54,7 @@ body{
 }
 
 .elementView{
-	border-right: 1px solid #333;
+	border-right: 1px solid #ccc;
 }
 
 .stateView-title{
@@ -70,7 +69,7 @@ body{
 }
 
 .purple{
-	color: purple;
+	color: rgb(136, 18, 128);
 }
 
 .gray{
@@ -86,6 +85,33 @@ body{
 font-weight: bold;
 }
 
-.element{
+.elementView .element{
+	height: 18px;
+	line-height: 18px;
+	font-size: 0;
+	padding-bottom: 3px;
+}
+
+.elementView .tag{
+	color:rgb(168, 148, 166)
+}
+
+.elementView .arrow{
+	height: 15px;
+	width: 15px;
+	padding-right: 3px;
+}
+
+.elementView .ele-item{
 	font-size: 18px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.elementView .arrow-down{
+	transform: rotate(90deg);
+}
+
+.elementView .hide{
+	display: none;
 }

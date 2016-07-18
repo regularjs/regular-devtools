@@ -58,9 +58,12 @@ var devtoolsModel = (function() {
             store = [];
             for (var i = 0; i < ins.length; i++) {
                 if (ins[i].$root === ins[i]) {
+                    if (ins[i].parentNode) {
+                        var name = "root#" + ins[i].parentNode.tagName + "." + ins[i].parentNode.className.split(" ").join(".");
+                    }
                     var node = {
                         uuid: ins[i].uuid,
-                        name: "root",
+                        name: name || "root",
                         data: ins[i].data,
                         childNodes: []
                     }
