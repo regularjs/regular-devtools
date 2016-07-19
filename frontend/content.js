@@ -9,15 +9,14 @@ function injectScript(file, node) {
     s.setAttribute('src', file);
     th.appendChild(s);
 }
-injectScript( chrome.extension.getURL('frontend/inject.js'), 'body');
+injectScript(chrome.extension.getURL('frontend/inject.js'), 'body');
 
 window.addEventListener("message", function(event) {
-  // We only accept messages from ourselves
-  if (event.source != window)
-    return;
+    // We only accept messages from ourselves
+    if (event.source != window)
+        return;
 
-  if (event.data.type && (event.data.type == "FROM_PAGE")) {
-  	console.log(event.data.data, "message from the page")
-    port.postMessage(event.data.data);
-  }
+    if (event.data.type && (event.data.type == "FROM_PAGE")) {
+        port.postMessage(event.data.data);
+    }
 }, false);

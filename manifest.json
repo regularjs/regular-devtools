@@ -19,10 +19,17 @@
         "100": "/assets/regular.png"
     },
 
-    "web_accessible_resources": ["/frontend/inject.js", "/frontend/content.js"],
+    "web_accessible_resources": ["/frontend/inject.js", "/frontend/content.js", "/frontend/hook.js"],
 
     "permissions": [
-        "*://*/*",
-        "tabs"
-    ]
+        "http://*/*",
+        "https://*/*",
+        "file://*"
+    ],
+
+    "content_scripts": [{
+        "matches": ["<all_urls>"],
+        "js": ["/frontend/hook.js"],
+        "run_at": "document_start"
+    }]
 }

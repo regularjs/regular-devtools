@@ -16,7 +16,7 @@
         </div>
         <div class='elementView'>
           {#list nodes as node}
-              <element node={node} level={0} selected={false} opened={false}></element>
+              <element node={node} level={0} selected={false} localState={localStateMap[node.uuid]}></element>
           {/list}
         </div>
         <div class='stateView'>
@@ -37,8 +37,8 @@
 
 <script type='template/regular' id='elementView'>
   <div class="element purple" style="padding-left:{level*20}px;}" on-click={this.onClick(node)}>
-    <svg on-click={opened = !opened} 
-    class="arrow ele-item {opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}" 
+    <svg on-click={localState.opened = !localState.opened} 
+    class="arrow ele-item {localState.opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}" 
     viewBox="0 0 200 200" version="1.1" 
     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <g class="transform-group">
@@ -53,13 +53,13 @@
   </div>
   {#if node.childNodes.length > 0}
       {#list node.childNodes as n}
-        <div style={opened ? null : "display:none;"}>
-          <element node={n} level={level+1} on-click={this.onClick(1, $event)}></element>
+        <div style={localState.opened ? null : "display:none;"}>
+          <element node={n} level={level+1} localState={this.$root.data.localStateMap[n.uuid]} on-click={this.onClick(1, $event)}></element>
         </div>
       {/list}
   {/if}
   {#if node.childNodes.length > 0}
-  <div class="element purple" style="padding-left:{level*20}px;{opened ? null : 'display:none;'}">
+  <div class="element purple" style="padding-left:{level*20}px;{localState.opened ? null : 'display:none;'}">
     <span class="tag ele-item"><</span>
     <span class="tagname ele-item">{node.name}</span>
     <span class="tag ele-item">/></span>

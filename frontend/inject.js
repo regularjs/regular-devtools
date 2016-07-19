@@ -1,8 +1,13 @@
+// this is injected to the app page when the panel is activated.
+// this script serves as the model layer of the devtools
 var devtoolsModel = (function() {
-    var ins = window.__RDGH__ || [];
+    var hook = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__;
+    var ins = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins || [];
     var store = [];
     var length = ins.length;
-    var treeWalker = function(parentNode, children) {
+    var initialUuidArr = [];
+
+    var treeWalker = function(parentNode, children, uuidFlag) {
         for (var i = 0; i < children.length; i++) {
             var node = {
                 uuid: children[i].uuid,
@@ -11,8 +16,11 @@ var devtoolsModel = (function() {
                 childNodes: []
             }
             parentNode.childNodes.push(node);
+            if (uuidFlag) {
+                initialUuidArr.push(node.uuid);
+            }
             if (children[i]._children) {
-                treeWalker(node, children[i]._children);
+                treeWalker(node, children[i]._children, uuidFlag);
             }
         }
     }
@@ -27,18 +35,62 @@ var devtoolsModel = (function() {
             s4() + '-' + s4() + s4() + s4();
     }
 
-    var uuidGen = function(arr) {
+    var uuidGen = function(obj) {
+        if (!obj.uuid) {
+            obj.uuid = guid();
+        }
+    }
+
+    var uuidGenArr = function(arr) {
         for (var i = 0; i < arr.length; i++) {
             if (!arr[i].uuid) {
-                arr[i].uuid = guid();
+                uuidGen(arr[i]);
             }
         }
     }
-    
-    // generate uuid for the first time
-    uuidGen(ins);
-    return {
 
+
+
+    // generate uuid for the first time
+    uuidGenArr(ins);
+    return {
+        initialUuidArr: initialUuidArr,
+        init: function() {
+            var self = this;
+            hook.on("flush", function() {
+                window.postMessage({
+                    type: "FROM_PAGE",
+                    data: {
+                        type: "dataUpdate",
+                        nodes: self.storeGen()
+                    }
+                }, "*");
+            })
+
+            hook.on("addNodeMessage", function(obj) {
+                uuidGen(obj)
+                window.postMessage({
+                    type: "FROM_PAGE",
+                    data: {
+                        type: "addNode",
+                        nodes: self.storeGen(),
+                        nodeId: obj.uuid
+                    }
+                }, "*");
+            })
+
+            hook.on("delNodeMessage", function(obj) {
+                window.postMessage({
+                    type: "FROM_PAGE",
+                    data: {
+                        type: "delNode",
+                        nodes: self.storeGen(),
+                        nodeId: obj.uuid
+                    }
+                }, "*");
+            })
+
+        },
         sanitize: function(store) {
             var str = JSON.stringify(store, function(key, value) {
                 if (value instanceof Regular) {
@@ -54,7 +106,7 @@ var devtoolsModel = (function() {
             }
             return ins;
         },
-        storeGen: function() {
+        storeGen: function(uuidFlag) {
             store = [];
             for (var i = 0; i < ins.length; i++) {
                 if (ins[i].$root === ins[i]) {
@@ -67,10 +119,12 @@ var devtoolsModel = (function() {
                         data: ins[i].data,
                         childNodes: []
                     }
+                    if (uuidFlag) {
+                        initialUuidArr.push(node.uuid);
+                    }
                     store.push(node);
                     if (ins[i]._children.length) {
-                        console.log(node, ins[i]._children)
-                        treeWalker(node, ins[i]._children)
+                        treeWalker(node, ins[i]._children, uuidFlag)
                     }
                 }
             }
@@ -90,56 +144,17 @@ var devtoolsModel = (function() {
                     nodes: self.storeGen()
                 }
             }, "*");
-        },
-        addEvent: function() {
-            var self = this;
-            for (var i = 0; i < ins.length; i++) {
-                console.log('addEvent!!')
-                ins[i].$off("update");
-                ins[i].$off("$destory");
-                ins[i].$on("update", function() {
-                    if (self.ifChanged()) {
-                        uuidGen(ins)
-                        self.addEvent();
-                        window.postMessage({
-                            type: "FROM_PAGE",
-                            data: {
-                                type: "reRender",
-                                nodes: self.storeGen()
-                            }
-                        }, "*");
-                    } else {
-                        window.postMessage({
-                            type: "FROM_PAGE",
-                            data: {
-                                type: "dataUpdate",
-                                nodes: self.storeGen()
-                            }
-                        }, "*");
-                    }
-                });
-
-                ins[i].$on("$destroy", function() {
-                    self.remove(this);
-                });
-            }
-        },
-        ifChanged: function() {
-            if (length != ins.length) {
-                length = ins.length;
-                return true;
-            }
-            return false;
-        },
+        }
     }
 })();
-
-devtoolsModel.addEvent();
 
 window.postMessage({
     type: "FROM_PAGE",
     data: {
         type: "initNodes",
-        nodes: devtoolsModel.storeGen()
+        nodes: devtoolsModel.storeGen(true),
+        uuidArr: devtoolsModel.initialUuidArr
     }
 }, "*");
+
+devtoolsModel.init();
