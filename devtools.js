@@ -9,14 +9,23 @@ var devtoolsView = Regular.extend({
 
 var element = Regular.extend({
     name: "element",
-    template: "#elementView",
+    template: "#element",
     onClick: function(node) {
         this.$root.$emit("clickElement", node)
     },
     getLocalState: function(uuid) {
-        console.log(this.$root, uuid)
         return this.$root.data.localStateMap[uuid];
     }
+})
+
+var stateView = Regular.extend({
+    name: "stateView",
+    template: "#stateView"
+})
+
+var elementView = Regular.extend({
+    name: "elementView",
+    template: "#elementView"
 })
 
 var devtools = new devtoolsView({
@@ -76,34 +85,34 @@ devtools
     })
     .$on("clickElement", function(node) {
         this.data.currentNode = node;
-        this.$update();
-    }).$on("dataUpdate", function(nodes) {
+        this.$refs.stateView.$update();
+    }).$on("stateViewReRender", function(nodes) {
+        console.log("stateViewReRender rerender!!");
         this.data.nodes = nodes;
         var currNode = findElementByUuid(nodes, this.data.currentNode.uuid)
         if (currNode) {
             this.data.currentNode = currNode;
-            this.$update();
-        } 
-    }).$on("addNode", function(nodes, id) {
-        this.data.nodes = nodes;
-        addLocalState(id);
-        this.$update();
-    }).$on("delNode", function(nodes, id) {
-        this.data.nodes = nodes;
-        var currNode = findElementByUuid(nodes, this.data.currentNode.uuid)
-        if (currNode) {
-            this.data.currentNode = currNode;
-        } else {
+            this.$refs.stateView.$update();
+        }else {
             this.data.currentNode = this.data.nodes[0];
+            this.$refs.stateView.$update();
         }
-        this.$update();
+    }).$on("elementViewReRender", function(nodes) {
+        console.log("elementView rerender!!");
+        this.data.nodes = nodes;
+        this.$refs.elemenView.$update();
+        this.emit("stateViewReRender", nodes);
+    }).$on("addNode", function(id) {
+        addLocalState(id);
+    }).$on("delNode", function(id) {
+
     })
 
 backgroundPageConnection.onMessage.addListener(function(message) {
     if (message.type === "dataUpdate") {
-        devtools.$emit("dataUpdate", message.nodes);
+        devtools.$emit("stateViewReRender", message.nodes);
     } else if (message.type === "reRender") {
-        devtools.$emit("dataUpdate", message.nodes);
+        devtools.$emit("elementViewReRender", message.nodes);
     } else if (message.type === "initNodes") {
         devtools.$emit("initNodes", message.nodes, message.uuidArr);
     } else if (message.type === "addNode") {

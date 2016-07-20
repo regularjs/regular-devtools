@@ -57,7 +57,7 @@ var devtoolsModel = (function() {
         initialUuidArr: initialUuidArr,
         init: function() {
             var self = this;
-            hook.on("flush", function() {
+            hook.on("flushMessage", function() {
                 window.postMessage({
                     type: "FROM_PAGE",
                     data: {
@@ -73,19 +73,28 @@ var devtoolsModel = (function() {
                     type: "FROM_PAGE",
                     data: {
                         type: "addNode",
-                        nodes: self.storeGen(),
                         nodeId: obj.uuid
                     }
                 }, "*");
             })
-
+            
             hook.on("delNodeMessage", function(obj) {
                 window.postMessage({
                     type: "FROM_PAGE",
                     data: {
                         type: "delNode",
-                        nodes: self.storeGen(),
                         nodeId: obj.uuid
+                    }
+                }, "*");
+            })
+
+            hook.on("reRender", function(obj) {
+                console.log("reRender!!")
+                window.postMessage({
+                    type: "FROM_PAGE",
+                    data: {
+                        type: "reRender",
+                        nodes: self.storeGen()
                     }
                 }, "*");
             })

@@ -1,74 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Regular Developer Tools</title>
-  <link rel="stylesheet" href="/devtools.css">
+    <meta charset="UTF-8">
+    <title>Regular Developer Tools</title>
+    <link rel="stylesheet" href="/devtools.css">
 </head>
+
 <body>
-<div id="devtoolsInject" class="devtoolsInject"></div>
-
-<script type='template/regular' id='devtoolsView'>
-<div class='regualrDevtools'>
-        <div class='devtoolsHeader'>
-          <img src='https://camo.githubusercontent.com/2aa58d95573a7ea723774da778072ee580a4776f/687474703a2f2f726567756c61726a732e6769746875622e696f2f696d6167652f726567756c61722d69636f6e2d3130302e706e67' class='devtoolsHeader-img'/>
-          <span class='devtoolsHeader-title'>Regular Devtools</span>
-        </div>
-        <div class='elementView'>
-          {#list nodes as node}
-              <element node={node} level={0} selected={false} localState={localStateMap[node.uuid]}></element>
-          {/list}
-        </div>
-        <div class='stateView'>
-        <div class='stateView-title purple'>{'<' + currentNode.name + '>'}</div>
-        <div>
-          <span>data</span>
-          <span on-click={this.onInspectNode()}>inspect</span>
-        </div>
-         {#list Object.keys(currentNode.data) as key}
-            <div class='stateView-state gray'>
-              <span class='bold'>{key + ': '} </span>
-               <span class='blue'>{JSON.stringify(currentNode.data[key])}</span>
+    <div id="devtoolsInject" class="devtoolsInject"></div>
+    <script type='template/regular' id='devtoolsView'>
+        <div class='regualrDevtools'>
+            <div class='devtoolsHeader'>
+                <img src='https://camo.githubusercontent.com/2aa58d95573a7ea723774da778072ee580a4776f/687474703a2f2f726567756c61726a732e6769746875622e696f2f696d6167652f726567756c61722d69636f6e2d3130302e706e67' class='devtoolsHeader-img' />
+                <span class='devtoolsHeader-title'>Regular Devtools</span>
             </div>
-         {/list}
+            <elementView ref=elementView nodes={nodes} localStateMap={localStateMap} />
+            <stateView ref=stateView currentNode={currentNode} />
         </div>
-</div>
-</script>
-
-<script type='template/regular' id='elementView'>
-  <div class="element purple" style="padding-left:{level*20}px;}" on-click={this.onClick(node)}>
-    <svg on-click={localState.opened = !localState.opened} 
-    class="arrow ele-item {localState.opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}" 
-    viewBox="0 0 200 200" version="1.1" 
-    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-        <g class="transform-group">
-            <g transform="scale(0.1953125, 0.1953125)">
-                <path d="M191.485661 130.1185 191.485661 896.024304 829.998029 512Z" fill="#272636"></path>
-            </g>
-        </g>
-    </svg> 
-    <span class="tag ele-item"><</span>
-    <span class="tagname ele-item">{node.name}</span>
-    <span class="tag ele-item">></span>
-  </div>
-  {#if node.childNodes.length > 0}
-      {#list node.childNodes as n}
+    </script>
+    <script type='template/regular' id='elementView'>
+        <div class='elementView'>
+            {#list nodes as node}
+              <element node={node} level={0} selected={false} localState={localStateMap[node.uuid]}>
+              </element>
+            {/list}
+        </div>
+    </script>
+    <script type='template/regular' id='element'>
+        <div class="element purple" style="padding-left:{level*20}px;}" on-click={this.onClick(node)}>
+            <svg on-click={localState.opened=! localState.opened} class="arrow ele-item {localState.opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <g class="transform-group">
+                    <g transform="scale(0.1953125, 0.1953125)">
+                        <path d="M191.485661 130.1185 191.485661 896.024304 829.998029 512Z" fill="#272636"></path>
+                    </g>
+                </g>
+            </svg>
+            <span class="tag ele-item"><</span>
+            <span class="tagname ele-item">{node.name}</span>
+            <span class="tag ele-item">></span>
+        </div>
+        {#if node.childNodes.length > 0} {#list node.childNodes as n}
         <div style={localState.opened ? null : "display:none;"}>
-          <element node={n} level={level+1} localState={this.$root.data.localStateMap[n.uuid]} on-click={this.onClick(1, $event)}></element>
+            <element node={n} level={level+1} localState={this.$root.data.localStateMap[n.uuid]} on-click={this.onClick(1, $event)}></element>
         </div>
-      {/list}
-  {/if}
-  {#if node.childNodes.length > 0}
-  <div class="element purple" style="padding-left:{level*20}px;{localState.opened ? null : 'display:none;'}">
-    <span class="tag ele-item"><</span>
-    <span class="tagname ele-item">{node.name}</span>
-    <span class="tag ele-item">/></span>
-  </div>
-  {/if}
-</script>
-
-<!-- 引入regularjs -->
-<script src="/lib/regular.js"></script>
-<script src="/devtools.js"></script>
+        {/list} {/if} {#if node.childNodes.length > 0}
+        <div class="element purple" style="padding-left:{level*20}px;{localState.opened ? null : 'display:none;'}">
+            <span class="tag ele-item"><</span>
+            <span class="tagname ele-item">{node.name}</span>
+            <span class="tag ele-item">/></span>
+        </div>
+        {/if}
+    </script>
+    <script type='template/regular' id='stateView'>
+        <div class='stateView'>
+            <div class='stateView-title purple'>
+                {'<' + currentNode.name + '>'}
+            </div>
+            <div>
+                <span>data</span>
+                <span on-click={this.onInspectNode()}>inspect</span>
+            </div>
+            {#list Object.keys(currentNode.data) as key}
+            <div class='stateView-state gray'>
+                <span class='bold'>{key + ': '} </span>
+                <span class='blue'>{JSON.stringify(currentNode.data[key])}</span>
+            </div>
+            {/list}
+        </div>
+    </script>
+    <!-- 引入regularjs -->
+    <script src="/lib/regular.js"></script>
+    <script src="/devtools.js"></script>
 </body>
+
 </html>

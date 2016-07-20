@@ -66,6 +66,32 @@ function installHook(window) {
         }
     }
 
+    // debounce helper
+    var debounce = function (func, wait, immediate) {
+        var timeout; //Why is this set to nothing?
+        return function() {
+            var context = this,
+                args = arguments;
+            clearTimeout(timeout); // If timeout was just set to nothing, what can be cleared? 
+            timeout = setTimeout(function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            }, wait);
+            if (immediate && !timeout) func.apply(context, args); //This applies the original function to the context and to these arguments?
+        };
+    };
+
+    var emitRerender = function () {
+        console.log("emit rerender");
+        hook.emit("reRender");
+    }
+
+    var emitStateRender = function () {
+        hook.emit("flushMessage");
+    }
+    
+    var reRender = debounce(emitRerender, 300);
+    var reRenderState = debounce(emitStateRender, 200);
 
     Object.defineProperty(window, '__REGULAR_DEVTOOLS_GLOBAL_HOOK__', {
         get() {
@@ -76,13 +102,18 @@ function installHook(window) {
     hook.on('init', function(obj) {
         hook.ins.push(obj);
         this.emit('addNodeMessage', obj);
+        reRender();
     })
 
     hook.on('destroy', function(obj) {
         hook.ins.splice(hook.ins.indexOf(obj), 1);
-        this.emit('delNodeMessage', obj);
+        //this.emit('delNodeMessage', obj);
+        reRender();
     })
-
+    
+    hook.on('flush', function() {
+        reRenderState();
+    })
 }
 
 
