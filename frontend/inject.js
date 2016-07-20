@@ -13,7 +13,8 @@ var devtoolsModel = (function() {
                 uuid: children[i].uuid,
                 name: children[i].name || "node",
                 data: children[i].data,
-                childNodes: []
+                childNodes: [],
+                inspectable: !!ins[i].node
             }
             parentNode.childNodes.push(node);
             if (uuidFlag) {
@@ -77,7 +78,7 @@ var devtoolsModel = (function() {
                     }
                 }, "*");
             })
-            
+
             hook.on("delNodeMessage", function(obj) {
                 window.postMessage({
                     type: "FROM_PAGE",
@@ -126,7 +127,8 @@ var devtoolsModel = (function() {
                         uuid: ins[i].uuid,
                         name: name || "root",
                         data: ins[i].data,
-                        childNodes: []
+                        childNodes: [],
+                        inspectable: !!ins[i].node
                     }
                     if (uuidFlag) {
                         initialUuidArr.push(node.uuid);

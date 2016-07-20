@@ -93,13 +93,10 @@ function installHook(window) {
     var reRender = debounce(emitRerender, 300);
     var reRenderState = debounce(emitStateRender, 200);
 
-    Object.defineProperty(window, '__REGULAR_DEVTOOLS_GLOBAL_HOOK__', {
-        get() {
-            return hook
-        }
-    })
+    window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__ = hook;
 
     hook.on('init', function(obj) {
+        console.log(hook)
         hook.ins.push(obj);
         this.emit('addNodeMessage', obj);
         reRender();
@@ -107,13 +104,13 @@ function installHook(window) {
 
     hook.on('destroy', function(obj) {
         hook.ins.splice(hook.ins.indexOf(obj), 1);
-        //this.emit('delNodeMessage', obj);
         reRender();
     })
     
     hook.on('flush', function() {
         reRenderState();
     })
+    console.log(window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__)
 }
 
 

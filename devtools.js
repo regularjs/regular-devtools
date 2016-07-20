@@ -3,6 +3,7 @@ var backgroundPageConnection = chrome.runtime.connect({
     name: "devToBackCon"
 });
 
+// Regualr components for devtools' UI
 var devtoolsView = Regular.extend({
     template: "#devtoolsView",
 })
@@ -20,7 +21,17 @@ var element = Regular.extend({
 
 var stateView = Regular.extend({
     name: "stateView",
-    template: "#stateView"
+    template: "#stateView",
+    onInspectNode: function() {
+        var uuid = this.data.currentNode.uuid;
+        console.log("inspect ", uuid)
+        chrome.devtools.inspectedWindow.eval(
+            "inspect(window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(node) { return node.uuid === '" + uuid + "'})[0].node)",
+            function(result, isException) {
+                //console.log("on ins!!", result, isException)
+            }
+        );
+    }
 })
 
 var elementView = Regular.extend({
@@ -28,6 +39,7 @@ var elementView = Regular.extend({
     template: "#elementView"
 })
 
+// init devtools
 var devtools = new devtoolsView({
     data: {
         nodes: [],
@@ -37,18 +49,10 @@ var devtools = new devtoolsView({
         localStateMap: {
 
         }
-    },
-    onInspectNode: function() {
-        var uuid = this.data.currentNode.uuid;
-        chrome.devtools.inspectedWindow.eval(
-            "inspect(window.__RDGH__.filter(function(node) { return node.uuid === '" + uuid + "'})[0].node)",
-            function(result, isException) {
-                console.log("on ins!!", result, isException)
-            }
-        );
     }
 }).$inject("#devtoolsInject")
 
+// some utility functions
 var findElementByUuid = function(nodes, uuid) {
     for (var i = 0; i < nodes.length; i++) {
         if (nodes[i].uuid === uuid) {
@@ -72,10 +76,21 @@ var initLocalState = function(arr) {
 
 var addLocalState = function(uuid) {
     devtools.data.localStateMap[uuid] = {
-        opened: false
+        opened: false,
+        selected: false
     }
 }
 
+var clearProps = function(props, initValue) {
+    var obj = devtools.data.localStateMap;
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) { 
+            obj[key][props] = initValue;
+        }
+    }
+}
+
+// register custom events
 devtools
     .$on("initNodes", function(nodes, uuidArr) {
         this.data.nodes = nodes;
@@ -85,6 +100,9 @@ devtools
     })
     .$on("clickElement", function(node) {
         this.data.currentNode = node;
+        clearProps("selected", false);
+        this.data.localStateMap[node.uuid].selected = true;
+        this.$refs.elementView.$update();
         this.$refs.stateView.$update();
     }).$on("stateViewReRender", function(nodes) {
         console.log("stateViewReRender rerender!!");
@@ -93,12 +111,11 @@ devtools
         if (currNode) {
             this.data.currentNode = currNode;
             this.$refs.stateView.$update();
-        }else {
+        } else {
             this.data.currentNode = this.data.nodes[0];
             this.$refs.stateView.$update();
         }
     }).$on("elementViewReRender", function(nodes) {
-        console.log("elementView rerender!!");
         this.data.nodes = nodes;
         this.$refs.elemenView.$update();
         this.emit("stateViewReRender", nodes);

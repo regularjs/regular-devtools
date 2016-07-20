@@ -12,7 +12,7 @@
     <script type='template/regular' id='devtoolsView'>
         <div class='regualrDevtools'>
             <div class='devtoolsHeader'>
-                <img src='https://camo.githubusercontent.com/2aa58d95573a7ea723774da778072ee580a4776f/687474703a2f2f726567756c61726a732e6769746875622e696f2f696d6167652f726567756c61722d69636f6e2d3130302e706e67' class='devtoolsHeader-img' />
+                <img src='/assets/regular.png' class='devtoolsHeader-img' />
                 <span class='devtoolsHeader-title'>Regular Devtools</span>
             </div>
             <elementView ref=elementView nodes={nodes} localStateMap={localStateMap} />
@@ -22,13 +22,14 @@
     <script type='template/regular' id='elementView'>
         <div class='elementView'>
             {#list nodes as node}
-              <element node={node} level={0} selected={false} localState={localStateMap[node.uuid]}>
+              <element node={node} level={1} localState={localStateMap[node.uuid]}>
               </element>
             {/list}
         </div>
     </script>
     <script type='template/regular' id='element'>
-        <div class="element purple" style="padding-left:{level*20}px;}" on-click={this.onClick(node)}>
+        <div class="element purple {localState.selected ? 'selected' : 'element-tag'}" 
+        style="padding-left:{level*20}px;}" on-click={this.onClick(node)}>
             <svg on-click={localState.opened=! localState.opened} class="arrow ele-item {localState.opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <g class="transform-group">
                     <g transform="scale(0.1953125, 0.1953125)">
@@ -36,9 +37,9 @@
                     </g>
                 </g>
             </svg>
-            <span class="tag ele-item"><</span>
+            <span class="tag ele-item">&lt;</span>
             <span class="tagname ele-item">{node.name}</span>
-            <span class="tag ele-item">></span>
+            <span class="tag ele-item">&gt;</span>
         </div>
         {#if node.childNodes.length > 0} {#list node.childNodes as n}
         <div style={localState.opened ? null : "display:none;"}>
@@ -46,20 +47,25 @@
         </div>
         {/list} {/if} {#if node.childNodes.length > 0}
         <div class="element purple" style="padding-left:{level*20}px;{localState.opened ? null : 'display:none;'}">
-            <span class="tag ele-item"><</span>
+            <span class="tag ele-item">&lt;/</span>
             <span class="tagname ele-item">{node.name}</span>
-            <span class="tag ele-item">/></span>
+            <span class="tag ele-item">&gt;</span>
         </div>
         {/if}
     </script>
     <script type='template/regular' id='stateView'>
         <div class='stateView'>
-            <div class='stateView-title purple'>
+            <div class='stateView-title-node purple'>
                 {'<' + currentNode.name + '>'}
             </div>
-            <div>
-                <span>data</span>
-                <span on-click={this.onInspectNode()}>inspect</span>
+            <div class='stateView-title-text'>
+                <div class='data'>data</div>
+                {#if currentNode.inspectable }
+                <div class='inspect no-space cp' on-click={this.onInspectNode()}>
+                  <img class='inspect-icon' src="/assets/inspect.svg" alt="inspect"/>
+                  <div class='inspect-text'>inspect</div>
+                </div>
+                {/if}
             </div>
             {#list Object.keys(currentNode.data) as key}
             <div class='stateView-state gray'>
