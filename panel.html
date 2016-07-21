@@ -67,14 +67,40 @@
                 </div>
                 {/if}
             </div>
-            {#list Object.keys(currentNode.data) as key}
-            <div class='stateView-state gray'>
-                <span class='bold'>{key + ': '} </span>
-                <span class='blue'>{JSON.stringify(currentNode.data[key])}</span>
+            <div class='stateView-data'>
+                {#list Object.keys(currentNode.data) as key}
+                    <prop key={key} value={currentNode.data[key]}/>
+                {/list}
             </div>
-            {/list}
         </div>
     </script>
+    <script type='template/regular' id='stateViewProp'>
+        <div class='stateView-data'>
+            <div class='stateView-data-key bold'>
+                <span>{key + ': '} </span>
+                {#if this.isPrimitive(value)}
+                    {#if this.type(value) === 'String'}
+                        <span class='string'>"{value}"</span>
+                    {#else}
+                        <span class='others'>{value}</span>
+                    {/if}
+                {#elseif this.type(value) === 'Array'}
+                    Array[{value.length}]
+                {#else}
+                    {this.type(value)}
+                {/if}
+            </div>
+            {#if opened && 
+                ((this.type(value) === 'Array') || (this.type(value) === 'Object'))}
+            <div class='stateView-data-props' style={padding ? 'padding-left:20px' : null}>
+                {#list Object.keys(value) as key}
+                    <prop key={key} value={value[key]} padding={true}/>
+                {/list}
+            </div>
+            {/if} 
+        </div>
+    </script>
+
     <!-- 引入regularjs -->
     <script src="/lib/regular.js"></script>
     <script src="/devtools.js"></script>

@@ -94,9 +94,10 @@ function installHook(window) {
     var reRenderState = debounce(emitStateRender, 200);
 
     window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__ = hook;
+     window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__2 = hook;
+     window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__3 = hook;
 
     hook.on('init', function(obj) {
-        console.log(hook)
         hook.ins.push(obj);
         this.emit('addNodeMessage', obj);
         reRender();

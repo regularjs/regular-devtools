@@ -3,6 +3,16 @@ var backgroundPageConnection = chrome.runtime.connect({
     name: "devToBackCon"
 });
 
+// Util
+var isPrimitive = function(arg) {
+    var type = typeof arg;
+    return arg == null || (type != "object" && type != "function");
+}
+
+var type = function(obj) {
+    return Object.prototype.toString.call(obj).slice(8, -1)
+}
+
 // Regualr components for devtools' UI
 var devtoolsView = Regular.extend({
     template: "#devtoolsView",
@@ -38,6 +48,17 @@ var elementView = Regular.extend({
     name: "elementView",
     template: "#elementView"
 })
+
+var prop = Regular.extend({
+    name: "prop",
+    template: "#stateViewProp",
+    data:{
+        opened: true,
+    },
+    isPrimitive:isPrimitive,
+    type:type
+})
+
 
 // init devtools
 var devtools = new devtoolsView({
@@ -84,13 +105,42 @@ var addLocalState = function(uuid) {
 var clearProps = function(props, initValue) {
     var obj = devtools.data.localStateMap;
     for (var key in obj) {
-        if (obj.hasOwnProperty(key)) { 
+        if (obj.hasOwnProperty(key)) {
             obj[key][props] = initValue;
         }
     }
 }
 
-// register custom events
+var snycObject = function(oldObj, newObj, container) {
+    for (var key in newObj) {
+        if (!newObj.hasOwnProperty(key)) {
+            continue;
+        }
+        if (oldObj[key]) {
+            if (oldObj[key] === newObj[key]) {
+                container[key] = oldObj[key];
+            } else if (JSON.stringify(oldObj[key]) === JSON.stringify(newObj[key])) {
+                container[key] = oldObj[key];
+            } else if ((typeof(oldObj[key]) === "object") && (typeof(newObj[key]) === "object")) {
+                if ((newObj[key] instanceof Array) && (oldObj[key] instanceof Array)) {
+                    var temp = snycObject(oldObj[key], newObj[key], []);
+                    container[key] = temp;
+                } else {
+                    var temp = snycObject(oldObj[key], newObj[key], {});
+                    container[key] = temp;
+                }
+            } else {
+                container[key] = newObj[key];
+            }
+        } else {
+            container[key] = newObj[key];
+        }
+    }
+    return container;
+}
+
+
+// register custom events 
 devtools
     .$on("initNodes", function(nodes, uuidArr) {
         this.data.nodes = nodes;
@@ -109,7 +159,7 @@ devtools
         this.data.nodes = nodes;
         var currNode = findElementByUuid(nodes, this.data.currentNode.uuid)
         if (currNode) {
-            this.data.currentNode = currNode;
+            this.data.currentNode = snycObject(this.data.nodes.currentNode, currNode, {});
             this.$refs.stateView.$update();
         } else {
             this.data.currentNode = this.data.nodes[0];
