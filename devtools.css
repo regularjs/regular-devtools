@@ -1,3 +1,13 @@
+// test
+.stateView-title-tag {
+	font-size: 18px;
+	padding-bottom: 10px;
+}
+
+.purple{
+	color: rgb(136, 18, 128);
+}
+
 html{
 	height: 100%;
 }
@@ -57,17 +67,10 @@ body{
 	padding:20px;
 }
 
-.elementView{
-	padding:20px 0;
-	border-right: 2px solid #e3e3e3;
-}
+// .stateView
 
-.stateView-title-node{
-	font-size: 18px;
-	padding-bottom: 10px;
-}
 
-.stateView-title-text{
+.stateView-title-text {
 	font-size: 16px;
 	line-height: 16px;
 }
@@ -92,30 +95,20 @@ body{
 	font-size: 16px;
 }
 
-.no-space{
-	font-size: 0;
-}
-
 .stateView-state{
 	font-size: 16px;
 	word-wrap:break-word;
 	padding-bottom:5px;
 }
-
-.purple{
-	color: rgb(136, 18, 128);
+.stateView-data {
+	font-size: 13px;
 }
 
-.gray{
-	color: gray;
-}
 
-.blue{
-	color: blue;
-}
 
-.bold{
-	font-weight: bold;
+.elementView{
+	padding:20px 0;
+	border-right: 2px solid #e3e3e3;
 }
 
 .elementView .element{
@@ -133,7 +126,6 @@ body{
 .elementView .arrow{
 	height: 15px;
 	width: 15px;
-	padding-bottom: 3px
 }
 
 .elementView .ele-item{
@@ -142,12 +134,8 @@ body{
 	vertical-align: middle;
 }
 
-.elementView .arrow-down{
+.elementView .arrow-down,.stateView .arrow-down{
 	transform: rotate(90deg);
-}
-
-.elementView .hide{
-	display: none;
 }
 
 .element-tag:hover{
@@ -160,4 +148,61 @@ body{
 
 .flush-animation{
 
+}
+
+
+
+.stateView-data-key .arrow {
+	height: 13px;
+	width: 13px;
+}
+
+.stateView-data-key {
+	line-height: 13px;
+	padding-bottom:3px;
+}
+.stateView-data-key .item{
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 13px;
+}
+
+.stateView-data .key{
+	color:#881391;
+}
+
+.stateView-data .primitive{
+	color: #03c;
+}
+
+.stateView-data .string{
+	color: #c41a16;
+}
+
+.stateView-data .others{
+	color: #444;
+}
+
+
+//util
+
+
+.gray{
+	color: gray;
+}
+
+.blue{
+	color: blue;
+}
+
+.bold{
+	font-weight: bold;
+}
+
+.no-space{
+	font-size: 0;
+}
+
+.elementView .hide, .stateView-data-key .hide{
+	display: none;
 }

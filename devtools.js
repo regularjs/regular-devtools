@@ -52,11 +52,24 @@ var elementView = Regular.extend({
 var prop = Regular.extend({
     name: "prop",
     template: "#stateViewProp",
-    data:{
+    data: {
         opened: true,
     },
-    isPrimitive:isPrimitive,
-    type:type
+    computed: {
+        type: {
+            get: function(data) {
+                return this.type(data.value);
+            }
+        },
+        hasChildren: {
+            get: function(data) {
+                return ((this.type(data.value) === 'Array') || (this.type(data.value) === 'Object')) &&
+                ((data.value.length || Object.keys(data.value).length ))
+            }
+        }
+    },
+    isPrimitive: isPrimitive,
+    type: type
 })
 
 

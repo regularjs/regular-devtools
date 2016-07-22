@@ -30,13 +30,10 @@
     <script type='template/regular' id='element'>
         <div class="element purple {localState.selected ? 'selected' : 'element-tag'}" 
         style="padding-left:{level*20}px;}" on-click={this.onClick(node)}>
-            <svg on-click={localState.opened=! localState.opened} class="arrow ele-item {localState.opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <g class="transform-group">
-                    <g transform="scale(0.1953125, 0.1953125)">
-                        <path d="M191.485661 130.1185 191.485661 896.024304 829.998029 512Z" fill="#272636"></path>
-                    </g>
-                </g>
-            </svg>
+            <img src="/assets/arrow.svg" 
+            style="margin-left: -15px;"
+            alt="arrow" on-click={localState.opened=! localState.opened} 
+            class="arrow ele-item {localState.opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}"/>
             <span class="tag ele-item">&lt;</span>
             <span class="tagname ele-item">{node.name}</span>
             <span class="tag ele-item">&gt;</span>
@@ -55,8 +52,8 @@
     </script>
     <script type='template/regular' id='stateView'>
         <div class='stateView'>
-            <div class='stateView-title-node purple'>
-                {'<' + currentNode.name + '>'}
+            <div class="stateView-title-tag purple">
+                &lt;{currentNode.name}&gt;
             </div>
             <div class='stateView-title-text'>
                 <div class='data'>data</div>
@@ -76,25 +73,28 @@
     </script>
     <script type='template/regular' id='stateViewProp'>
         <div class='stateView-data'>
-            <div class='stateView-data-key bold'>
-                <span>{key + ': '} </span>
+            <div class='stateView-data-key no-space'>
+                <img src="/assets/arrow.svg" 
+                style="margin-left: -13px;"
+                 alt="arrow" on-click={opened = !opened} 
+                 class="arrow item {opened ? 'arrow-down' : null} {hasChildren ? '': 'hide'}"/>
+                <span class="key item">{key + ': '} </span>
                 {#if this.isPrimitive(value)}
-                    {#if this.type(value) === 'String'}
-                        <span class='string'>"{value}"</span>
+                    {#if type === 'String'}
+                        <span class='item string'>"{value}"</span>
                     {#else}
-                        <span class='others'>{value}</span>
+                        <span class='item primitive'>{value}</span>
                     {/if}
-                {#elseif this.type(value) === 'Array'}
-                    Array[{value.length}]
+                {#elseif type === 'Array'}
+                    <span class='item others'>Array[{value.length}]</span>
                 {#else}
-                    {this.type(value)}
+                    <span class='item others'>{type}</span>
                 {/if}
             </div>
-            {#if opened && 
-                ((this.type(value) === 'Array') || (this.type(value) === 'Object'))}
-            <div class='stateView-data-props' style={padding ? 'padding-left:20px' : null}>
-                {#list Object.keys(value) as key}
-                    <prop key={key} value={value[key]} padding={true}/>
+            {#if opened && hasChildren}
+            <div class='stateView-data-props' style='padding-left:20px'>
+                {#list Object.keys(value) as k}
+                    <prop key={k} value={value[k]} padding={true}/>
                 {/list}
             </div>
             {/if} 
