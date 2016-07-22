@@ -90,12 +90,10 @@ function installHook(window) {
         hook.emit("flushMessage");
     }
     
-    var reRender = debounce(emitRerender, 300);
-    var reRenderState = debounce(emitStateRender, 200);
+    var reRender = debounce(emitRerender, 500);
+    var reRenderState = debounce(emitStateRender, 500);
 
     window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__ = hook;
-     window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__2 = hook;
-     window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__3 = hook;
 
     hook.on('init', function(obj) {
         hook.ins.push(obj);
@@ -111,7 +109,6 @@ function installHook(window) {
     hook.on('flush', function() {
         reRenderState();
     })
-    console.log(window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__)
 }
 
 

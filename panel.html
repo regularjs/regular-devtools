@@ -22,28 +22,31 @@
     <script type='template/regular' id='elementView'>
         <div class='elementView'>
             {#list nodes as node}
-              <element node={node} level={1} localState={localStateMap[node.uuid]}>
+              <element node={node} level={1} >
               </element>
             {/list}
         </div>
     </script>
     <script type='template/regular' id='element'>
-        <div class="element purple {localState.selected ? 'selected' : 'element-tag'}" 
+        <div class="element purple {selected ? 'selected' : 'element-tag'}" 
         style="padding-left:{level*20}px;}" on-click={this.onClick(node)}>
             <img src="/assets/arrow.svg" 
             style="margin-left: -15px;"
-            alt="arrow" on-click={localState.opened=! localState.opened} 
-            class="arrow ele-item {localState.opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}"/>
+            alt="arrow" on-click={opened = !opened} 
+            class="arrow ele-item {opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}"/>
             <span class="tag ele-item">&lt;</span>
             <span class="tagname ele-item">{node.name}</span>
             <span class="tag ele-item">&gt;</span>
         </div>
         {#if node.childNodes.length > 0} {#list node.childNodes as n}
-        <div style={localState.opened ? null : "display:none;"}>
-            <element node={n} level={level+1} localState={this.$root.data.localStateMap[n.uuid]} on-click={this.onClick(1, $event)}></element>
+        <div style={opened ? null : "display:none;"}>
+            <element node={n} level={level+1} ></element>
         </div>
-        {/list} {/if} {#if node.childNodes.length > 0}
-        <div class="element purple" style="padding-left:{level*20}px;{localState.opened ? null : 'display:none;'}">
+        {/list} 
+        {/if} 
+        {#if node.childNodes.length > 0}
+        <div class="element purple" 
+        style="padding-left:{level*20}px;{opened ? null : 'display:none;'}">
             <span class="tag ele-item">&lt;/</span>
             <span class="tagname ele-item">{node.name}</span>
             <span class="tag ele-item">&gt;</span>
@@ -52,11 +55,11 @@
     </script>
     <script type='template/regular' id='stateView'>
         <div class='stateView'>
-            <div class="stateView-title-tag purple">
+            <div class="purplee">
                 &lt;{currentNode.name}&gt;
             </div>
-            <div class='stateView-title-text'>
-                <div class='data'>data</div>
+            <div class="s-text">
+                <div class='s-data'>data</div>
                 {#if currentNode.inspectable }
                 <div class='inspect no-space cp' on-click={this.onInspectNode()}>
                   <img class='inspect-icon' src="/assets/inspect.svg" alt="inspect"/>
@@ -75,10 +78,10 @@
         <div class='stateView-data'>
             <div class='stateView-data-key no-space'>
                 <img src="/assets/arrow.svg" 
-                style="margin-left: -13px;"
+                style="margin-left: -10px;"
                  alt="arrow" on-click={opened = !opened} 
                  class="arrow item {opened ? 'arrow-down' : null} {hasChildren ? '': 'hide'}"/>
-                <span class="key item">{key + ': '} </span>
+                <span class="key item">{key + ':'}&nbsp;</span>
                 {#if this.isPrimitive(value)}
                     {#if type === 'String'}
                         <span class='item string'>"{value}"</span>

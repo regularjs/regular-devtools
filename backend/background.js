@@ -1,11 +1,11 @@
-// background.js
+// background.js, runs presistently
+// inject content script for devtools page
+// pass message from content script to devtools page
 var connection;
 
 chrome.runtime.onConnect.addListener(function(panelConnection) {
-    console.log('connected')
     var injectListener = function(message, sender, sendResponse) {
-            console.log('injected!!')
-                // Inject a content script into the identified tab
+            // Inject a content script into the identified tab
             chrome.tabs.executeScript(message.tabId, {
                 file: message.scriptToInject
             });

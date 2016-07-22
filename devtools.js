@@ -1,3 +1,6 @@
+// the real devtools script
+// the UI layer of devtools
+
 // Create a connection to the background page
 var backgroundPageConnection = chrome.runtime.connect({
     name: "devToBackCon"
@@ -13,6 +16,9 @@ var type = function(obj) {
     return Object.prototype.toString.call(obj).slice(8, -1)
 }
 
+// Global Ref
+var lastSelected = null;
+
 // Regualr components for devtools' UI
 var devtoolsView = Regular.extend({
     template: "#devtoolsView",
@@ -21,8 +27,28 @@ var devtoolsView = Regular.extend({
 var element = Regular.extend({
     name: "element",
     template: "#element",
+    data: {
+        selected:false
+    },
+    computed: {
+        opened: {
+            get: function(data) {
+                return this.$root.data.localStateMap[data.node.uuid].opened;
+            },
+            set: function(value, data) {
+                this.$root.data.localStateMap[data.node.uuid].opened = value;
+            },
+        },
+    },
     onClick: function(node) {
-        this.$root.$emit("clickElement", node)
+        this.data.selected = true;
+        if (lastSelected) {
+            lastSelected.data.selected = false;
+        }
+        lastSelected = this;
+        lastSelected.$update();
+        this.$update();
+        this.$root.$emit("clickElement", node);
     },
     getLocalState: function(uuid) {
         return this.$root.data.localStateMap[uuid];
@@ -53,7 +79,7 @@ var prop = Regular.extend({
     name: "prop",
     template: "#stateViewProp",
     data: {
-        opened: true,
+        opened: false,
     },
     computed: {
         type: {
@@ -111,7 +137,6 @@ var initLocalState = function(arr) {
 var addLocalState = function(uuid) {
     devtools.data.localStateMap[uuid] = {
         opened: false,
-        selected: false
     }
 }
 
@@ -163,26 +188,25 @@ devtools
     })
     .$on("clickElement", function(node) {
         this.data.currentNode = node;
-        clearProps("selected", false);
-        this.data.localStateMap[node.uuid].selected = true;
-        this.$refs.elementView.$update();
         this.$refs.stateView.$update();
     }).$on("stateViewReRender", function(nodes) {
-        console.log("stateViewReRender rerender!!");
+        console.log("stateView render!!");
         this.data.nodes = nodes;
         var currNode = findElementByUuid(nodes, this.data.currentNode.uuid)
         if (currNode) {
-            this.data.currentNode = snycObject(this.data.nodes.currentNode, currNode, {});
+            this.data.currentNode = snycObject(this.data.currentNode, currNode, {});
             this.$refs.stateView.$update();
         } else {
             this.data.currentNode = this.data.nodes[0];
             this.$refs.stateView.$update();
         }
     }).$on("elementViewReRender", function(nodes) {
+        console.log("elementView render!!");
         this.data.nodes = nodes;
         this.$refs.elemenView.$update();
         this.emit("stateViewReRender", nodes);
     }).$on("addNode", function(id) {
+        console.log("add local state")
         addLocalState(id);
     }).$on("delNode", function(id) {
 

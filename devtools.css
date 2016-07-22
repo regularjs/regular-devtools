@@ -1,7 +1,14 @@
 // test
-.stateView-title-tag {
+.purplee {
 	font-size: 18px;
-	padding-bottom: 10px;
+	color: rgb(136, 18, 128);
+}
+
+.s-text {
+	font-size: 16px;
+	line-height: 16px;
+	padding: 10px 0;
+	padding-bottom: 5px
 }
 
 .purple{
@@ -70,27 +77,24 @@ body{
 // .stateView
 
 
-.stateView-title-text {
-	font-size: 16px;
-	line-height: 16px;
-}
 
-.stateView-title-text .inspect:hover{
+
+.s-text .inspect:hover{
 	color: #44a1ff;
 }
 
-.stateView-title-text .data, .stateView-title-text .inspect{
+.s-text .s-data, .s-text .inspect{
 	display: inline-block;
 }
 
-.stateView-title-text .inspect-icon{
+.s-text .inspect-icon{
 	display: inline-block;
 	height: 16px;
 	width: 16px;
 	vertical-align: top;
 }
 
-.stateView-title-text .inspect-text{
+.s-text .inspect-text{
 	display: inline-block;
 	font-size: 16px;
 }
@@ -153,13 +157,13 @@ body{
 
 
 .stateView-data-key .arrow {
-	height: 13px;
-	width: 13px;
+	height: 10px;
+	width: 10px;
 }
 
 .stateView-data-key {
 	line-height: 13px;
-	padding-bottom:3px;
+	padding-bottom:6px;
 }
 .stateView-data-key .item{
 	display: inline-block;
