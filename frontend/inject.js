@@ -5,23 +5,53 @@ var devtoolsModel = (function() {
     var ins = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins || [];
     var store = [];
     var length = ins.length;
-    var initialUuidArr = [];
 
-    var treeWalker = function(parentNode, children, uuidFlag) {
+    var findElementByUuid = function(nodes, uuid) {
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].uuid === uuid) {
+                return nodes[i]
+            } else {
+                if (nodes[i].childNodes.length) {
+                    var result = findElementByUuid(nodes[i].childNodes, uuid);
+                    if (result) {
+                        return result;
+                    }
+                }
+            }
+        }
+    }
+
+    var treeWalker = function(parentNode, children) {
         for (var i = 0; i < children.length; i++) {
+            var currNode = children[i];
             var node = {
-                uuid: children[i].uuid,
-                name: children[i].name || "node",
-                data: children[i].data,
+                uuid: currNode.uuid,
+                name: currNode.name || "node",
+                data: currNode.data,
                 childNodes: [],
-                inspectable: !!ins[i].node
+                inspectable: !!currNode.node,
+                shadowFlag: false
             }
-            parentNode.childNodes.push(node);
-            if (uuidFlag) {
-                initialUuidArr.push(node.uuid);
+            if (!currNode.node && currNode.$outer) {
+                node.shadowFlag = true;
+                var outerNode;
+                for (var j = 0; j < children.length; j++) {
+                    if (currNode.$outer === children[j]) {
+                        outerNode = findElementByUuid(parentNode.childNodes, children[j].uuid);
+                        continue;
+                    }
+                }
+                if (outerNode) {
+                    outerNode.childNodes.push(node);
+                } else {
+                    parentNode.childNodes.push(node);
+                }
+            } else {
+                parentNode.childNodes.push(node);
             }
+
             if (children[i]._children) {
-                treeWalker(node, children[i]._children, uuidFlag);
+                treeWalker(node, currNode._children);
             }
         }
     }
@@ -50,12 +80,9 @@ var devtoolsModel = (function() {
         }
     }
 
-
-
     // generate uuid for the first time
     uuidGenArr(ins);
     return {
-        initialUuidArr: initialUuidArr,
         init: function() {
             var self = this;
             hook.on("flushMessage", function() {
@@ -116,7 +143,7 @@ var devtoolsModel = (function() {
             }
             return ins;
         },
-        storeGen: function(uuidFlag) {
+        storeGen: function() {
             store = [];
             for (var i = 0; i < ins.length; i++) {
                 if (ins[i].$root === ins[i]) {
@@ -130,12 +157,10 @@ var devtoolsModel = (function() {
                         childNodes: [],
                         inspectable: !!ins[i].node
                     }
-                    if (uuidFlag) {
-                        initialUuidArr.push(node.uuid);
-                    }
                     store.push(node);
                     if (ins[i]._children.length) {
-                        treeWalker(node, ins[i]._children, uuidFlag)
+                         console.log(ins[i]._children)
+                        treeWalker(node, ins[i]._children)
                     }
                 }
             }
@@ -163,8 +188,7 @@ window.postMessage({
     type: "FROM_PAGE",
     data: {
         type: "initNodes",
-        nodes: devtoolsModel.storeGen(true),
-        uuidArr: devtoolsModel.initialUuidArr
+        nodes: devtoolsModel.storeGen()
     }
 }, "*");
 

@@ -21,6 +21,7 @@ var makeElementTree = function(nodes, container) {
         var node = {
             name: nodes[i].name,
             uuid: nodes[i].uuid,
+            shadowFlag:  nodes[i].shadowFlag,
             childNodes: []
         }
         container.push(node);
@@ -195,6 +196,7 @@ var snycArr = function(oldArr, newArr, container) {
         if (oldNode) {
             if (JSON.stringify(oldNode) != JSON.stringify(newNode)) {
                 oldNode['name'] = newNode['name'];
+                oldNode['shadowFlag'] = newNode['shadowFlag'];
                 oldNode['childNodes'] = snycArr(oldNode['childNodes'], newNode['childNodes'], [])
             }
             container.push(oldNode);
@@ -210,8 +212,8 @@ var elementView = devtools.$refs.elementView;
 
 // register custom events 
 devtools
-    .$on("initNodes", function(nodes, uuidArr) {
-        console.log("init node!!");
+    .$on("initNodes", function(nodes) {
+        console.log("init node!!", nodes);
         this.data.nodes = nodes;
         stateView.data.currentNode = nodes[0];
         elementView.data.nodes = makeElementTree(nodes, []);
@@ -248,7 +250,7 @@ backgroundPageConnection.onMessage.addListener(function(message) {
     } else if (message.type === "reRender") {
         devtools.$emit("elementViewReRender", message.nodes);
     } else if (message.type === "initNodes") {
-        devtools.$emit("initNodes", message.nodes, message.uuidArr);
+        devtools.$emit("initNodes", message.nodes);
     }
 });
 
