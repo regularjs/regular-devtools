@@ -15,14 +15,14 @@
                 <img src='/assets/regular.png' class='devtoolsHeader-img' />
                 <span class='devtoolsHeader-title'>Regular Devtools</span>
             </div>
-            <elementView ref=elementView nodes={nodes} localStateMap={localStateMap} />
-            <stateView ref=stateView currentNode={currentNode} />
+            <elementView ref=elementView isolate/>
+            <stateView ref=stateView isolate />
         </div>
     </script>
     <script type='template/regular' id='elementView'>
         <div class='elementView'>
             {#list nodes as node}
-              <element node={node} level={1} >
+              <element node={node} level={1}>
               </element>
             {/list}
         </div>

@@ -16,6 +16,21 @@ var type = function(obj) {
     return Object.prototype.toString.call(obj).slice(8, -1)
 }
 
+var makeElementTree = function(nodes, container) {
+    for (var i = 0; i < nodes.length; i++) {
+        var node = {
+            name: nodes[i].name,
+            uuid: nodes[i].uuid,
+            childNodes: []
+        }
+        container.push(node);
+        if (nodes[i].childNodes.length) {
+            makeElementTree(nodes[i].childNodes, node.childNodes);
+        }
+    }
+    return container;
+}
+
 // Global Ref
 var lastSelected = null;
 
@@ -28,36 +43,38 @@ var element = Regular.extend({
     name: "element",
     template: "#element",
     data: {
-        selected:false
-    },
-    computed: {
-        opened: {
-            get: function(data) {
-                return this.$root.data.localStateMap[data.node.uuid].opened;
-            },
-            set: function(value, data) {
-                this.$root.data.localStateMap[data.node.uuid].opened = value;
-            },
-        },
+        selected: false,
+        opened: false
     },
     onClick: function(node) {
-        this.data.selected = true;
         if (lastSelected) {
-            lastSelected.data.selected = false;
+            if (lastSelected === this) {
+                return;
+            } else {
+                this.data.selected = true;
+                if (!findElementByUuid(this.$root.data.nodes, lastSelected.data.node.uuid)) {
+                    lastSelected = null;
+                } else {
+                    lastSelected.data.selected = false;
+                }
+
+            }
         }
         lastSelected = this;
-        lastSelected.$update();
-        this.$update();
-        this.$root.$emit("clickElement", node);
-    },
-    getLocalState: function(uuid) {
-        return this.$root.data.localStateMap[uuid];
+        this.$root.$emit("clickElement", node.uuid);
     }
 })
 
 var stateView = Regular.extend({
     name: "stateView",
     template: "#stateView",
+    data: {
+        currentNode: {
+            name: "",
+            uuid: "",
+            data: {}
+        }
+    },
     onInspectNode: function() {
         var uuid = this.data.currentNode.uuid;
         console.log("inspect ", uuid)
@@ -72,7 +89,10 @@ var stateView = Regular.extend({
 
 var elementView = Regular.extend({
     name: "elementView",
-    template: "#elementView"
+    template: "#elementView",
+    data: {
+        nodes: []
+    }
 })
 
 var prop = Regular.extend({
@@ -90,7 +110,7 @@ var prop = Regular.extend({
         hasChildren: {
             get: function(data) {
                 return ((this.type(data.value) === 'Array') || (this.type(data.value) === 'Object')) &&
-                ((data.value.length || Object.keys(data.value).length ))
+                    ((data.value.length || Object.keys(data.value).length))
             }
         }
     },
@@ -102,13 +122,7 @@ var prop = Regular.extend({
 // init devtools
 var devtools = new devtoolsView({
     data: {
-        nodes: [],
-        currentNode: {
-            data: {}
-        },
-        localStateMap: {
-
-        }
+        nodes: []
     }
 }).$inject("#devtoolsInject")
 
@@ -128,17 +142,14 @@ var findElementByUuid = function(nodes, uuid) {
     }
 }
 
-var initLocalState = function(arr) {
-    for (var i = 0; i < arr.length; i++) {
-        addLocalState(arr[i])
+var findElementByUuidNonRecursive = function(nodes, uuid) {
+    for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].uuid === uuid) {
+            return nodes[i]
+        }
     }
 }
 
-var addLocalState = function(uuid) {
-    devtools.data.localStateMap[uuid] = {
-        opened: false,
-    }
-}
 
 var clearProps = function(props, initValue) {
     var obj = devtools.data.localStateMap;
@@ -177,39 +188,58 @@ var snycObject = function(oldObj, newObj, container) {
     return container;
 }
 
+var snycArr = function(oldArr, newArr, container) {
+    for (var i = 0; i < newArr.length; i++) {
+        var newNode = newArr[i];
+        var oldNode = findElementByUuidNonRecursive(oldArr, newArr[i].uuid);
+        if (oldNode) {
+            if (JSON.stringify(oldNode) != JSON.stringify(newNode)) {
+                oldNode['name'] = newNode['name'];
+                oldNode['childNodes'] = snycArr(oldNode['childNodes'], newNode['childNodes'], [])
+            }
+            container.push(oldNode);
+        } else {
+            container.push(newNode);
+        }
+    }
+    return container;
+}
+
+var stateView = devtools.$refs.stateView;
+var elementView = devtools.$refs.elementView;
 
 // register custom events 
 devtools
     .$on("initNodes", function(nodes, uuidArr) {
+        console.log("init node!!");
         this.data.nodes = nodes;
-        this.data.currentNode = nodes[0];
-        initLocalState(uuidArr);
-        this.$update();
+        stateView.data.currentNode = nodes[0];
+        elementView.data.nodes = makeElementTree(nodes, []);
+        stateView.$update();
+        elementView.$update();
     })
-    .$on("clickElement", function(node) {
-        this.data.currentNode = node;
-        this.$refs.stateView.$update();
+    .$on("clickElement", function(uuid) {
+        if (uuid != stateView.data.currentNode.uuid) {
+            stateView.data.currentNode = findElementByUuid(this.data.nodes, uuid);
+            stateView.$update();
+        }
     }).$on("stateViewReRender", function(nodes) {
         console.log("stateView render!!");
         this.data.nodes = nodes;
-        var currNode = findElementByUuid(nodes, this.data.currentNode.uuid)
+        var currNode = findElementByUuid(nodes, stateView.data.currentNode.uuid);
         if (currNode) {
-            this.data.currentNode = snycObject(this.data.currentNode, currNode, {});
-            this.$refs.stateView.$update();
+            stateView.data.currentNode = snycObject(stateView.data.currentNode, currNode, {});
+            stateView.$update();
         } else {
-            this.data.currentNode = this.data.nodes[0];
-            this.$refs.stateView.$update();
+            stateView.data.currentNode = nodes[0];
+            stateView.$update();
         }
     }).$on("elementViewReRender", function(nodes) {
-        console.log("elementView render!!");
-        this.data.nodes = nodes;
-        this.$refs.elemenView.$update();
-        this.emit("stateViewReRender", nodes);
-    }).$on("addNode", function(id) {
-        console.log("add local state")
-        addLocalState(id);
-    }).$on("delNode", function(id) {
-
+        console.log("element view rerender!!");
+        var oldArr = elementView.data.nodes;
+        var newArr = makeElementTree(nodes, []);
+        oldArr = snycArr(oldArr, newArr, []);
+        elementView.$update();
     })
 
 backgroundPageConnection.onMessage.addListener(function(message) {
@@ -219,10 +249,6 @@ backgroundPageConnection.onMessage.addListener(function(message) {
         devtools.$emit("elementViewReRender", message.nodes);
     } else if (message.type === "initNodes") {
         devtools.$emit("initNodes", message.nodes, message.uuidArr);
-    } else if (message.type === "addNode") {
-        devtools.$emit("addNode", message.nodes, message.nodeId);
-    } else if (message.type === "delNode") {
-        devtools.$emit("delNode", message.nodes, message.nodeId);
     }
 });
 
