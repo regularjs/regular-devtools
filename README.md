@@ -7,9 +7,9 @@ Regular Developer Tools is a Chrome Extension that allows real-time inspection o
 Some GIFs to show you how Regular Devtools works.
 
 
-![rdt-demo](http://7oxh2b.com1.z0.glb.clouddn.com/rdt_demo_ss.gif)
+![rdt-demo](https://raw.githubusercontent.com/zxc0328/regular-devtools/master/gifs/rdt_demo_ss.gif)
 
-![rdt-demo](http://7oxh2b.com1.z0.glb.clouddn.com/rdt_demo_dom_ss.gif)
+![rdt-demo](https://raw.githubusercontent.com/zxc0328/regular-devtools/master/gifs/rdt_demo_dom_ss.gif)
 
 ### Features
 
