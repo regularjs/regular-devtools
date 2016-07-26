@@ -109,18 +109,16 @@ body{
 }
 
 
-
 .elementView{
 	padding:20px 0;
 	border-right: 2px solid #e3e3e3;
 }
 
 .elementView .element{
-	height: 18px;
 	line-height: 18px;
 	font-size: 0;
 	padding:0 20px 3px;
-
+	
 }
 
 .elementView .tag{
@@ -128,14 +126,19 @@ body{
 }
 
 .elementView .arrow{
-	height: 15px;
-	width: 15px;
+	height: 12px;
+	width: 12px;
 }
 
 .elementView .ele-item{
-	font-size: 18px;
+	font-size: 16px;
 	display: inline-block;
 	vertical-align: middle;
+}
+
+.elementView  .ele-include{
+	font-size: 13px;
+	color: rgb(48, 57, 66);
 }
 
 .elementView .arrow-down,.stateView .arrow-down{
@@ -154,6 +157,9 @@ body{
 
 }
 
+.elementView .selected .ele-item{
+	color: #fff;
+}
 
 
 .stateView-data-key .arrow {
