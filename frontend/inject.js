@@ -117,7 +117,6 @@ var devtoolsModel = (function() {
             })
 
             hook.on("reRender", function(obj) {
-                console.log("reRender!!")
                 window.postMessage({
                     type: "FROM_PAGE",
                     data: {
@@ -148,7 +147,7 @@ var devtoolsModel = (function() {
             for (var i = 0; i < ins.length; i++) {
                 if (ins[i].$root === ins[i]) {
                     if (ins[i].parentNode) {
-                        var name = "root#" + ins[i].parentNode.tagName + "." + ins[i].parentNode.className.split(" ").join(".");
+                        var name = ins[i].name || "root#" + ins[i].parentNode.tagName + "." + ins[i].parentNode.className.split(" ").join(".");
                     }
                     var node = {
                         uuid: ins[i].uuid,
@@ -159,7 +158,6 @@ var devtoolsModel = (function() {
                     }
                     store.push(node);
                     if (ins[i]._children.length) {
-                         console.log(ins[i]._children)
                         treeWalker(node, ins[i]._children)
                     }
                 }

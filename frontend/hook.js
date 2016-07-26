@@ -63,11 +63,30 @@ function installHook(window) {
                     cbs[i].apply(this, args)
                 }
             }
-        }
+        },
+
+        contain: function(n, array) {
+            arr = array || this.ins;
+            for (var i = 0; i < arr.length; i++) {
+                var node = arr[i].node;
+                if (typeof node === "object") {
+                    if (node.contains(n)) {
+                        if (arr[i]._children.length > 0) {
+                            var deeper = this.contain(n, arr[i]._children);
+                            if (deeper) {
+                                return deeper;
+                            }
+                        } 
+                        return arr[i].uuid;
+                    }
+                }
+            }
+            return false;
+        },
     }
 
     // debounce helper
-    var debounce = function (func, wait, immediate) {
+    var debounce = function(func, wait, immediate) {
         var timeout; //Why is this set to nothing?
         return function() {
             var context = this,
@@ -81,15 +100,14 @@ function installHook(window) {
         };
     };
 
-    var emitRerender = function () {
-        console.log("emit rerender");
+    var emitRerender = function() {
         hook.emit("reRender");
     }
 
-    var emitStateRender = function () {
+    var emitStateRender = function() {
         hook.emit("flushMessage");
     }
-    
+
     var reRender = debounce(emitRerender, 500);
     var reRenderState = debounce(emitStateRender, 500);
 
@@ -105,7 +123,7 @@ function installHook(window) {
         hook.ins.splice(hook.ins.indexOf(obj), 1);
         reRender();
     })
-    
+
     hook.on('flush', function() {
         reRenderState();
     })

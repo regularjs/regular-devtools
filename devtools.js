@@ -21,7 +21,7 @@ var makeElementTree = function(nodes, container) {
         var node = {
             name: nodes[i].name,
             uuid: nodes[i].uuid,
-            shadowFlag:  nodes[i].shadowFlag,
+            shadowFlag: nodes[i].shadowFlag,
             childNodes: []
         }
         container.push(node);
@@ -213,7 +213,7 @@ var elementView = devtools.$refs.elementView;
 // register custom events 
 devtools
     .$on("initNodes", function(nodes) {
-        console.log("init node!!", nodes);
+        console.log("init node!!");
         this.data.nodes = nodes;
         stateView.data.currentNode = nodes[0];
         elementView.data.nodes = makeElementTree(nodes, []);
@@ -242,6 +242,23 @@ devtools
         var newArr = makeElementTree(nodes, []);
         oldArr = snycArr(oldArr, newArr, []);
         elementView.$update();
+    }).$on("currentNodeChange", function(uuid) {
+        console.log("currentNodeChange");
+        if (stateView.data.currentNode.uuid != uuid) {
+            stateView.data.currentNode = findElementByUuid(this.data.nodes, uuid);
+            stateView.$update();
+            var path = [];
+            searchPathWarpper(elementView._children, uuid, path);
+            for (var i=0;i<path.length;i++) {
+                path[i].data.opened = true;
+            }
+            if (lastSelected) {
+                lastSelected.data.selected = false;
+            }
+            lastSelected = path[0];
+            path[0].data.selected = true;
+            elementView.$update();
+        } 
     })
 
 backgroundPageConnection.onMessage.addListener(function(message) {
@@ -258,3 +275,38 @@ backgroundPageConnection.postMessage({
     tabId: chrome.devtools.inspectedWindow.tabId,
     scriptToInject: "frontend/content.js"
 });
+
+window.addEventListener("message", function(event) {
+    if (event.data.type === "currNodeChange") {
+         devtools.$emit("currentNodeChange", event.data.uuid)
+    }
+}, false);
+
+
+
+var searchPathWarpper = function(nodes, uuid, path) {
+    for (var i=0;i<nodes.length;i++) {
+        if (nodes[i].uuid === uuid) {
+            path.push(nodes[i])
+            return path;
+        } else if(searchPath(nodes[i]._children, uuid, path)){
+            path.push(nodes[i])
+            return path;
+        }
+    }
+}
+
+var searchPath = function(nodes, uuid, path) {
+    for (var i=0;i<nodes.length;i++) {
+        if (nodes[i].data.node.uuid === uuid) {
+            path.push(nodes[i])
+            return true;
+        } else if (nodes[i]._children.length > 0){
+            if(searchPath(nodes[i]._children, uuid, path)) {
+                path.push(nodes[i]);
+                return true;;
+            }
+        }
+    }
+    return false
+}

@@ -3,8 +3,19 @@ chrome.devtools.panels.create("Regular",
     "./assets/regular.png",
     "panel.html",
     function(panel) {
-      // code invoked on panel creation
+        panel.onShown.addListener(function(extPanelWindow) {
+            chrome.devtools.inspectedWindow.eval(
+                "window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.contain($0)",
+                function(result, isException) {
+                    console.log(result, isException)
+                    if (!isException && result) {
+                        extPanelWindow.postMessage({
+                            type: "currNodeChange",
+                            uuid: result
+                        }, "*")
+                    }
+                }
+            );
+        });
     }
 );
-
-
