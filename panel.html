@@ -21,10 +21,14 @@
     </script>
     <script type='template/regular' id='elementView'>
         <div class='elementView'>
-            {#list nodes as node}
-              <element node={node} level={1}>
-              </element>
-            {/list}
+            {#if nodes.length > 0} 
+                {#list nodes as node}
+                    <element node={node} level={1}>
+                    </element>
+                {/list}
+            {#else}
+                <div>There is no Regular instance detected. Please check if you're using the latest version of Regularjs. </div>
+            {/if}
         </div>
     </script>
     <script type='template/regular' id='element'>

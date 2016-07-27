@@ -6,7 +6,16 @@ var backgroundPageConnection = chrome.runtime.connect({
     name: "devToBackCon"
 });
 
+var injectContentScript = function() {
+    backgroundPageConnection.postMessage({
+        tabId: chrome.devtools.inspectedWindow.tabId,
+        scriptToInject: "frontend/content.js"
+    });
+}
+
 // Util
+var prefix = "[Regular Devtools] ";
+
 var isPrimitive = function(arg) {
     var type = typeof arg;
     return arg == null || (type != "object" && type != "function");
@@ -30,6 +39,34 @@ var makeElementTree = function(nodes, container) {
         }
     }
     return container;
+}
+
+
+var searchPathWarpper = function(nodes, uuid, path) {
+    for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].uuid === uuid) {
+            path.push(nodes[i])
+            return path;
+        } else if (searchPath(nodes[i]._children, uuid, path)) {
+            path.push(nodes[i])
+            return path;
+        }
+    }
+}
+
+var searchPath = function(nodes, uuid, path) {
+    for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].data.node.uuid === uuid) {
+            path.push(nodes[i])
+            return true;
+        } else if (nodes[i]._children.length > 0) {
+            if (searchPath(nodes[i]._children, uuid, path)) {
+                path.push(nodes[i]);
+                return true;;
+            }
+        }
+    }
+    return false
 }
 
 // Global Ref
@@ -127,7 +164,7 @@ var devtools = new devtoolsView({
     }
 }).$inject("#devtoolsInject")
 
-// some utility functions
+// more utility functions
 var findElementByUuid = function(nodes, uuid) {
     for (var i = 0; i < nodes.length; i++) {
         if (nodes[i].uuid === uuid) {
@@ -213,7 +250,7 @@ var elementView = devtools.$refs.elementView;
 // register custom events 
 devtools
     .$on("initNodes", function(nodes) {
-        console.log("init node!!");
+        console.log(prefix + "On initNodes.");
         this.data.nodes = nodes;
         stateView.data.currentNode = nodes[0];
         elementView.data.nodes = makeElementTree(nodes, []);
@@ -226,7 +263,7 @@ devtools
             stateView.$update();
         }
     }).$on("stateViewReRender", function(nodes) {
-        console.log("stateView render!!");
+        console.log(prefix + "On stateViewRender.");
         this.data.nodes = nodes;
         var currNode = findElementByUuid(nodes, stateView.data.currentNode.uuid);
         if (currNode) {
@@ -237,19 +274,19 @@ devtools
             stateView.$update();
         }
     }).$on("elementViewReRender", function(nodes) {
-        console.log("element view rerender!!");
+        console.log(prefix + "On elementViewRerender.");
         var oldArr = elementView.data.nodes;
         var newArr = makeElementTree(nodes, []);
         oldArr = snycArr(oldArr, newArr, []);
         elementView.$update();
     }).$on("currentNodeChange", function(uuid) {
-        console.log("currentNodeChange");
+        console.log(prefix + "On currentNodeChange.");
         if (stateView.data.currentNode.uuid != uuid) {
             stateView.data.currentNode = findElementByUuid(this.data.nodes, uuid);
             stateView.$update();
             var path = [];
             searchPathWarpper(elementView._children, uuid, path);
-            for (var i=0;i<path.length;i++) {
+            for (var i = 0; i < path.length; i++) {
                 path[i].data.opened = true;
             }
             if (lastSelected) {
@@ -258,7 +295,10 @@ devtools
             lastSelected = path[0];
             path[0].data.selected = true;
             elementView.$update();
-        } 
+        }
+    }).$on("reload", function() {
+        console.log(prefix + "On reload.");
+        injectContentScript();
     })
 
 backgroundPageConnection.onMessage.addListener(function(message) {
@@ -268,45 +308,17 @@ backgroundPageConnection.onMessage.addListener(function(message) {
         devtools.$emit("elementViewReRender", message.nodes);
     } else if (message.type === "initNodes") {
         devtools.$emit("initNodes", message.nodes);
+    } else if (message.type === "pageReload") {
+        devtools.$emit("reload");
     }
 });
 
-backgroundPageConnection.postMessage({
-    tabId: chrome.devtools.inspectedWindow.tabId,
-    scriptToInject: "frontend/content.js"
-});
 
+// listen for messge when switch from element tab to regular tab
 window.addEventListener("message", function(event) {
     if (event.data.type === "currNodeChange") {
-         devtools.$emit("currentNodeChange", event.data.uuid)
+        devtools.$emit("currentNodeChange", event.data.uuid)
     }
 }, false);
 
-
-
-var searchPathWarpper = function(nodes, uuid, path) {
-    for (var i=0;i<nodes.length;i++) {
-        if (nodes[i].uuid === uuid) {
-            path.push(nodes[i])
-            return path;
-        } else if(searchPath(nodes[i]._children, uuid, path)){
-            path.push(nodes[i])
-            return path;
-        }
-    }
-}
-
-var searchPath = function(nodes, uuid, path) {
-    for (var i=0;i<nodes.length;i++) {
-        if (nodes[i].data.node.uuid === uuid) {
-            path.push(nodes[i])
-            return true;
-        } else if (nodes[i]._children.length > 0){
-            if(searchPath(nodes[i]._children, uuid, path)) {
-                path.push(nodes[i]);
-                return true;;
-            }
-        }
-    }
-    return false
-}
+injectContentScript();

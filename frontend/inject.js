@@ -97,23 +97,6 @@ var devtoolsModel = (function() {
 
             hook.on("addNodeMessage", function(obj) {
                 uuidGen(obj)
-                window.postMessage({
-                    type: "FROM_PAGE",
-                    data: {
-                        type: "addNode",
-                        nodeId: obj.uuid
-                    }
-                }, "*");
-            })
-
-            hook.on("delNodeMessage", function(obj) {
-                window.postMessage({
-                    type: "FROM_PAGE",
-                    data: {
-                        type: "delNode",
-                        nodeId: obj.uuid
-                    }
-                }, "*");
             })
 
             hook.on("reRender", function(obj) {
