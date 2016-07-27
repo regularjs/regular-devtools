@@ -11,9 +11,14 @@
     <div id="devtoolsInject" class="devtoolsInject"></div>
     <script type='template/regular' id='devtoolsView'>
         <div class='regualrDevtools'>
-            <div class='devtoolsHeader'>
-                <img src='/assets/regular.png' class='devtoolsHeader-img' />
-                <span class='devtoolsHeader-title'>Regular Devtools</span>
+            <div class='devtoolsHeader no-space'>
+                <div class="devtoolsHeader-container">
+                    <img src='/assets/regular.png' class='devtoolsHeader-img' />
+                    <span class='devtoolsHeader-title'>Regular Devtools</span>
+                </div>
+                <div class="devtoolsHeader-container right">
+                    <img src='/assets/refresh.svg' on-click={this.onRefresh()} class='devtoolsHeader-refresh' title="Refresh"/>
+                </div>
             </div>
             <elementView ref=elementView isolate/>
             <stateView ref=stateView isolate />
@@ -27,7 +32,7 @@
                     </element>
                 {/list}
             {#else}
-                <div>There is no Regular instance detected. Please check if you're using the latest version of Regularjs. </div>
+                <div class="warnning">There is no Regular instance detected. Please check if you're using the latest version of Regularjs. </div>
             {/if}
         </div>
     </script>

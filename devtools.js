@@ -75,6 +75,9 @@ var lastSelected = null;
 // Regualr components for devtools' UI
 var devtoolsView = Regular.extend({
     template: "#devtoolsView",
+    onRefresh: function() {
+        chrome.devtools.inspectedWindow.reload();
+    }
 })
 
 var element = Regular.extend({

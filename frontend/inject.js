@@ -84,6 +84,9 @@ var devtoolsModel = (function() {
     uuidGenArr(ins);
     return {
         init: function() {
+            if (ins.length === 0) {
+                return;
+            }
             var self = this;
             hook.on("flushMessage", function() {
                 window.postMessage({
@@ -108,6 +111,14 @@ var devtoolsModel = (function() {
                     }
                 }, "*");
             })
+
+            window.postMessage({
+                type: "FROM_PAGE",
+                data: {
+                    type: "initNodes",
+                    nodes: this.storeGen()
+                }
+            }, "*");
 
         },
         sanitize: function(store) {
@@ -164,13 +175,5 @@ var devtoolsModel = (function() {
         }
     }
 })();
-
-window.postMessage({
-    type: "FROM_PAGE",
-    data: {
-        type: "initNodes",
-        nodes: devtoolsModel.storeGen()
-    }
-}, "*");
 
 devtoolsModel.init();
