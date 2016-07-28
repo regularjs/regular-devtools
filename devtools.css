@@ -138,6 +138,7 @@ body{
 
 
 .elementView{
+	position: relative;
 	padding:20px 0;
 	border-right: 2px solid #e3e3e3;
 }
@@ -176,6 +177,28 @@ body{
 
 .elementView .arrow-down,.stateView .arrow-down{
 	transform: rotate(90deg);
+}
+
+.elementView .loading-img{
+	width: 30px;
+	height: 30px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-left: -15px;
+	margin-top: -15px;
+	animation: loading-animation 2s infinite;
+}
+
+@keyframes loading-animation {
+	from {
+		 transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+	
 }
 
 .element-tag:hover{

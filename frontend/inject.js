@@ -85,6 +85,7 @@ var devtoolsModel = (function() {
     return {
         init: function() {
             if (ins.length === 0) {
+                console.log("ins length == 0")
                 return;
             }
             var self = this;
@@ -99,7 +100,7 @@ var devtoolsModel = (function() {
             })
 
             hook.on("addNodeMessage", function(obj) {
-                uuidGen(obj)
+                uuidGen(obj);
             })
 
             hook.on("reRender", function(obj) {
@@ -119,6 +120,7 @@ var devtoolsModel = (function() {
                     nodes: this.storeGen()
                 }
             }, "*");
+            console.log("init devtools from page")
 
         },
         sanitize: function(store) {

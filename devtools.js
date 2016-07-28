@@ -9,7 +9,7 @@ var backgroundPageConnection = chrome.runtime.connect({
 var injectContentScript = function() {
     backgroundPageConnection.postMessage({
         tabId: chrome.devtools.inspectedWindow.tabId,
-        scriptToInject: "frontend/content.js"
+        file: "/frontend/content.js"
     });
 }
 
@@ -132,7 +132,8 @@ var elementView = Regular.extend({
     name: "elementView",
     template: "#elementView",
     data: {
-        nodes: []
+        nodes: [],
+        loading: true
     }
 })
 
@@ -256,6 +257,7 @@ devtools
         console.log(prefix + "On initNodes.");
         this.data.nodes = nodes;
         stateView.data.currentNode = nodes[0];
+        elementView.data.loading = false;
         elementView.data.nodes = makeElementTree(nodes, []);
         stateView.$update();
         elementView.$update();
@@ -301,7 +303,7 @@ devtools
         }
     }).$on("reload", function() {
         console.log(prefix + "On reload.");
-        injectContentScript();
+        setTimeout(injectContentScript, 2000);
     })
 
 backgroundPageConnection.onMessage.addListener(function(message) {
@@ -312,6 +314,8 @@ backgroundPageConnection.onMessage.addListener(function(message) {
     } else if (message.type === "initNodes") {
         devtools.$emit("initNodes", message.nodes);
     } else if (message.type === "pageReload") {
+        elementView.data.loading = true;
+        elementView.$update();
         devtools.$emit("reload");
     }
 });

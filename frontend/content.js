@@ -11,7 +11,6 @@ function injectScript(file, node) {
     s.setAttribute('src', file);
     th.appendChild(s);
 }
-injectScript(chrome.extension.getURL('frontend/inject.js'), 'body');
 
 window.addEventListener("message", function(event) {
     // We only accept messages from ourselves
@@ -22,3 +21,6 @@ window.addEventListener("message", function(event) {
         port.postMessage(event.data.data);
     }
 }, false);
+
+
+injectScript(chrome.extension.getURL('frontend/inject.js'), 'body');
