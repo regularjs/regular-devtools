@@ -48,5 +48,5 @@ Custom build of Regularjs. You can find it in `/libs/regular.js`
 
 ### License
 
-WTFPL(Do What the Fuck You Want To Public License)
+[MIT](https://github.com/regularjs/regular-devtools/blob/master/LICENSE)
 
