@@ -118,11 +118,15 @@ var stateView = Regular.extend({
     },
     onInspectNode: function() {
         var uuid = this.data.currentNode.uuid;
-        console.log("inspect ", uuid)
         chrome.devtools.inspectedWindow.eval(
-            "inspect(window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(node) { return node.uuid === '" + uuid + "'})[0].node)",
+            "var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) { return n.uuid === " + "'" + uuid + "'" + "})[0];" +
+            "if (node) {" + 
+            "    inspect(node.node || node.parentNode);" +
+            "}",
             function(result, isException) {
-                //console.log("on ins!!", result, isException)
+                if (isException) {
+                    console.log(prefix + "Inspect Error: ", isException);
+                }
             }
         );
     }
@@ -303,6 +307,7 @@ devtools
         }
     }).$on("reload", function() {
         console.log(prefix + "On reload.");
+        // wait for the page to fully intialize
         setTimeout(injectContentScript, 2000);
     })
 

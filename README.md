@@ -2,6 +2,8 @@
 
 Regular Developer Tools is a Chrome Extension that allows real-time inspection of [Regular](http://regularjs.github.io/) components.
 
+[中文介绍](http://zxc0328.github.io/2016/07/26/annoucing-regular-devtools/)
+
 ### Overview
 
 Some GIFs to show you how Regular Devtools works.

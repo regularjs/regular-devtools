@@ -79,22 +79,55 @@ var devtoolsModel = (function() {
             }
         }
     }
+    
+    // eliminate circular reference
+    var sanitize = function(store) {
+        var str = JSON.stringify(store, function(key, value) {
+            if (value instanceof Regular) {
+                return;
+            }
+            return value;
+        });
+        return JSON.parse(str);
+    }
+
+    var storeGen = function() {
+        store = [];
+        for (var i = 0; i < ins.length; i++) {
+            if (ins[i].$root === ins[i]) {
+                if (ins[i].parentNode) {
+                    var name = ins[i].name || "root#" + ins[i].parentNode.tagName + "." + ins[i].parentNode.className.split(" ").join(".");
+                }
+                var node = {
+                    uuid: ins[i].uuid,
+                    name: name || "root",
+                    data: ins[i].data,
+                    childNodes: [],
+                    inspectable: !!ins[i].parentNode
+                }
+                store.push(node);
+                if (ins[i]._children.length) {
+                    treeWalker(node, ins[i]._children)
+                }
+            }
+        }
+        store = sanitize(store)
+        return store;
+    }
 
     // generate uuid for the first time
     uuidGenArr(ins);
     return {
         init: function() {
             if (ins.length === 0) {
-                console.log("ins length == 0")
                 return;
             }
-            var self = this;
             hook.on("flushMessage", function() {
                 window.postMessage({
                     type: "FROM_PAGE",
                     data: {
                         type: "dataUpdate",
-                        nodes: self.storeGen()
+                        nodes: storeGen()
                     }
                 }, "*");
             })
@@ -108,7 +141,7 @@ var devtoolsModel = (function() {
                     type: "FROM_PAGE",
                     data: {
                         type: "reRender",
-                        nodes: self.storeGen()
+                        nodes: storeGen()
                     }
                 }, "*");
             })
@@ -117,63 +150,10 @@ var devtoolsModel = (function() {
                 type: "FROM_PAGE",
                 data: {
                     type: "initNodes",
-                    nodes: this.storeGen()
+                    nodes: storeGen()
                 }
             }, "*");
-            console.log("init devtools from page")
 
-        },
-        sanitize: function(store) {
-            var str = JSON.stringify(store, function(key, value) {
-                if (value instanceof Regular) {
-                    return;
-                }
-                return value;
-            });
-            return JSON.parse(str);
-        },
-        get: function(index) {
-            if (index) {
-                return ins[index];
-            }
-            return ins;
-        },
-        storeGen: function() {
-            store = [];
-            for (var i = 0; i < ins.length; i++) {
-                if (ins[i].$root === ins[i]) {
-                    if (ins[i].parentNode) {
-                        var name = ins[i].name || "root#" + ins[i].parentNode.tagName + "." + ins[i].parentNode.className.split(" ").join(".");
-                    }
-                    var node = {
-                        uuid: ins[i].uuid,
-                        name: name || "root",
-                        data: ins[i].data,
-                        childNodes: [],
-                        inspectable: !!ins[i].node
-                    }
-                    store.push(node);
-                    if (ins[i]._children.length) {
-                        treeWalker(node, ins[i]._children)
-                    }
-                }
-            }
-            store = this.sanitize(store)
-            return store;
-        },
-        getStore: function() {
-            return store;
-        },
-        remove: function(i) {
-            var self = this;
-            ins.splice(ins.indexOf(i), 1);
-            window.postMessage({
-                type: "FROM_PAGE",
-                data: {
-                    type: "reRender",
-                    nodes: self.storeGen()
-                }
-            }, "*");
         }
     }
 })();
