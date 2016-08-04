@@ -84,15 +84,14 @@
         <div class='stateView'>
             <div class="purplee">
                 &lt;{currentNode.name}&gt;
+                {#if currentNode.inspectable }
+                <div class='inspect' on-click={this.onInspectNode()}>
+                  inspect
+                </div>
+                {/if}
             </div>
             <div class="s-text">
                 <div class='s-data'>data</div>
-                {#if currentNode.inspectable }
-                <div class='inspect no-space cp' on-click={this.onInspectNode()}>
-                  <img class='inspect-icon' src="/assets/inspect.svg" alt="inspect"/>
-                  <div class='inspect-text'>inspect</div>
-                </div>
-                {/if}
             </div>
             <div class='stateView-data'>
                 {#list Object.keys(currentNode.data) as key}
