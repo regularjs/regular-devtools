@@ -96,7 +96,9 @@ var devtoolsModel = (function() {
         for (var i = 0; i < ins.length; i++) {
             if (ins[i].$root === ins[i]) {
                 if (ins[i].parentNode) {
-                    var name = ins[i].name || "root#" + ins[i].parentNode.tagName + "." + ins[i].parentNode.className.split(" ").join(".");
+	                var id = ins[i].parentNode.id;
+	                var classNames = ins[i].parentNode.className.replace(/\s+/g, ' ').split(" ").join(".");
+                    var name = ins[i].name || "root#" + id + ( classNames ? '.' + classNames : '' );
                 }
                 var node = {
                     uuid: ins[i].uuid,
