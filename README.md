@@ -16,7 +16,7 @@ Some GIFs to show you how Regular Devtools works.
 
 + Inspecting Regular components hierarchy tree in the element view.
 + Inspecting the selected component's data in the state view.
-+ Date changes made with Regular components will be reflected at both element view and state view in real-time.
++ Data changes made with Regular components will be reflected in both element view and state view in real-time.
 + Included contents will be annotated(with `#include` on top).
 + Click inspect button state view to inspect DOM node of the selected component in the Element tab.
 + **Pro Tips** When inspecting DOM node in Elements tab, switch for Regular tab, if the DOM node you are inspecting is rendered from a Regular component, the Regular Devtools will automatically focus on that component. It's like the reverse version of the last feature.
