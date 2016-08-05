@@ -21,6 +21,42 @@ var devtoolsModel = (function() {
         }
     }
 
+    var treeGen = function(root, container) {
+        var tree = container || [];
+        if (root.group) {
+            for (var i = 0; i < root.group.children.length; i++) {
+                walker(root.group.children[i], tree)
+            }
+        }
+        return tree;
+    }
+
+    var walker = function(node, container) {
+        // node is a element
+        if (node.type && node.group) {
+            for (var i = 0; i < node.group.children.length; i++) {
+                walker(node.group.children[i], container)
+            }
+            // node is a Group
+        } else if (node.children) {
+            for (var j = 0; j < node.children.length; j++) {
+                walker(node.children[j], container)
+            }
+            // node is a regular instance
+        } else if (node.uuid) {
+            var n = {
+                uuid: node.uuid,
+                name: node.name || "node",
+                data: node.data,
+                childNodes: []
+            }
+            container.push(n);
+            if (node.group) {
+                treeGen(node, n.childNodes)
+            }
+        }
+    }
+
     var treeWalker = function(parentNode, children) {
         for (var i = 0; i < children.length; i++) {
             var currNode = children[i];
@@ -79,7 +115,7 @@ var devtoolsModel = (function() {
             }
         }
     }
-    
+
     // eliminate circular reference
     var sanitize = function(store) {
         var str = JSON.stringify(store, function(key, value) {
@@ -92,12 +128,24 @@ var devtoolsModel = (function() {
     }
 
     var storeGen = function() {
+        var start = new Date();
         store = [];
         for (var i = 0; i < ins.length; i++) {
             if (ins[i].$root === ins[i]) {
+                var node = {
+                    uuid: ins[i].uuid,
+                    name: name || "root",
+                    data: ins[i].data,
+                    childNodes: []
+                }
+                treeGen(ins[i], node.childNodes);
+                store.push(node);
+            }
+            /**
+           
                 if (ins[i].parentNode) {
-	                var id = ins[i].parentNode.id;
-	                var classNames = ins[i].parentNode.className.replace(/\s+/g, ' ').split(" ").join(".");
+                    var id = ins[i].parentNode.id;
+                    var classNames = ins[i].parentNode.className.replace(/\s+/g, ' ').split(" ").join(".");
                     var name = ins[i].name || "root#" + id + ( classNames ? '.' + classNames : '' );
                 }
                 var node = {
@@ -112,8 +160,11 @@ var devtoolsModel = (function() {
                     treeWalker(node, ins[i]._children)
                 }
             }
+            **/
         }
         store = sanitize(store)
+        var end = new Date();
+        console.log(store, end - start);
         return store;
     }
 
@@ -155,7 +206,6 @@ var devtoolsModel = (function() {
                     nodes: storeGen()
                 }
             }, "*");
-
         }
     }
 })();
