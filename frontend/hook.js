@@ -16,6 +16,8 @@ function installHook(window) {
     var hook = {
         ins: [],
 
+        finalUUID: "",
+
         on: function(event, fn) {
             event = '$' + event;
             (listeners[event] || (listeners[event] = [])).push(fn)
@@ -65,38 +67,43 @@ function installHook(window) {
             }
         },
 
-        contain: function(n, array) {
-            arr = array || this.ins;
-            for (var i = 0; i < arr.length; i++) {
-                var node = arr[i].node;
-                if (typeof node === "object") {
-                    if (node.contains(n)) {
-                        if (arr[i]._children.length > 0) {
-                            var deeper = this.contain(n, arr[i]._children);
-                            if (deeper) {
-                                return deeper;
-                            }
-                        } 
-                        return arr[i].uuid;
+        contain: function(selectedNode) {
+            this.finalUUID = "";
+            var nodeTree = devtoolsModel.getNodeTree();
+            for (var i = 0; i < nodeTree.length; i++) {
+                this.containByNode(selectedNode, nodeTree[i]);
+            }
+            console.log(this.finalUUID)
+            return this.finalUUID;
+        },
+        containByNode: function(selectedNode, node) {
+            if (node.node.length) {
+                for (var i = 0; i < node.node.length; i++) {
+                    if (node.node[i].contains(selectedNode)) {
+                        this.finalUUID = node.uuid;
                     }
                 }
             }
-            return false;
-        },
+            if (node.childNodes) {
+                for (var j = 0; j < node.childNodes.length; j++) {
+                    this.containByNode(selectedNode, node.childNodes[j]);
+                }
+            }
+        }
     }
 
     // debounce helper
     var debounce = function(func, wait, immediate) {
-        var timeout; //Why is this set to nothing?
+        var timeout;
         return function() {
             var context = this,
                 args = arguments;
-            clearTimeout(timeout); // If timeout was just set to nothing, what can be cleared? 
+            clearTimeout(timeout);
             timeout = setTimeout(function() {
                 timeout = null;
                 if (!immediate) func.apply(context, args);
             }, wait);
-            if (immediate && !timeout) func.apply(context, args); //This applies the original function to the context and to these arguments?
+            if (immediate && !timeout) func.apply(context, args);
         };
     };
 
