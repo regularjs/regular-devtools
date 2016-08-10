@@ -16,7 +16,10 @@ function installHook(window) {
     var hook = {
         ins: [],
 
-        finalUUID: "",
+        location: {
+            finalUUID: "",
+            level: 0
+        },
 
         on: function(event, fn) {
             event = '$' + event;
@@ -68,25 +71,30 @@ function installHook(window) {
         },
 
         contain: function(selectedNode) {
-            this.finalUUID = "";
+            this.location.finalUUID = "";
+            this.location.level = 0;
             var nodeTree = devtoolsModel.getNodeTree();
             for (var i = 0; i < nodeTree.length; i++) {
-                this.containByNode(selectedNode, nodeTree[i]);
+                this.containByNode(selectedNode, nodeTree[i], 0);
             }
-            console.log(this.finalUUID)
-            return this.finalUUID;
+            return this.location.finalUUID;
         },
-        containByNode: function(selectedNode, node) {
+        containByNode: function(selectedNode, node, level) {
+            var currLevel;
             if (node.node.length) {
                 for (var i = 0; i < node.node.length; i++) {
                     if (node.node[i].contains(selectedNode)) {
-                        this.finalUUID = node.uuid;
+                        if (level >= this.location.level) {
+                            this.location.finalUUID = node.uuid;
+                            this.location.level = level;
+                        }   
                     }
                 }
             }
             if (node.childNodes) {
+                currLevel = level + 1
                 for (var j = 0; j < node.childNodes.length; j++) {
-                    this.containByNode(selectedNode, node.childNodes[j]);
+                    this.containByNode(selectedNode, node.childNodes[j], currLevel);
                 }
             }
         }

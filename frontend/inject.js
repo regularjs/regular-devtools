@@ -50,9 +50,10 @@ var devtoolsModel = (function() {
                 var n = {
                     uuid: node.uuid,
                     childNodes: [],
-                    node: []
+                    node: [],
+                    ref: node
                 }
-                if (node.node) {
+                if (node.node && (typeof node.node === "object")) {
                     n.node.push(node.node);
                 } else if (node.group) {
                     for (var i = 0; i < node.group.children.length; i++) {
@@ -83,7 +84,7 @@ var devtoolsModel = (function() {
                         }
                     }
                 }
-                if (node.$outer){
+                if (node.$outer) {
                     n.shadowFlag = true;
                 }
                 node.visited = true;
@@ -133,8 +134,9 @@ var devtoolsModel = (function() {
 
     var storeGen = function(flag) {
         if (!flag) {
-            var start = new Date();
             store = [];
+        } else {
+            nodeTree = [];
         }
         for (var i = 0; i < ins.length; i++) {
             if (ins[i].$root === ins[i]) {
@@ -144,7 +146,16 @@ var devtoolsModel = (function() {
                         childNodes: [],
                         node: []
                     }
-                    node.node.push(ins[i].parentNode);
+                    var body = document.querySelector("body");
+                    if (ins[i].parentNode === body) {
+                        for (var j = 0; j < ins[i].group.children.length; j++) {
+                            if (ins[i].group.get(j).type) {
+                                node.node.push(ins[i].group.get(j).node());
+                            }
+                        }
+                    } else {
+                        node.node.push(ins[i].parentNode);
+                    }
                     treeGen(ins[i], node.childNodes, flag);
                     nodeTree.push(node);
                 } else {
@@ -166,7 +177,6 @@ var devtoolsModel = (function() {
         } else {
             store = sanitize(store)
             var end = new Date();
-            console.log(end - start);
             return store;
         }
 

@@ -44,7 +44,7 @@ var makeElementTree = function(nodes, container) {
 
 var searchPathWarpper = function(nodes, uuid, path) {
     for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].uuid === uuid) {
+        if (nodes[i].data.node.uuid === uuid) {
             path.push(nodes[i])
             return path;
         } else if (searchPath(nodes[i]._children, uuid, path)) {
@@ -120,7 +120,7 @@ var stateView = Regular.extend({
         var uuid = this.data.currentNode.uuid;
         chrome.devtools.inspectedWindow.eval(
             "var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) { return n.uuid === " + "'" + uuid + "'" + "})[0];" +
-            "if (node) {" + 
+            "if (node) {" +
             "    inspect(node.node || node.parentNode);" +
             "}",
             function(result, isException) {
@@ -245,7 +245,7 @@ var snycArr = function(oldArr, newArr, container) {
                 oldNode['childNodes'] = snycArr(oldNode['childNodes'], newNode['childNodes'], [])
             }
             container.push(oldNode);
-        } else {
+        } else { 
             container.push(newNode);
         }
     }
