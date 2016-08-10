@@ -5,6 +5,8 @@ var devtoolsModel = (function() {
     var ins = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins || [];
     var store = [];
     var length = ins.length;
+    // node tree for DOM-Component search
+    var nodeTree = [];
 
     var findElementByUuid = function(nodes, uuid) {
         for (var i = 0; i < nodes.length; i++) {
@@ -21,40 +23,79 @@ var devtoolsModel = (function() {
         }
     }
 
-    var treeWalker = function(parentNode, children) {
-        for (var i = 0; i < children.length; i++) {
-            var currNode = children[i];
-            var node = {
-                uuid: currNode.uuid,
-                name: currNode.name || "node",
-                data: currNode.data,
-                childNodes: [],
-                inspectable: !!currNode.node,
-                shadowFlag: false
+    var treeGen = function(root, container, flag) {
+        var tree = container || [];
+        if (root.group) {
+            for (var i = 0; i < root.group.children.length; i++) {
+                walker(root.group.children[i], tree, flag)
             }
-            if (!currNode.node && currNode.$outer) {
-                node.shadowFlag = true;
-                var outerNode;
-                for (var j = 0; j < children.length; j++) {
-                    if (currNode.$outer === children[j]) {
-                        outerNode = findElementByUuid(parentNode.childNodes, children[j].uuid);
-                        continue;
+        }
+        return tree;
+    }
+
+    var walker = function(node, container, flag) {
+        // node is a element
+        if (node.type && node.group) {
+            for (var i = 0; i < node.group.children.length; i++) {
+                walker(node.group.children[i], container, flag)
+            }
+            // node is a Group
+        } else if (node.children) {
+            for (var i = 0; i < node.children.length; i++) {
+                walker(node.children[i], container, flag)
+            }
+            // node is a regular instance
+        } else if (node.uuid) {
+            if (flag) {
+                var n = {
+                    uuid: node.uuid,
+                    childNodes: [],
+                    node: [],
+                    ref: node
+                }
+                if (node.node && (typeof node.node === "object")) {
+                    n.node.push(node.node);
+                } else if (node.group) {
+                    for (var i = 0; i < node.group.children.length; i++) {
+                        if (node.group.get(i).type) {
+                            n.node.push(node.group.get(i).node());
+                        }
                     }
                 }
-                if (outerNode) {
-                    outerNode.childNodes.push(node);
-                } else {
-                    parentNode.childNodes.push(node);
+                if (node.group) {
+                    treeGen(node, n.childNodes, flag)
                 }
+                container.push(n);
             } else {
-                parentNode.childNodes.push(node);
-            }
-
-            if (children[i]._children) {
-                treeWalker(node, currNode._children);
+                var n = {
+                    uuid: node.uuid,
+                    name: node.name || "node",
+                    data: node.data,
+                    childNodes: [],
+                    inspectable: (node.node || node.group.chi)
+                }
+                if (node.node) {
+                    n.inspectable = true;
+                } else if (node.group.children) {
+                    for (var i = 0; i < node.group.children.length; i++) {
+                        if (node.group.get(i).type) {
+                            n.inspectable = true;
+                            break;
+                        }
+                    }
+                }
+                if (node.$outer) {
+                    n.shadowFlag = true;
+                }
+                node.visited = true;
+                container.push(n);
+                if (node.group) {
+                    treeGen(node, n.childNodes)
+                }
             }
         }
     }
+
 
     var guid = function() {
         function s4() {
@@ -79,7 +120,7 @@ var devtoolsModel = (function() {
             }
         }
     }
-    
+
     // eliminate circular reference
     var sanitize = function(store) {
         var str = JSON.stringify(store, function(key, value) {
@@ -91,28 +132,54 @@ var devtoolsModel = (function() {
         return JSON.parse(str);
     }
 
-    var storeGen = function() {
-        store = [];
+    var storeGen = function(flag) {
+        if (!flag) {
+            store = [];
+        } else {
+            nodeTree = [];
+        }
         for (var i = 0; i < ins.length; i++) {
             if (ins[i].$root === ins[i]) {
-                if (ins[i].parentNode) {
-                    var name = ins[i].name || "root#" + ins[i].parentNode.tagName + "." + ins[i].parentNode.className.split(" ").join(".");
-                }
-                var node = {
-                    uuid: ins[i].uuid,
-                    name: name || "root",
-                    data: ins[i].data,
-                    childNodes: [],
-                    inspectable: !!ins[i].parentNode
-                }
-                store.push(node);
-                if (ins[i]._children.length) {
-                    treeWalker(node, ins[i]._children)
+                if (flag && ins[i].parentNode) {
+                    var node = {
+                        uuid: ins[i].uuid,
+                        childNodes: [],
+                        node: []
+                    }
+                    var body = document.querySelector("body");
+                    if (ins[i].parentNode === body) {
+                        for (var j = 0; j < ins[i].group.children.length; j++) {
+                            if (ins[i].group.get(j).type) {
+                                node.node.push(ins[i].group.get(j).node());
+                            }
+                        }
+                    } else {
+                        node.node.push(ins[i].parentNode);
+                    }
+                    treeGen(ins[i], node.childNodes, flag);
+                    nodeTree.push(node);
+                } else {
+                    var node = {
+                        uuid: ins[i].uuid,
+                        name: name || "root",
+                        data: ins[i].data,
+                        childNodes: [],
+                        inspectable: !!ins[i].parentNode
+                    }
+                    ins[i].visited = true;
+                    treeGen(ins[i], node.childNodes);
+                    store.push(node);
                 }
             }
         }
-        store = sanitize(store)
-        return store;
+        if (flag) {
+            return nodeTree;
+        } else {
+            store = sanitize(store)
+            var end = new Date();
+            return store;
+        }
+
     }
 
     // generate uuid for the first time
@@ -153,7 +220,9 @@ var devtoolsModel = (function() {
                     nodes: storeGen()
                 }
             }, "*");
-
+        },
+        getNodeTree: function() {
+            return storeGen(true);
         }
     }
 })();
