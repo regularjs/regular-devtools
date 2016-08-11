@@ -9,6 +9,7 @@
 
 <body>
     <div id="devtoolsInject" class="devtoolsInject"></div>
+    
     <script type='template/regular' id='devtoolsView'>
         <div class='regualrDevtools'>
             <div class='devtoolsHeader no-space'>
@@ -21,7 +22,17 @@
                 </div>
             </div>
             <elementView ref=elementView isolate/>
-            <stateView ref=stateView isolate />
+            <div class="sidebar">
+                <tabs source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></tabs>
+                <div class="sidebar-content">
+                    <div r-hide="{ tabSelected !== 'data' }">
+                        <stateView ref=stateView isolate />
+                    </div>
+                    <div r-hide="{ tabSelected !== 'others' }">
+                        
+                    </div>
+                </div>
+            </div>
         </div>
     </script>
     <script type='template/regular' id='elementView'>
@@ -29,7 +40,7 @@
             {#if loading }
                 <img src='/assets/loading.svg' class='loading-img' />
             {#else}
-                {#if nodes.length > 0} 
+                {#if nodes.length > 0}
                 {#list nodes as node}
                     <element node={node} level={1}>
                     </element>
@@ -41,12 +52,12 @@
         </div>
     </script>
     <script type='template/regular' id='element'>
-        <div class="element purple {selected ? 'selected' : 'element-tag'}" 
+        <div class="element purple {selected ? 'selected' : 'element-tag'}"
         style="padding-left:{level*30}px;}" on-click={this.onClick(node)}>
             <div class="borderline"></div>
-            <img src="/assets/arrow.svg" 
+            <img src="/assets/arrow.svg"
             style="margin-left: -10px;"
-            alt="arrow" on-click={opened = !opened} 
+            alt="arrow" on-click={opened = !opened}
             class="arrow ele-item {opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}"/>
             {#if node.shadowFlag }
             <span class="ele-item ele-include">#include</span>
@@ -69,10 +80,10 @@
         <div style={opened ? '' : "display:none;"} class={node.shadowFlag ? 'include-border':null}>
             <element node={n} level={level+1} ></element>
         </div>
-        {/list} 
-        {/if} 
+        {/list}
+        {/if}
         {#if node.childNodes.length > 0}
-        <div class="element purple" 
+        <div class="element purple"
         style="padding-left:{level*30}px;{opened ? null : 'display:none;'}">
             <span class="tag ele-item">&lt;/</span>
             <span class="tagname ele-item">{node.name}</span>
@@ -81,18 +92,12 @@
         {/if}
     </script>
     <script type='template/regular' id='stateView'>
+        {#if currentNode.inspectable }
+            <div class='inspect' on-click={this.onInspectNode()}>
+              inspect
+            </div>
+        {/if}
         <div class='stateView'>
-            <div class="purplee">
-                &lt;{currentNode.name}&gt;
-                {#if currentNode.inspectable }
-                <div class='inspect' on-click={this.onInspectNode()}>
-                  inspect
-                </div>
-                {/if}
-            </div>
-            <div class="s-text">
-                <div class='s-data'>data</div>
-            </div>
             <div class='stateView-data'>
                 {#list Object.keys(currentNode.data) as key}
                     <prop key={key} value={currentNode.data[key]}/>
@@ -103,9 +108,9 @@
     <script type='template/regular' id='stateViewProp'>
         <div class='stateView-data'>
             <div class='stateView-data-key no-space'>
-                <img src="/assets/arrow.svg" 
+                <img src="/assets/arrow.svg"
                 style="margin-left: -10px;"
-                 alt="arrow" on-click={opened = !opened} 
+                 alt="arrow" on-click={opened = !opened}
                  class="arrow item {opened ? 'arrow-down' : null} {hasChildren ? '': 'hide'}"/>
                 <span class="key item">{key + ':'}&nbsp;</span>
                 {#if this.isPrimitive(value)}
@@ -126,7 +131,20 @@
                     <prop key={k} value={value[k]} padding={true}/>
                 {/list}
             </div>
-            {/if} 
+            {/if}
+        </div>
+    </script>
+    <script type="template/regular" id="tabs">
+        <div class="tabs">
+            <div class="tabs-header">
+                <div class="tabs-header-items">
+                    {#list source as s}
+                        <div class="tabs-header-item { selected === s.key ? 'selected' : '' }" on-click="{ this.onTabClick( s.key ) }">
+                            { s.text }
+                        </div>
+                    {/list}
+                </div>
+            </div>
         </div>
     </script>
 

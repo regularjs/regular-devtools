@@ -1,14 +1,6 @@
-// test
 .purplee {
 	font-size: 18px;
 	color: rgb(136, 18, 128);
-}
-
-.s-text {
-	font-size: 16px;
-	line-height: 16px;
-	padding: 10px 0;
-	padding-bottom: 5px
 }
 
 .purple{
@@ -87,7 +79,7 @@ body{
 	vertical-align: middle;
 }
 
-.elementView, .stateView{
+.elementView {
 	box-sizing: border-box;
 	display: inline-block;
 	width: 50%;
@@ -95,18 +87,23 @@ body{
 	color: #000;
 	vertical-align: top;
 	height: 100%;
-	overflow-y: scroll;
+	overflow-y: auto;
+}
+
+.sidebar {
+    display: inline-block;
+    width: 50%;
+    height: 100%;
+}
+
+.sidebar-content {
+    height: -webkit-calc(100% - 31px);
+    overflow-y: auto;
+    font-size: 20px;
 }
 
 .stateView{
-	padding:20px;
-}
-
-// .stateView
-
-
-.s-text .s-data{
-	display: inline-block;
+	padding: 10px 20px;
 }
 
 .inspect {
@@ -119,6 +116,8 @@ body{
 	font-size: 14px;
 	color: #333;
 	cursor: pointer;
+    margin-top: 15px;
+    margin-left: 10px;
 }
 
 .inspect:hover {
@@ -137,7 +136,7 @@ body{
 .elementView{
 	position: relative;
 	padding:20px 0;
-	border-right: 2px solid #e3e3e3;
+	border-right: 1px solid #e3e3e3;
 }
 
 .elementView .element{
@@ -247,8 +246,7 @@ body{
 }
 
 
-//util
-
+/* util */
 
 .gray{
 	color: gray;
@@ -269,3 +267,48 @@ body{
 .elementView .hide, .stateView-data-key .hide{
 	display: none;
 }
+
+/* tabs start */
+
+.tabs {
+    font-family: Consolas, Lucida Console, monospace;
+}
+.tabs-header {
+    overflow: hidden;
+    background-color: #f3f3f3;
+    border-bottom: 1px solid #ccc;
+    font-size: 12px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.tabs-header-items {
+    margin-left: 5px;
+}
+.tabs-header-item {
+    box-sizing: border-box;
+    float: left;
+    margin-top: 6px;
+    padding: 0 6px;
+    height: 24px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    line-height: 15px;
+    white-space: nowrap;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    color: #5a5a5a;
+}
+.tabs-header-item.selected {
+    border: 1px solid #ccc;
+    border-bottom: none;
+    color: #333;
+    background-color: white;
+    border-top-color: #ccc;
+}
+.tabs-header-item:hover, .tabs-header-item.selected:hover {
+    color: #333;
+    background-color: #e5e5e5;
+}
+
+/* tabs end */

@@ -72,7 +72,7 @@ var devtoolsModel = (function() {
                     name: node.name || "node",
                     data: node.data,
                     childNodes: [],
-                    inspectable: (node.node || node.group.chi)
+                    inspectable: (node.node || node.group.children)
                 }
                 if (node.node) {
                     n.inspectable = true;

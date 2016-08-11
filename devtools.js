@@ -62,7 +62,7 @@ var searchPath = function(nodes, uuid, path) {
         } else if (nodes[i]._children.length > 0) {
             if (searchPath(nodes[i]._children, uuid, path)) {
                 path.push(nodes[i]);
-                return true;;
+                return true;
             }
         }
     }
@@ -75,6 +75,26 @@ var lastSelected = null;
 // Regualr components for devtools' UI
 var devtoolsView = Regular.extend({
     template: "#devtoolsView",
+    config: function() {
+        this.data.tabSource = [
+            {
+                text: 'data',
+                key: 'data'
+            },
+            /*{
+                text: 'others',
+                key: 'others'
+            }*/
+        ];
+        // defaults to `data` pane
+        this.data.tabSelected = 'data';
+    },
+    onTabChange: function( key ) {
+        this.data.tabSelected = key;
+        console.log(prefix + "Tab is Changed to", key);
+        // TODO: switch tab pane content here
+        this.$update();
+    },
     onRefresh: function() {
         chrome.devtools.inspectedWindow.reload();
     }
@@ -164,6 +184,19 @@ var prop = Regular.extend({
     type: type
 })
 
+var tabs = Regular.extend({
+    name: 'tabs',
+    template: '#tabs',
+    onTabClick: function( key ) {
+        if( this.data.selected === key ) {
+            return;
+        }
+        this.$emit( 'change', key );
+    },
+    config: function() {
+        
+    }
+});
 
 // init devtools
 var devtools = new devtoolsView({
