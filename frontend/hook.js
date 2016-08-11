@@ -11,7 +11,7 @@
  */
 
 function installHook(window) {
-    var listeners = {}
+    var listeners = {};
 
     var hook = {
         ins: [],
@@ -23,34 +23,34 @@ function installHook(window) {
 
         on: function(event, fn) {
             event = '$' + event;
-            (listeners[event] || (listeners[event] = [])).push(fn)
+            (listeners[event] || (listeners[event] = [])).push(fn);
         },
 
         once: function(event, fn) {
-            event = '$' + event
+            event = '$' + event;
 
             function on() {
-                this.off(event, on)
-                fn.apply(this, arguments)
-            };
-            (listeners[event] || (listeners[event] = [])).push(on)
+                this.off(event, on);
+                fn.apply(this, arguments);
+            }
+            (listeners[event] || (listeners[event] = [])).push(on);
         },
 
         off: function(event, fn) {
-            event = '$' + event
+            event = '$' + event;
             if (!arguments.length) {
-                listeners = {}
+                listeners = {};
             } else {
-                const cbs = listeners[event]
+                const cbs = listeners[event];
                 if (cbs) {
                     if (!fn) {
-                        listeners[event] = null
+                        listeners[event] = null;
                     } else {
                         for (let i = 0, l = cbs.length; i < l; i++) {
-                            const cb = cbs[i]
+                            const cb = cbs[i];
                             if (cb === fn || cb.fn === fn) {
-                                cbs.splice(i, 1)
-                                break
+                                cbs.splice(i, 1);
+                                break;
                             }
                         }
                     }
@@ -59,13 +59,13 @@ function installHook(window) {
         },
 
         emit: function(event) {
-            event = '$' + event
-            let cbs = listeners[event]
+            event = '$' + event;
+            let cbs = listeners[event];
             if (cbs) {
-                const args = [].slice.call(arguments, 1)
-                cbs = cbs.slice()
+                const args = [].slice.call(arguments, 1);
+                cbs = cbs.slice();
                 for (let i = 0, l = cbs.length; i < l; i++) {
-                    cbs[i].apply(this, args)
+                    cbs[i].apply(this, args);
                 }
             }
         },
@@ -87,25 +87,26 @@ function installHook(window) {
                         if (level >= this.location.level) {
                             this.location.finalUUID = node.uuid;
                             this.location.level = level;
-                        }   
+                        }
                     }
                 }
             }
             if (node.childNodes) {
-                currLevel = level + 1
+                currLevel = level + 1;
                 for (var j = 0; j < node.childNodes.length; j++) {
-                    this.containByNode(selectedNode, node.childNodes[j], currLevel);
+                    this.containByNode(selectedNode,
+                        node.childNodes[j], currLevel);
                 }
             }
         }
-    }
+    };
 
     // debounce helper
     var debounce = function(func, wait, immediate) {
         var timeout;
         return function() {
-            var context = this,
-                args = arguments;
+            var context = this;
+            var args = arguments;
             clearTimeout(timeout);
             timeout = setTimeout(function() {
                 timeout = null;
@@ -117,14 +118,14 @@ function installHook(window) {
 
     var emitRerender = function() {
         hook.emit("reRender");
-    }
+    };
 
     var emitStateRender = function() {
         hook.emit("flushMessage");
-    }
+    };
 
-    var reRender = debounce(emitRerender, 300);
-    var reRenderState = debounce(emitStateRender, 300);
+    var reRender = debounce(emitRerender, 500);
+    var reRenderState = debounce(emitStateRender, 500);
 
     window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__ = hook;
 
@@ -132,22 +133,20 @@ function installHook(window) {
         hook.ins.push(obj);
         this.emit('addNodeMessage', obj);
         reRender();
-    })
+    });
 
     hook.on('destroy', function(obj) {
         hook.ins.splice(hook.ins.indexOf(obj), 1);
         reRender();
-    })
+    });
 
     hook.on('flush', function() {
         reRenderState();
-    })
+    });
 }
 
-
-
 // inject the hook
-var script = document.createElement('script')
-script.textContent = ';(' + installHook.toString() + ')(window)'
-document.documentElement.appendChild(script)
-script.parentNode.removeChild(script)
+var script = document.createElement('script');
+script.textContent = ';(' + installHook.toString() + ')(window)';
+document.documentElement.appendChild(script);
+script.parentNode.removeChild(script);
