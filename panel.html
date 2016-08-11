@@ -95,11 +95,13 @@
     </script>
     <script type='template/regular' id='stateViewProp'>
         <div class='stateView-data'>
-            <div class='stateView-data-key no-space'>
-                <img src="/assets/arrow.svg"
-                style="margin-left: -10px;"
-                 alt="arrow" on-click={opened = !opened}
-                 class="arrow item {opened ? 'arrow-down' : null} {hasChildren ? '': 'hide'}"/>
+            <div class='stateView-data-key no-space' on-click={opened = !opened}>
+                <img
+                    src="/assets/arrow.svg"
+                    style="margin-left: -10px;"
+                    alt="arrow"
+                    class="arrow item {opened ? 'arrow-down' : null} {hasChildren ? '': 'hide'}"
+                />
                 <span class="key item">{key + ':'}&nbsp;</span>
                 {#if this.isPrimitive(value)}
                     {#if type === 'String'}

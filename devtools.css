@@ -217,11 +217,13 @@ body{
 .stateView-data-key .arrow {
 	height: 10px;
 	width: 10px;
+	margin-right: 3px;
 }
 
 .stateView-data-key {
 	line-height: 13px;
 	padding-bottom:6px;
+	cursor: default;
 }
 .stateView-data-key .item{
 	display: inline-block;
