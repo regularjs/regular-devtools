@@ -1,24 +1,22 @@
 {
   "name": "regular-devtools",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Regular Developer Tools is a Chrome Extension that allows real-time inspection of [Regular](http://regularjs.github.io/) components.",
   "main": "devtools.js",
   "directories": {
-    "example": "example"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zxc0328/regular-devtools.git"
+    "url": "git+https://github.com/regularjs/regular-devtools.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zxc0328/regular-devtools/issues"
+    "url": "https://github.com/regularjs/regular-devtools/issues"
   },
-  "homepage": "https://github.com/zxc0328/regular-devtools#readme",
+  "homepage": "https://github.com/regularjs/regular-devtools#readme",
   "devDependencies": {
     "eslint": "^3.2.2",
     "eslint-config-google": "^0.6.0"

@@ -26,7 +26,17 @@
                 <tabs source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></tabs>
                 <div class="sidebar-content">
                     <div r-hide="{ tabSelected !== 'data' }">
-                        <stateView ref=stateView isolate />
+                        {#if currentNode.inspectable }
+                            <div class='inspect' on-click={this.onInspectNode()}>
+                                inspect
+                            </div>
+                        {/if}
+                        <sidebarPane title="normal">
+                            <stateView ref=stateView isolate />
+                        </sidebarPane>
+                        <sidebarPane title="computed">
+                            <stateView source="{ currentNode.computed }" />
+                        </sidebarPane>
                     </div>
                     <div r-hide="{ tabSelected !== 'others' }">
                         
@@ -59,22 +69,10 @@
             style="margin-left: -10px;"
             alt="arrow" on-click={opened = !opened}
             class="arrow ele-item {opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}"/>
-            {#if node.shadowFlag }
-            <span class="ele-item ele-include">#include</span>
-            {/if}
-            {#if node.shadowFlag }
-            <div>
             <span class="tag ele-item">&lt;</span>
             <span class="tagname ele-item">{node.name}
             </span>
-            <span class="tag ele-item">&gt;</span>
-            </div>
-            {#else}
-            <span class="tag ele-item">&lt;</span>
-            <span class="tagname ele-item">{node.name}
-            </span>
-            <span class="tag ele-item">&gt;</span>
-            {/if}
+            <span class="tag ele-item">&gt;{#if node.shadowFlag }<span class="ele-include">#inc</span>{/if}</span>
         </div>
         {#if node.childNodes.length > 0} {#list node.childNodes as n}
         <div style={opened ? '' : "display:none;"} class={node.shadowFlag ? 'include-border':null}>
@@ -92,26 +90,23 @@
         {/if}
     </script>
     <script type='template/regular' id='stateView'>
-        {#if currentNode.inspectable }
-            <div class='inspect' on-click={this.onInspectNode()}>
-              inspect
-            </div>
-        {/if}
         <div class='stateView'>
             <div class='stateView-data'>
-                {#list Object.keys(currentNode.data) as key}
-                    <prop key={key} value={currentNode.data[key]}/>
+                {#list source as s}
+                    <prop key={s_key} value={s}/>
                 {/list}
             </div>
         </div>
     </script>
     <script type='template/regular' id='stateViewProp'>
         <div class='stateView-data'>
-            <div class='stateView-data-key no-space'>
-                <img src="/assets/arrow.svg"
-                style="margin-left: -10px;"
-                 alt="arrow" on-click={opened = !opened}
-                 class="arrow item {opened ? 'arrow-down' : null} {hasChildren ? '': 'hide'}"/>
+            <div class='stateView-data-key no-space' on-click={opened = !opened}>
+                <img
+                    src="/assets/arrow.svg"
+                    style="margin-left: -10px;"
+                    alt="arrow"
+                    class="arrow item {opened ? 'arrow-down' : null} {hasChildren ? '': 'hide'}"
+                />
                 <span class="key item">{key + ':'}&nbsp;</span>
                 {#if this.isPrimitive(value)}
                     {#if type === 'String'}
@@ -144,6 +139,16 @@
                         </div>
                     {/list}
                 </div>
+            </div>
+        </div>
+    </script>
+    <script type="template/regular" id="sidebarPane">
+        <div class="sidebar-pane">
+            <div class="sidebar-pane-header">
+                { title }
+            </div>
+            <div class="sidebar-pane-content">
+                {#inc this.$body}
             </div>
         </div>
     </script>
