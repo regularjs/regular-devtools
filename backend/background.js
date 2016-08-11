@@ -20,6 +20,7 @@ chrome.runtime.onConnect.addListener(function(connection) {
         chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
             if (changeInfo.status === "complete") {
                 console.log(prefix + "Backend send pageReload event");
+
                 devToBackConnection.postMessage({
                     type: "pageReload",
                     tabId: tabId

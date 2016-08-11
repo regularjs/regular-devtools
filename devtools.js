@@ -6,9 +6,10 @@ var backgroundPageConnection = chrome.runtime.connect({
     name: "devToBackCon"
 });
 
-var injectContentScript = function() {
+
+var injectContentScript = function(tabId) {
     backgroundPageConnection.postMessage({
-        tabId: chrome.devtools.inspectedWindow.tabId,
+        tabId: tabId || chrome.devtools.inspectedWindow.tabId,
         file: "/frontend/content.js"
     });
 }
@@ -338,10 +339,12 @@ devtools
             path[0].data.selected = true;
             elementView.$update();
         }
-    }).$on("reload", function() {
+    }).$on("reload", function(event) {
         console.log(prefix + "On reload.");
         // wait for the page to fully intialize
-        setTimeout(injectContentScript, 2000);
+        setTimeout(function(){
+            injectContentScript(event.tabId);
+        }, 2000);
     })
 
 backgroundPageConnection.onMessage.addListener(function(message) {
@@ -354,7 +357,9 @@ backgroundPageConnection.onMessage.addListener(function(message) {
     } else if (message.type === "pageReload") {
         elementView.data.loading = true;
         elementView.$update();
-        devtools.$emit("reload");
+        devtools.$emit("reload",{
+            tabId: message.tabId
+        });
     }
 });
 
