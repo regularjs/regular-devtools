@@ -1,9 +1,9 @@
 // the real devtools script
 // the UI layer of devtools
 
-// Create a connection to the background page
+// Create a current inspected page unique connection to the background page, by its tabId
 var backgroundPageConnection = chrome.runtime.connect({
-    name: "devToBackCon"
+    name: "devToBackCon_" + chrome.devtools.inspectedWindow.tabId
 });
 
 
