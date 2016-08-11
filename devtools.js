@@ -141,7 +141,7 @@ var stateView = Regular.extend({
         chrome.devtools.inspectedWindow.eval(
             "var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) { return n.uuid === " + "'" + uuid + "'" + "})[0];" +
             "if (node) {" +
-            "    inspect(node.node || node.parentNode);" +
+            "    inspect(node.group && node.group.children && node.group.children[0].node() || node.parentNode);" +
             "}",
             function(result, isException) {
                 if (isException) {
