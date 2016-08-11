@@ -6,6 +6,8 @@ var devtoolsModel = (function() {
     var store = [];
     // node tree for DOM-Component search
     var findElementByUuid;
+    // fetch all computed props from instance
+    var fetchComputedProps;
     var nodeTree = [];
     var walker;
     var treeGen;
@@ -22,6 +24,14 @@ var devtoolsModel = (function() {
                 }
             }
         }
+    };
+
+    fetchComputedProps = function(ins) {
+        var computed = {};
+        Object.keys(ins.computed).forEach(function(v) {
+            computed[v] = ins.$get(v);
+        });
+        return computed;
     };
 
     walker = function(node, container, flag) {
@@ -80,6 +90,9 @@ var devtoolsModel = (function() {
                 if (node.$outer) {
                     n.shadowFlag = true;
                 }
+
+                // fetch all computed props
+                n.computed = fetchComputedProps(node);
                 node.visited = true;
                 container.push(n);
                 if (node.group) {
@@ -143,13 +156,16 @@ var devtoolsModel = (function() {
         }
         for (var i = 0; i < ins.length; i++) {
             if (ins[i].$root === ins[i]) {
+                // fetch all computed props
+                var computed = fetchComputedProps(ins[i]);
                 if (flag && ins[i].parentNode) {
                     node = {
                         uuid: ins[i].uuid,
                         childNodes: [],
-                        node: []
+                        node: [],
+                        computed: computed
                     };
-                    var body = document.querySelector("body");
+                    var body = document.body;
                     if (ins[i].parentNode === body) {
                         for (var j = 0; j < ins[i].group.children.length; j++) {
                             if (ins[i].group.get(j).type) {
@@ -166,6 +182,7 @@ var devtoolsModel = (function() {
                         uuid: ins[i].uuid,
                         name: name || "root",
                         data: ins[i].data,
+                        computed: computed,
                         childNodes: [],
                         inspectable: !!ins[i].parentNode
                     };

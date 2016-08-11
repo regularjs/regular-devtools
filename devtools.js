@@ -98,6 +98,12 @@ searchPathWarpper = function(nodes, uuid, path) {
 devtoolsViewComponent = Regular.extend({
     template: "#devtoolsView",
     config: function() {
+        // defaultValue of currentNode
+        this.data.currentNode = {
+            name: "",
+            uuid: "",
+            data: {}
+        };
         this.data.tabSource = [{
                 text: "data",
                 key: "data"
@@ -118,6 +124,20 @@ devtoolsViewComponent = Regular.extend({
     },
     onRefresh: function() {
         chrome.devtools.inspectedWindow.reload();
+    },
+    onInspectNode: function() {
+        var uuid = this.data.currentNode.uuid;
+        chrome.devtools.inspectedWindow.eval(
+            "var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) { return n.uuid === " + "'" + uuid + "'" + "})[0];" +
+            "if (node) {" +
+            "    inspect(node.group && node.group.children && node.group.children[0] && node.group.children[0].node && node.group.children[0].node() || node.parentNode);" +
+            "}",
+            function(result, isException) {
+                if (isException) {
+                    console.log(prefix + "Inspect Error: ", isException);
+                }
+            }
+        );
     }
 });
 
@@ -150,25 +170,7 @@ stateViewComponent = Regular.extend({
     name: "stateView",
     template: "#stateView",
     data: {
-        currentNode: {
-            name: "",
-            uuid: "",
-            data: {}
-        }
-    },
-    onInspectNode: function() {
-        var uuid = this.data.currentNode.uuid;
-        chrome.devtools.inspectedWindow.eval(
-            "var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) { return n.uuid === " + "'" + uuid + "'" + "})[0];" +
-            "if (node) {" +
-            "    inspect(node.group && node.group.children && node.group.children[0].node() || node.parentNode);" +
-            "}",
-            function(result, isException) {
-                if (isException) {
-                    console.log(prefix + "Inspect Error: ", isException);
-                }
-            }
-        );
+        source: {}
     }
 })
 
@@ -216,6 +218,12 @@ tabsComponent = Regular.extend({
     config: function() {
 
     }
+});
+
+var sidebarPaneComponent = Regular.extend({
+    name: 'sidebarPane',
+    template: '#sidebarPane',
+    
 });
 
 // init devtools
@@ -313,27 +321,37 @@ devtools
     .$on("initNodes", function(nodes) {
         console.log(prefix + "On initNodes.");
         this.data.nodes = nodes;
-        stateView.data.currentNode = nodes[0];
+        this.data.currentNode = nodes[0];
+        stateView.data.source = nodes[0].data;
         elementView.data.loading = false;
         elementView.data.nodes = makeElementTree(nodes, []);
+        this.$update();
         stateView.$update();
         elementView.$update();
     })
     .$on("clickElement", function(uuid) {
-        if (uuid !== stateView.data.currentNode.uuid) {
-            stateView.data.currentNode = findElementByUuid(this.data.nodes, uuid);
+        if (uuid !== this.data.currentNode.uuid) {
+            var node = findElementByUuid(this.data.nodes, uuid);
+            this.data.currentNode = node;
+            stateView.data.source = node.data;
+            this.$update();
             stateView.$update();
         }
         printInConsole(uuid);
     }).$on("stateViewReRender", function(nodes) {
         console.log(prefix + "On stateViewRender.");
         this.data.nodes = nodes;
-        var currNode = findElementByUuid(nodes, stateView.data.currentNode.uuid);
+        var currNode = findElementByUuid(nodes, this.data.currentNode.uuid);
         if (currNode) {
-            stateView.data.currentNode = snycObject(stateView.data.currentNode, currNode, {});
+            var node = snycObject(this.data.currentNode, currNode, {});
+            stateView.data.source = node.data;
+            this.data.currentNode = node;
+            this.$update();
             stateView.$update();
         } else {
-            stateView.data.currentNode = nodes[0];
+            stateView.data.source = nodes[0].data;
+            this.data.currentNode = nodes[0];
+            this.$update();
             stateView.$update();
         }
     }).$on("elementViewReRender", function(nodes) {
@@ -344,8 +362,11 @@ devtools
         elementView.$update();
     }).$on("currentNodeChange", function(uuid) {
         console.log(prefix + "On currentNodeChange.");
-        if (stateView.data.currentNode.uuid !== uuid) {
-            stateView.data.currentNode = findElementByUuid(this.data.nodes, uuid);
+        if (this.data.currentNode.uuid !== uuid) {
+            var node = findElementByUuid(this.data.nodes, uuid);
+            stateView.data.source = node.data;
+            this.data.currentNode = node;
+            this.$update();
             stateView.$update();
             var path = [];
             searchPathWarpper(elementView._children, uuid, path);
