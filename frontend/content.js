@@ -1,5 +1,6 @@
 // this is the content script runs when the panel is activated.
 // this script serves as the brigde between app page script(inject and hook) and the backend script
+
 var port = chrome.runtime.connect({
     name: "injectToBackCon"
 });
