@@ -123,11 +123,6 @@ body{
 	color: #000;
 }
 
-.stateView-state{
-	font-size: 16px;
-	word-wrap:break-word;
-	padding-bottom:5px;
-}
 .stateView-data {
 	font-size: 13px;
 }
