@@ -20,28 +20,8 @@
                     <img src='/assets/refresh.svg' on-click={this.onRefresh()} class='devtoolsHeader-refresh' title="Refresh"/>
                 </div>
             </div>
-            <elementView ref=elementView isolate/>
-            <div class="sidebar">
-                <tabs source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></tabs>
-                <div class="sidebar-content">
-                    <div r-hide="{ tabSelected !== 'data' }">
-                        {#if currentNode.inspectable }
-                            <div class='inspect' on-click={this.onInspectNode()}>
-                                inspect
-                            </div>
-                        {/if}
-                        <sidebarPane title="normal">
-                            <stateView ref=stateView isolate />
-                        </sidebarPane>
-                        <sidebarPane title="computed">
-                            <stateView source="{ currentNode.computed }" />
-                        </sidebarPane>
-                    </div>
-                    <div r-hide="{ tabSelected !== 'others' }">
-                        
-                    </div>
-                </div>
-            </div>
+            <elementView ref=elementView isolate />
+            <sidebarView ref=sidebarView isolate />
         </div>
     </script>
     <script type='template/regular' id='elementView'>
@@ -88,11 +68,34 @@
         </div>
         {/if}
     </script>
+    <script type="template/regular" id="sidebarView">
+        <div class="sidebar">
+            <tabs source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></tabs>
+            <div class="sidebar-content">
+                <div r-hide="{ tabSelected !== 'data' }">
+                    {#if currentNode.inspectable }
+                        <div class='inspect' on-click={this.onInspectNode()}>
+                            inspect
+                        </div>
+                    {/if}
+                    <sidebarPane title="normal">
+                        <stateView source="{ currentNode.data }" />
+                    </sidebarPane>
+                    <sidebarPane title="computed">
+                        <stateView source="{ currentNode.computed }" />
+                    </sidebarPane>
+                </div>
+                <div r-hide="{ tabSelected !== 'others' }">
+                    
+                </div>
+            </div>
+        </div>
+    </script>
     <script type='template/regular' id='stateView'>
         <div class='stateView'>
             <div class='stateView-data'>
-                {#list source as s}
-                    <prop key={s_key} value={s}/>
+                {#list Object.keys(source) as k}
+                    <prop key={k} value={source[k]}/>
                 {/list}
             </div>
         </div>

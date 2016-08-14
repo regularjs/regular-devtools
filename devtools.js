@@ -14,10 +14,11 @@ var elementComponent;
 var stateViewComponent;
 var elementViewComponent;
 var propComponent;
+var sidebarViewComponent;
 var tabsComponent;
 var devtools;
 var findElementByUuid;
-var stateView;
+var sidebarView;
 var elementView;
 var snycArr;
 var printInConsole;
@@ -98,47 +99,8 @@ searchPathWarpper = function(nodes, uuid, path) {
 // Regualr components for devtools' UI
 devtoolsViewComponent = Regular.extend({
     template: "#devtoolsView",
-    config: function() {
-        // defaultValue of currentNode
-        this.data.currentNode = {
-            name: "",
-            uuid: "",
-            data: {}
-        };
-        this.data.tabSource = [{
-                text: "data",
-                key: "data"
-            },
-            /*{
-                text: 'others',
-                key: 'others'
-            }*/
-        ];
-        // defaults to `data` pane
-        this.data.tabSelected = 'data';
-    },
-    onTabChange: function(key) {
-        this.data.tabSelected = key;
-        console.log(prefix + "Tab is Changed to", key);
-        // TODO: switch tab pane content here
-        this.$update();
-    },
     onRefresh: function() {
         chrome.devtools.inspectedWindow.reload();
-    },
-    onInspectNode: function() {
-        var uuid = this.data.currentNode.uuid;
-        chrome.devtools.inspectedWindow.eval(
-            "var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) { return n.uuid === " + "'" + uuid + "'" + "})[0];" +
-            "if (node) {" +
-            "    inspect(node.group && node.group.children && node.group.children[0] && node.group.children[0].node && node.group.children[0].node() || node.parentNode);" +
-            "}",
-            function(result, isException) {
-                if (isException) {
-                    console.log(prefix + "Inspect Error: ", isException);
-                }
-            }
-        );
     }
 });
 
@@ -207,6 +169,50 @@ propComponent = Regular.extend({
     type: type
 });
 
+sidebarViewComponent = Regular.extend({
+    name: 'sidebarView',
+    template: '#sidebarView',
+    config: function() {
+        // defaultValue of currentNode
+        this.data.currentNode = {
+            name: "",
+            uuid: "",
+            data: {}
+        };
+        this.data.tabSource = [{
+                text: "data",
+                key: "data"
+            },
+            /*{
+                text: 'others',
+                key: 'others'
+            }*/
+        ];
+        // defaults to `data` pane
+        this.data.tabSelected = 'data';
+    },
+    onTabChange: function(key) {
+        this.data.tabSelected = key;
+        console.log(prefix + "Tab is Changed to", key);
+        // TODO: switch tab pane content here
+        this.$update();
+    },
+    onInspectNode: function() {
+        var uuid = this.data.currentNode.uuid;
+        chrome.devtools.inspectedWindow.eval(
+            "var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) { return n.uuid === " + "'" + uuid + "'" + "})[0];" +
+            "if (node) {" +
+            "    inspect(node.group && node.group.children && node.group.children[0] && node.group.children[0].node && node.group.children[0].node() || node.parentNode);" +
+            "}",
+            function(result, isException) {
+                if (isException) {
+                    console.log(prefix + "Inspect Error: ", isException);
+                }
+            }
+        );
+    }
+});
+
 tabsComponent = Regular.extend({
     name: 'tabs',
     template: '#tabs',
@@ -223,8 +229,7 @@ tabsComponent = Regular.extend({
 
 var sidebarPaneComponent = Regular.extend({
     name: 'sidebarPane',
-    template: '#sidebarPane',
-    
+    template: '#sidebarPane'
 });
 
 // init devtools
@@ -257,33 +262,33 @@ findElementByUuidNonRecursive = function(nodes, uuid) {
     }
 };
 
-snycObject = function(oldObj, newObj, container) {
-    for (var key in newObj) {
-        if (!newObj.hasOwnProperty(key)) {
-            continue;
-        }
-        if (oldObj[key]) {
-            if (oldObj[key] === newObj[key]) {
-                container[key] = oldObj[key];
-            } else if (JSON.stringify(oldObj[key]) === JSON.stringify(newObj[key])) {
-                container[key] = oldObj[key];
-            } else if ((typeof(oldObj[key]) === "object") && (typeof(newObj[key]) === "object")) {
-                if ((newObj[key] instanceof Array) && (oldObj[key] instanceof Array)) {
-                    var temp = snycObject(oldObj[key], newObj[key], []);
-                    container[key] = temp;
-                } else {
-                    var temp = snycObject(oldObj[key], newObj[key], {});
-                    container[key] = temp;
-                }
-            } else {
-                container[key] = newObj[key];
-            }
-        } else {
-            container[key] = newObj[key];
-        }
-    }
-    return container;
-};
+//snycObject = function(oldObj, newObj, container) {
+//    for (var key in newObj) {
+//        if (!newObj.hasOwnProperty(key)) {
+//            continue;
+//        }
+//        if (oldObj[key]) {
+//            if (oldObj[key] === newObj[key]) {
+//                container[key] = oldObj[key];
+//            } else if (JSON.stringify(oldObj[key]) === JSON.stringify(newObj[key])) {
+//                container[key] = oldObj[key];
+//            } else if ((typeof(oldObj[key]) === "object") && (typeof(newObj[key]) === "object")) {
+//                if ((newObj[key] instanceof Array) && (oldObj[key] instanceof Array)) {
+//                    var temp = snycObject(oldObj[key], newObj[key], []);
+//                    container[key] = temp;
+//                } else {
+//                    var temp = snycObject(oldObj[key], newObj[key], {});
+//                    container[key] = temp;
+//                }
+//            } else {
+//                container[key] = newObj[key];
+//            }
+//        } else {
+//            container[key] = newObj[key];
+//        }
+//    }
+//    return container;
+//};
 
 snycArr = function(oldArr, newArr, container) {
     for (var i = 0; i < newArr.length; i++) {
@@ -314,46 +319,46 @@ printInConsole = function(uuid) {
     );
 };
 
-stateView = devtools.$refs.stateView;
+// left element view
 elementView = devtools.$refs.elementView;
+// right sidebar view
+sidebarView = devtools.$refs.sidebarView;
+// normal data
+var normalDataView = sidebarView.$refs.normal;
+
+console.log( normalDataView );
 
 // register custom events
 devtools
     .$on("initNodes", function(nodes) {
         console.log(prefix + "On initNodes.");
         this.data.nodes = nodes;
-        this.data.currentNode = nodes[0];
-        stateView.data.source = nodes[0].data;
+        sidebarView.data.currentNode = nodes[0];
         elementView.data.loading = false;
         elementView.data.nodes = makeElementTree(nodes, []);
-        this.$update();
-        stateView.$update();
+        sidebarView.$update();
         elementView.$update();
     })
     .$on("clickElement", function(uuid) {
-        if (uuid !== this.data.currentNode.uuid) {
+        if (uuid !== sidebarView.data.currentNode.uuid) {
             var node = findElementByUuid(this.data.nodes, uuid);
-            this.data.currentNode = node;
-            stateView.data.source = node.data;
-            this.$update();
-            stateView.$update();
+            sidebarView.data.currentNode = node;
+            sidebarView.$update();
         }
         printInConsole(uuid);
     }).$on("stateViewReRender", function(nodes) {
         console.log(prefix + "On stateViewRender.");
         this.data.nodes = nodes;
-        var currNode = findElementByUuid(nodes, this.data.currentNode.uuid);
+        var currNode = findElementByUuid(nodes, sidebarView.data.currentNode.uuid);
         if (currNode) {
-            var node = snycObject(this.data.currentNode, currNode, {});
-            stateView.data.source = node.data;
-            this.data.currentNode = node;
-            this.$update();
-            stateView.$update();
+            // var node = snycObject(sidebarView.data.currentNode, currNode, {});
+            sidebarView.data.currentNode = currNode;
+            sidebarView.$update();
+            normalDataView.data.source = currNode.data;
+            normalDataView.$update();
         } else {
-            stateView.data.source = nodes[0].data;
-            this.data.currentNode = nodes[0];
-            this.$update();
-            stateView.$update();
+            sidebarView.data.currentNode = nodes[0];
+            sidebarView.$update();
         }
     }).$on("elementViewReRender", function(nodes) {
         console.log(prefix + "On elementViewRerender.");
@@ -363,12 +368,10 @@ devtools
         elementView.$update();
     }).$on("currentNodeChange", function(uuid) {
         console.log(prefix + "On currentNodeChange.");
-        if (this.data.currentNode.uuid !== uuid) {
+        if (sidebarView.data.currentNode.uuid !== uuid) {
             var node = findElementByUuid(this.data.nodes, uuid);
-            stateView.data.source = node.data;
-            this.data.currentNode = node;
-            this.$update();
-            stateView.$update();
+            sidebarView.data.currentNode = node;
+            sidebarView.$update();
             var path = [];
             searchPathWarpper(elementView._children, uuid, path);
             for (var i = 0; i < path.length; i++) {
