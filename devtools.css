@@ -28,10 +28,11 @@ body{
 }
 
 .devtoolsHeader{
+	display: flex;
 	width: 100%;
 	height: 60px;
 	border-bottom: 1px solid #e3e3e3;
-  box-shadow: 0 0 8px rgba(0,0,0,.15);
+	box-shadow: 0 0 8px rgba(0,0,0,.15);
 	box-sizing: border-box;
 	position: absolute;
 	left: 0;
@@ -39,44 +40,30 @@ body{
 	padding:10px 20px;
 }
 
-.devtoolsHeader-container {
+.devtoolsHeader-container.logo {
+	display: flex;
+    align-items: center;
+	flex: 1;
 	height: 100%;
-	width: 50%;
-	display: inline-block;
-	vertical-align: top;
-}
-
-.devtoolsHeader-img{
-	display: inline-block;
-	height: 100%;
-	vertical-align: middle;
-}
-
-.devtoolsHeader-title{
-	display: inline-block;
-	vertical-align: middle;
+	padding-left: 50px;
+	background-image: url(/assets/regular.png);
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	font-size: 20px;
-	padding-left: 10px;
+	cursor: default;
+}
+
+.devtoolsHeader-container.refresh {
+	height: 70%;
+	align-self: center;
 }
 
 .devtoolsHeader-refresh{
-	height: 70%;
-	display: inline-block;
-	vertical-align: middle;
-}
-
-.devtoolsHeader .right{
-	text-align: right;
-	line-height: 39px;
-}
-
-.devtoolsHeader .right:after{
-	content: "",
 	height: 100%;
-	width: 0;
-	visibility: hidden;
-	display: inline-block;
-	vertical-align: middle;
+	cursor: pointer;
 }
 
 .elementView {
@@ -137,6 +124,7 @@ body{
 	line-height: 18px;
 	font-size: 0;
 	padding:0 20px 3px;
+	white-space: nowrap;
 	cursor: default;
 }
 
