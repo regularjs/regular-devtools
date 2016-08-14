@@ -135,7 +135,7 @@ stateViewComponent = Regular.extend({
     data: {
         source: {}
     }
-})
+});
 
 elementViewComponent = Regular.extend({
     name: "elementView",
@@ -221,9 +221,6 @@ tabsComponent = Regular.extend({
             return;
         }
         this.$emit('change', key);
-    },
-    config: function() {
-
     }
 });
 
