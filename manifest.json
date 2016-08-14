@@ -16,7 +16,9 @@
         "default_icon": "/assets/regular.png"
     },
     "icons": {
-        "100": "/assets/regular.png"
+        "16": "/assets/regular.png",
+		"48": "/assets/regular.png",
+		"128": "/assets/regular.png"
     },
 
     "web_accessible_resources": ["/frontend/inject.js", "/frontend/content.js", "/frontend/hook.js"],
