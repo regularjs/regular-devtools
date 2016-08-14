@@ -323,10 +323,6 @@ printInConsole = function(uuid) {
 elementView = devtools.$refs.elementView;
 // right sidebar view
 sidebarView = devtools.$refs.sidebarView;
-// normal data
-var normalDataView = sidebarView.$refs.normal;
-
-console.log( normalDataView );
 
 // register custom events
 devtools
@@ -354,8 +350,6 @@ devtools
             // var node = snycObject(sidebarView.data.currentNode, currNode, {});
             sidebarView.data.currentNode = currNode;
             sidebarView.$update();
-            normalDataView.data.source = currNode.data;
-            normalDataView.$update();
         } else {
             sidebarView.data.currentNode = nodes[0];
             sidebarView.$update();
