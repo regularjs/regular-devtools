@@ -79,10 +79,10 @@
                         </div>
                     {/if}
                     <sidebarPane title="normal">
-                        <stateView source="{ currentNode.data }" />
+                        <jsonTree source="{ currentNode.data }" />
                     </sidebarPane>
                     <sidebarPane title="computed">
-                        <stateView source="{ currentNode.computed }" />
+                        <jsonTree source="{ currentNode.computed }" />
                     </sidebarPane>
                 </div>
                 <div r-hide="{ tabSelected !== 'others' }">
@@ -91,18 +91,16 @@
             </div>
         </div>
     </script>
-    <script type='template/regular' id='stateView'>
-        <div class='stateView'>
-            <div class='stateView-data'>
-                {#list Object.keys(source) as k}
-                    <prop key={k} value={source[k]}/>
-                {/list}
-            </div>
+    <script type='template/regular' id='jsonTree'>
+        <div class='json-tree'>
+            {#list Object.keys(source) as k}
+                <jsonTreeProp key={k} value={source[k]} />
+            {/list}
         </div>
     </script>
-    <script type='template/regular' id='stateViewProp'>
-        <div class='stateView-data'>
-            <div class='stateView-data-key no-space' on-click={opened = !opened}>
+    <script type='template/regular' id='jsonTreeProp'>
+        <div class='json-tree-data'>
+            <div class='json-tree-data-key' on-click={opened = !opened}>
                 <img
                     src="/assets/arrow.svg"
                     style="margin-left: -10px;"
@@ -123,9 +121,9 @@
                 {/if}
             </div>
             {#if opened && hasChildren}
-            <div class='stateView-data-props' style='padding-left:20px'>
+            <div class='json-tree-data-props' style='padding-left:20px'>
                 {#list Object.keys(value) as k}
-                    <prop key={k} value={value[k]} padding={true}/>
+                    <jsonTreeProp key={k} value={value[k]} padding={true} />
                 {/list}
             </div>
             {/if}

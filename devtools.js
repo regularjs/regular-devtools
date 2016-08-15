@@ -11,7 +11,7 @@ var searchPath;
 var searchPathWarpper;
 var devtoolsViewComponent;
 var elementComponent;
-var stateViewComponent;
+var jsonTreeComponent;
 var elementViewComponent;
 var propComponent;
 var sidebarViewComponent;
@@ -129,14 +129,6 @@ elementComponent = Regular.extend({
     }
 });
 
-stateViewComponent = Regular.extend({
-    name: "stateView",
-    template: "#stateView",
-    data: {
-        source: {}
-    }
-});
-
 elementViewComponent = Regular.extend({
     name: "elementView",
     template: "#elementView",
@@ -146,9 +138,17 @@ elementViewComponent = Regular.extend({
     }
 });
 
+jsonTreeComponent = Regular.extend({
+    name: "jsonTree",
+    template: "#jsonTree",
+    data: {
+        source: {}
+    }
+});
+
 propComponent = Regular.extend({
-    name: "prop",
-    template: "#stateViewProp",
+    name: "jsonTreeProp",
+    template: "#jsonTreeProp",
     data: {
         opened: false
     },

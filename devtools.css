@@ -1,16 +1,7 @@
-.purplee {
-	font-size: 18px;
-	color: rgb(136, 18, 128);
-}
-
-.purple{
-	color: rgb(136, 18, 128);
-}
-
-html{
+html {
 	height: 100%;
 }
-body{
+body {
 	margin: 0;
 	height: 100%;
 }
@@ -22,10 +13,12 @@ body{
 	font-family: Consolas, Lucida Console, Menlo, monospace, '.SFNSDisplay-Regular', 'Helvetica Neue', 'Lucida Grande', sans-serif;
 }
 
-.regualrDevtools{
+.regualrDevtools {
 	height: 100%;
 	font-size: 0;
 }
+
+/* header start */
 
 .devtoolsHeader{
 	display: flex;
@@ -66,7 +59,12 @@ body{
 	cursor: pointer;
 }
 
+/* header end */
+
+/* elementView start */
+
 .elementView {
+	position: relative;
 	box-sizing: border-box;
 	display: inline-block;
 	width: 50%;
@@ -74,50 +72,9 @@ body{
 	color: #000;
 	vertical-align: top;
 	height: 100%;
-	overflow-y: auto;
-}
-
-.sidebar {
-    display: inline-block;
-    width: 50%;
-    height: 100%;
-}
-
-.sidebar-content {
-    height: -webkit-calc(100% - 31px);
-    overflow-y: auto;
-    font-size: 20px;
-}
-
-.stateView{
-	padding: 10px 20px;
-}
-
-.inspect {
-	display: inline-block;
-	background-image: url(/assets/inspect.svg);
-	background-position: 0 center;
-	background-size: 16px auto;
-	background-repeat: no-repeat;
-	padding-left: 18px;
-	font-size: 14px;
-	color: #333;
-	cursor: pointer;
-    margin: 10px;
-}
-
-.inspect:hover {
-	color: #000;
-}
-
-.stateView-data {
-	font-size: 13px;
-}
-
-.elementView{
-	position: relative;
 	padding:20px 0;
 	border-right: 1px solid #e3e3e3;
+	overflow-y: auto;
 }
 
 .elementView .element{
@@ -153,11 +110,11 @@ body{
 	color: rgb(48, 57, 66);
 }
 
-.elementView .arrow-down,.stateView .arrow-down{
+.elementView .arrow-down {
 	transform: rotate(90deg);
 }
 
-.elementView .loading-img{
+.elementView .loading-img {
 	width: 30px;
 	height: 30px;
 	position: absolute;
@@ -179,7 +136,7 @@ body{
 	
 }
 
-.element-tag:hover{
+.element-tag:hover {
 	background-color:#e5e5e5;
 }
 
@@ -187,70 +144,107 @@ body{
 	background-color: #44a1ff;
 }
 
-.flush-animation{
+.flush-animation {
 
 }
 
-.elementView .selected .ele-item{
+.elementView .selected .ele-item {
 	color: #fff;
 }
 
+.elementView .hide {
+	display: none;
+}
 
-.stateView-data-key .arrow {
+/* elementView end */
+
+/* jsonTree start */
+
+.json-tree {
+	padding: 10px 20px;
+}
+
+.json-tree-data {
+	font-size: 13px;
+}
+
+.json-tree .arrow-down{
+	transform: rotate(90deg);
+}
+
+.json-tree-data-key .arrow {
 	height: 10px;
 	width: 10px;
 	margin-right: 3px;
 }
 
-.stateView-data-key {
+.json-tree-data-key {
 	line-height: 13px;
 	padding-bottom:6px;
+	white-space: nowrap;
+	font-size: 0;
 	cursor: default;
 }
-.stateView-data-key .item{
+.json-tree-data-key .item{
 	display: inline-block;
 	vertical-align: middle;
 	font-size: 13px;
 }
 
-.stateView-data .key{
+.json-tree-data .key{
 	color:#881391;
 }
 
-.stateView-data .primitive{
+.json-tree-data .primitive{
 	color: #03c;
 }
 
-.stateView-data .string{
+.json-tree-data .string{
 	color: #c41a16;
 }
 
-.stateView-data .others{
+.json-tree-data .others{
 	color: #444;
 }
 
-
-/* util */
-
-.gray{
-	color: gray;
-}
-
-.blue{
-	color: blue;
-}
-
-.bold{
-	font-weight: bold;
-}
-
-.no-space{
-	font-size: 0;
-}
-
-.elementView .hide, .stateView-data-key .hide{
+.json-tree-data-key .hide{
 	display: none;
 }
+
+/* jsonTree end */
+
+/* sidebar start */
+
+.sidebar {
+    display: inline-block;
+    width: 50%;
+    height: 100%;
+}
+
+.sidebar-content {
+    height: -webkit-calc(100% - 31px);
+    overflow-y: auto;
+    font-size: 20px;
+}
+
+.inspect {
+	display: inline-block;
+	background-image: url(/assets/inspect.svg);
+	background-position: 0 center;
+	background-size: 16px auto;
+	background-repeat: no-repeat;
+	padding-left: 18px;
+	font-size: 14px;
+	color: #333;
+	cursor: pointer;
+    margin: 10px;
+}
+
+.inspect:hover {
+	color: #000;
+}
+
+/* sidebar end */
 
 /* tabs start */
 
@@ -318,3 +312,32 @@ body{
 }
 
 /* sidebar-pane end */
+
+/* util start */
+
+.purplee {
+	font-size: 18px;
+	color: rgb(136, 18, 128);
+}
+
+.purple{
+	color: rgb(136, 18, 128);
+}
+
+.gray{
+	color: gray;
+}
+
+.blue{
+	color: blue;
+}
+
+.bold{
+	font-weight: bold;
+}
+
+.no-space{
+	font-size: 0;
+}
+
+/* util end */
