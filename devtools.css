@@ -72,9 +72,7 @@ body {
 	color: #000;
 	vertical-align: top;
 	height: 100%;
-	padding:20px 0;
 	border-right: 1px solid #e3e3e3;
-	overflow-y: auto;
 }
 
 .elementView .element{
@@ -156,7 +154,36 @@ body {
 	display: none;
 }
 
+.elementTree{
+	width: 100%;
+	overflow-y: auto;
+	padding: 20px 0 60px 0;
+	height: 100%;
+	box-sizing: border-box;
+}
 /* elementView end */
+
+/* searchView start */
+.searchView{
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: 40px;
+	border-top:1px solid #e3e3e3;
+}
+
+.searchView-input{
+	width: 100%;
+	height: 100%;
+	line-height: 40px;
+	font-size: 20px;
+	padding:0;
+	border: 0;
+	padding-left: 10px;
+	box-sizing: border-box;
+}
+/* searchView end */
 
 /* jsonTree start */
 
