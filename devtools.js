@@ -159,12 +159,23 @@ searchViewComponent = Regular.extend({
     template: "#searchView",
     data: {
         value: "",
-        resultList: []
+        resultList: [],
+        index: 0
     },
     search: function() {
+        this.data.resultList = [];
+        this.data.index = 0;
         console.log('search', this.data.value);
         findElementByName(devtools.data.nodes, this.data.value, this.data.resultList);
         console.log(this.data.resultList);
+    },
+    next: function() {
+        var data = this.data;
+        if (data.resultList.length) {
+            foucsNode(data.resultList[data.index]);
+            data.index++;
+            if (data.index === data.resultList.length) data.index = 0;
+        }
     }
 });
 

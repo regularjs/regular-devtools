@@ -183,6 +183,31 @@ body {
 	padding-left: 10px;
 	box-sizing: border-box;
 }
+
+.searchView-btns{
+	text-align: right;
+	position: absolute;
+	right: 0;
+	top: 0;
+	line-height: 40px;
+	width: 300px;
+	padding-right: 20px;
+}
+
+.searchView-text {
+	font-size: 12px;
+	display: inline-block;
+	vertical-align: middle;
+	height: 40px;
+}
+
+.searchView-btn{
+	cursor: pointer;
+	display: inline-block;
+	vertical-align: middle;
+	height: 30px;
+	width: 30px;
+}
 /* searchView end */
 
 /* jsonTree start */

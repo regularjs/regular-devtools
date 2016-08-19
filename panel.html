@@ -27,6 +27,13 @@
     <script type='template/regular' id='searchView'>
         <div class="searchView">
             <input type="text" r-model={value} on-enter={this.search()} class="searchView-input" placeholder="Search By Component Name"/>
+            <div class="searchView-btns">
+                <div class="searchView-text">
+                    {resultList.length} results found
+                </div>
+                <img src="/assets/search.svg" class="searchView-btn" on-click={this.search()} alt="search"/>
+                <img src="/assets/next.svg" class="searchView-btn" on-click={this.next()} alt="next"/>
+            </div>
         </div>
     </script>
     <script type='template/regular' id='elementView'>
