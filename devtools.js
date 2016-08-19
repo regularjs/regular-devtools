@@ -168,13 +168,15 @@ searchViewComponent = Regular.extend({
         console.log('search', this.data.value);
         findElementByName(devtools.data.nodes, this.data.value, this.data.resultList);
         console.log(this.data.resultList);
+        foucsNode(this.data.resultList[0]);
     },
-    next: function() {
+    next: function(dir) {
         var data = this.data;
         if (data.resultList.length) {
-            foucsNode(data.resultList[data.index]);
-            data.index++;
+            data.index += dir;
             if (data.index === data.resultList.length) data.index = 0;
+            if (data.index === -1) data.index = data.resultList.length - 1;
+            foucsNode(data.resultList[data.index]);
         }
     }
 });

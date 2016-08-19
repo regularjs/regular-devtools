@@ -31,8 +31,9 @@
                 <div class="searchView-text">
                     {resultList.length} results found
                 </div>
-                <img src="/assets/search.svg" class="searchView-btn" on-click={this.search()} alt="search"/>
-                <img src="/assets/next.svg" class="searchView-btn" on-click={this.next()} alt="next"/>
+                <img src="/assets/search.svg" class="searchView-btn" on-click={this.search()} alt="search" title="Search"/>
+                <img src="/assets/prev.svg" class="searchView-btn" on-click={this.next(-1)} alt="prev" title="Previous result"/>
+                <img src="/assets/next.svg" class="searchView-btn" on-click={this.next(1)} alt="next" title="Next result"/>
             </div>
         </div>
     </script>
