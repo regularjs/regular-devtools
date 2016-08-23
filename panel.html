@@ -79,7 +79,7 @@
                         </div>
                     {/if}
                     <sidebarPane title="normal">
-                        <jsonTree source="{ currentNode.data }" />
+                        <jsonTree source="{ currentNode.data }" on-change="{ this.onDataChange($event) }" />
                     </sidebarPane>
                     <sidebarPane title="computed">
                         <jsonTree source="{ currentNode.computed }" />
@@ -94,35 +94,50 @@
     <script type='template/regular' id='jsonTree'>
         <div class='json-tree'>
             {#list Object.keys(source) as k}
-                <jsonTreeProp key={k} value={source[k]} />
+                <jsonTreeProp path={k} key={k} value={source[k]} />
             {/list}
         </div>
     </script>
     <script type='template/regular' id='jsonTreeProp'>
         <div class='json-tree-data'>
-            <div class='json-tree-data-key' on-click={opened = !opened}>
+            <div class='json-tree-data-key'>
                 <img
                     src="/assets/arrow.svg"
                     alt="arrow"
                     class="arrow item {opened ? 'arrow-down' : null} {hasChildren ? '': 'hide'}"
+                    on-click={opened = !opened}
                 />
-                <span class="key item">{key + ':'}&nbsp;</span>
-                {#if this.isPrimitive(value)}
-                    {#if type === 'String'}
-                        <span class='item string'>"{value}"</span>
+                <span class="key item" on-click={opened = !opened}>{key + ':'}</span>
+                
+                <span on-dblclick="{ this.onEdit() }">
+                {#if !editing}
+                    {#if this.isPrimitive(value)}
+                        {#if type === 'String'}
+                            <span class='item string'>"{value}"</span>
+                        {#else}
+                            <span class='item primitive'>{value}</span>
+                        {/if}
+                    {#elseif type === 'Array'}
+                        <span class='item others'>Array[{value.length}]</span>
                     {#else}
-                        <span class='item primitive'>{value}</span>
+                        <span class='item others'>{type}</span>
                     {/if}
-                {#elseif type === 'Array'}
-                    <span class='item others'>Array[{value.length}]</span>
-                {#else}
-                    <span class='item others'>{type}</span>
                 {/if}
+                <input
+                    r-hide="{ !editing }"
+                    class="edit"
+                    type="text"
+                    value="{ type === 'String' ? JSON.stringify(value) : value }"
+                    on-blur="{ this.onBlur($event) }"
+                    on-keyup="{ this.onEnter($event) }"
+                    ref="edit"
+                >
+                </span>
             </div>
             {#if opened && hasChildren}
             <div class='json-tree-data-props' style='padding-left:20px'>
                 {#list Object.keys(value) as k}
-                    <jsonTreeProp key={k} value={value[k]} padding={true} />
+                    <jsonTreeProp path={path + '.' + k} key={k} value={value[k]} padding={true} />
                 {/list}
             </div>
             {/if}

@@ -143,6 +143,16 @@ jsonTreeComponent = Regular.extend({
     template: "#jsonTree",
     data: {
         source: {}
+    },
+    config: function() {
+        var self = this;
+        function onClick(e) {
+            self.$emit('checkClickOutside', e.target);
+        }
+        document.addEventListener('click', onClick, false);
+        this.$on('$destroy', function() {
+            document.removeEventListener('click', onClick, false);
+        });
     }
 });
 
@@ -164,6 +174,65 @@ propComponent = Regular.extend({
                     ((data.value.length || Object.keys(data.value).length))
             }
         }
+    },
+    config: function() {
+        var self = this;
+        this.$parent.$on('checkClickOutside', function(v) {
+            if( self.$refs && self.$refs.edit && !self.$refs.edit.contains(v) ) {
+                self.data.editing = false;
+                self.$update();
+            }
+            self.$emit('checkClickOutside', v);
+        })
+    },
+    onEdit: function() {
+        if( !this.isPrimitive(this.data.value) ) {
+            return;
+        }
+        this.data.editing = true;
+        this.$update();
+        // select all when active
+        var input = this.$refs.edit;
+        input.setSelectionRange(0, input.value.length)
+    },
+    onBlur: function(e) {
+        this.data.editing = false;
+        this.$update();
+        this.editDone(e.target.value);
+    },
+    onEnter: function(e) {
+        // press enter
+        if( e.which === 13 ) {
+            this.$refs.edit.blur();
+        }
+    },
+    // when editing is finished
+    editDone: function(v) {
+        var tmp = this.data.value;
+        try {
+            tmp = JSON.parse(v);
+        } catch(e) {
+        }
+        
+        // if type is not primitive or new value equals original value, return
+        if( !this.isPrimitive(tmp) || tmp === this.data.value ) {
+            return;
+        }
+        
+        var parent = this;
+        while(parent = parent.$parent) {
+            if( parent.name === 'jsonTree' ) {
+                parent.$emit('change', {
+                    path: this.data.path,
+                    value: tmp,
+                    oldValue: this.data.value
+                });
+                break;
+            }
+        }
+        // TODO: maybe this can be deleted
+        this.data.value = tmp;
+        this.$update();
     },
     isPrimitive: isPrimitive,
     type: type
@@ -196,6 +265,26 @@ sidebarViewComponent = Regular.extend({
         console.log(prefix + "Tab is Changed to", key);
         // TODO: switch tab pane content here
         this.$update();
+    },
+    onDataChange: function(e) {
+        // send message to page, update instance by uuid and path
+        var fn = function(uuid, path, value) {
+            window.postMessage({
+                type: 'FROM_CONTENT_SCRIPT',
+                action: 'UPDATE_INSTANCE',
+                payload: {
+                    uuid: uuid,
+                    path: path,
+                    value: value
+                }
+            }, '*');
+        };
+        var uuid = this.data.currentNode.uuid;
+        chrome.devtools.inspectedWindow.eval(
+            '(' + fn + ')(' + JSON.stringify(uuid) + ',' + JSON.stringify(e.path) + ',' + JSON.stringify(e.value) + ')',
+            { useContentScriptContext: true },
+            function() {}
+        );
     },
     onInspectNode: function() {
         var uuid = this.data.currentNode.uuid;

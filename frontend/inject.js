@@ -1,5 +1,24 @@
+// listen for message from content script
+// ensure only executing window.addEventListener once
+if( !devtoolsModel ) {
+    window.addEventListener('message', function(event) {
+        // We only accept messages from ourselves
+        if (event.source !== window)
+            return;
+
+        var data = event.data;
+
+        if (data.type && (data.type === "FROM_CONTENT_SCRIPT")) {
+            if(data.action === 'UPDATE_INSTANCE') {
+                devtoolsModel && devtoolsModel.updateInstance(data.payload.uuid, data.payload.path, data.payload.value);
+            }
+        }
+    }, false);
+}
+
 // this is injected to the app page when the panel is activated.
 // this script serves as the model layer of the devtools
+// this lives in origin page context
 var devtoolsModel = (function() {
     var hook = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__;
     var ins = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins || [];
@@ -33,6 +52,54 @@ var devtoolsModel = (function() {
         });
         return computed;
     };
+
+    // setObjectByPath start
+    // https://github.com/sindresorhus/dot-prop
+    var isObj = function(arg) {
+        var type = typeof arg;
+        return arg !== null && (type === "object" || type === "function");
+    };
+
+    function getPathSegments(path) {
+        var pathArr = path.split('.');
+        var parts = [];
+
+        for (var i = 0; i < pathArr.length; i++) {
+            var p = pathArr[i];
+
+            while (p[p.length - 1] === '\\' && pathArr[i + 1] !== undefined) {
+                p = p.slice(0, -1) + '.';
+                p += pathArr[++i];
+            }
+
+            parts.push(p);
+        }
+
+        return parts;
+    }
+
+    var setObjectByPath = function(obj, path, value) {
+        if (!isObj(obj) || typeof path !== 'string') {
+            return;
+        }
+
+        var pathArr = getPathSegments(path);
+
+        for (var i = 0; i < pathArr.length; i++) {
+            var p = pathArr[i];
+
+            if (!isObj(obj[p])) {
+                obj[p] = {};
+            }
+
+            if (i === pathArr.length - 1) {
+                obj[p] = value;
+            }
+
+            obj = obj[p];
+        }
+    };
+    // setObjectByPath end
 
     walker = function(node, container, flag) {
         var n;
@@ -240,6 +307,22 @@ var devtoolsModel = (function() {
         },
         getNodeTree: function() {
             return storeGen(true);
+        },
+        updateInstance: function(uuid, path, value) {
+            // find instance by uuid
+            var instance;
+            for (var i = 0, len = ins.length; i < len; i++) {
+                if (ins[i].uuid === uuid) {
+                    instance = ins[i];
+                    break;
+                }
+            }
+            
+            if (!instance) return;
+
+            // update instance data by path
+            setObjectByPath(instance.data, path, value);
+            instance.$update();
         },
         print: function(uuid) {
             var i;

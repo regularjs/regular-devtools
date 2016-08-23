@@ -73,6 +73,8 @@ function installHook(window) {
         contain: function(selectedNode) {
             this.location.finalUUID = "";
             this.location.level = 0;
+            // devtoolsModel is in global scope
+            // TODO: rename devtoolsModel to __DevtoolsModel__
             var nodeTree = devtoolsModel.getNodeTree();
             for (var i = 0; i < nodeTree.length; i++) {
                 this.containByNode(selectedNode, nodeTree[i], 0);

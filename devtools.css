@@ -175,18 +175,19 @@ body {
 	margin-right: 3px;
 }
 
-.json-tree-data-key .arrow-down{
+.json-tree-data-key .arrow-down {
 	transform: rotate(90deg);
 }
 
 .json-tree-data-key {
+	position: relative;
 	line-height: 13px;
 	padding-bottom:6px;
 	white-space: nowrap;
 	font-size: 0;
 	cursor: default;
 }
-.json-tree-data-key .item{
+.json-tree-data-key .item {
 	display: inline-block;
 	vertical-align: middle;
 	font-size: 13px;
@@ -194,18 +195,30 @@ body {
 
 .json-tree-data .key{
 	color:#881391;
+	padding-right: 5px;
+}
+
+.json-tree-data .edit{
+    padding: 3px;
+    margin-top: -3px;
+    position: absolute;
+    border: solid 1px #e6e6e6;
+    box-sizing: border-box;
 }
 
 .json-tree-data .primitive{
 	color: #03c;
+	padding-right: 15px;
 }
 
 .json-tree-data .string{
 	color: #c41a16;
+	padding-right: 15px;
 }
 
 .json-tree-data .others{
 	color: #444;
+	padding-right: 15px;
 }
 
 .json-tree-data-key .hide{
