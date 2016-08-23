@@ -44,7 +44,7 @@ injectContentScript = function(tabId) {
 // Util
 isPrimitive = function(arg) {
     var type = typeof arg;
-    return arg === null || (type !== "object" && type !== "function");
+    return arg === null || (type !== "object" && type !== "function") ;
 };
 
 type = function(obj) {
@@ -246,16 +246,17 @@ sidebarViewComponent = Regular.extend({
         this.data.currentNode = {
             name: "",
             uuid: "",
-            data: {}
+            data: {},
+            others:{}
         };
         this.data.tabSource = [{
                 text: "data",
                 key: "data"
             },
-            /*{
+            {
                 text: 'others',
                 key: 'others'
-            }*/
+            }
         ];
         // defaults to `data` pane
         this.data.tabSelected = 'data';
@@ -298,6 +299,38 @@ sidebarViewComponent = Regular.extend({
                     console.log(prefix + "Inspect Error: ", isException);
                 }
             }
+        );
+    },
+    updateOthersData: function(uuid){
+        function getOthersData (uuid){
+            var othersNameArr = ['_directives','_filters', '_animations'];
+            var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) { return n.uuid === uuid })[0];
+            if (node) {
+                var constructor = node.constructor;
+                var result = {};
+                for (var prop in constructor) {
+                    if ( othersNameArr.indexOf(prop) != -1) {
+                        var tempObj= {};
+                        for (var key in constructor[prop]) {
+                            //tempObj[key] =  constructor[prop][key]; can't be function
+                            tempObj[key] = "function";
+                        }
+                        result[prop] = tempObj;
+                    }
+                }
+                return result;
+            }
+        }
+        chrome.devtools.inspectedWindow.eval(
+            "(" + getOthersData.toString() + ")" + "("  + JSON.stringify(uuid) + ")",
+            function(result, isException) {
+                if (isException) {
+                    console.log(prefix + "Inspect Error: ", isException);
+                    return;
+                }
+                console.dir(result);
+                this.data.currentNode.others =  result;
+            }.bind(this)
         );
     }
 });
@@ -418,6 +451,7 @@ devtools
         sidebarView.data.currentNode = nodes[0];
         elementView.data.loading = false;
         elementView.data.nodes = makeElementTree(nodes, []);
+        sidebarView.updateOthersData(nodes[0].uuid);
         sidebarView.$update();
         elementView.$update();
     })
@@ -425,6 +459,7 @@ devtools
         if (uuid !== sidebarView.data.currentNode.uuid) {
             var node = findElementByUuid(this.data.nodes, uuid);
             sidebarView.data.currentNode = node;
+            sidebarView.updateOthersData(uuid);
             sidebarView.$update();
         }
         printInConsole(uuid);
@@ -438,6 +473,7 @@ devtools
             sidebarView.$update();
         } else {
             sidebarView.data.currentNode = nodes[0];
+            sidebarView.updateOthersData(nodes[0].uuid);
             sidebarView.$update();
         }
     }).$on("elementViewReRender", function(nodes) {
