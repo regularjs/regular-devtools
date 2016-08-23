@@ -44,7 +44,7 @@ injectContentScript = function(tabId) {
 // Util
 isPrimitive = function(arg) {
     var type = typeof arg;
-    return arg === null || (type !== "object" && type !== "function") ;
+    return arg === null || (type !== "object" && type !== "function");
 };
 
 type = function(obj) {
@@ -186,6 +186,9 @@ propComponent = Regular.extend({
         })
     },
     onEdit: function() {
+        if(this.data.value == 'function'){
+            return;
+        }
         if( !this.isPrimitive(this.data.value) ) {
             return;
         }
@@ -328,8 +331,8 @@ sidebarViewComponent = Regular.extend({
                     console.log(prefix + "Inspect Error: ", isException);
                     return;
                 }
-                console.dir(result);
                 this.data.currentNode.others =  result;
+                this.$update();
             }.bind(this)
         );
     }
