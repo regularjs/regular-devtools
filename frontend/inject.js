@@ -328,8 +328,7 @@ var devtoolsModel = (function() {
             var i;
             for (i = 0; i < ins.length; i++) {
                 if (ins[i].uuid === uuid) {
-                    //console.log(ins[i]);
-                    window.$component = ins[i];
+                    window.$component = ins[i]; // console output $component as curUI component
                 }
             }
         }
