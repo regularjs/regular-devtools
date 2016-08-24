@@ -249,7 +249,7 @@ propComponent = Regular.extend({
     onBlur: function(e) {
         this.data.editing = false;
         this.$update();
-        this.editDone(e.target.value);
+        this.editDone(e);
     },
     onEnter: function(e) {
         // press enter
@@ -258,11 +258,14 @@ propComponent = Regular.extend({
         }
     },
     // when editing is finished
-    editDone: function(v) {
+    editDone: function(e) {
+        var v = e.target.value;
         var tmp = this.data.value;
         try {
             tmp = JSON.parse(v);
-        } catch (e) {}
+        } catch (error) {
+            e.target.value = this.data.value;
+        }
 
         // if type is not primitive or new value equals original value, return
         if (!this.isPrimitive(tmp) || tmp === this.data.value) {
