@@ -264,7 +264,7 @@ propComponent = Regular.extend({
         try {
             tmp = JSON.parse(v);
         } catch (error) {
-            e.target.value = this.data.value;
+            e.target.value = (type(tmp) ? JSON.stringify(tmp) : tmp);
         }
 
         // if type is not primitive or new value equals original value, return
