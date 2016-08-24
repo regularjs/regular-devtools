@@ -30,7 +30,7 @@ Your project must use a custom build of regularjs(before Regular v0.4.5 is relea
 
 ### Installation
 
-Install in [Chrome Webstore](https://chrome.google.com/webstore/detail/regular-developer-tools/ehlcoecgkhfjffhmdhmhbjkjjpaecmam)
+Install from [Chrome Webstore](https://chrome.google.com/webstore/detail/regular-developer-tools/ehlcoecgkhfjffhmdhmhbjkjjpaecmam)
 
 ### Development
 
