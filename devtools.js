@@ -23,7 +23,6 @@ var sidebarView;
 var elementView;
 var snycArr;
 var printInConsole;
-var snycObject;
 var findElementByUuidNonRecursive;
 var findElementByName;
 var dom = Regular.dom;
@@ -185,9 +184,13 @@ searchViewComponent = Regular.extend({
         }
     },
     search: function() {
+        if (!this.data.value) {
+            return;
+        }
+        var reg = new RegExp(this.data.value);
         this.data.resultList = [];
         this.data.index = 0;
-        findElementByName(devtools.data.nodes, this.data.value, this.data.resultList);
+        findElementByName(devtools.data.nodes, reg, this.data.resultList);
         this.data.hasSearched = true;
         if (this.data.resultList.length) {
             foucsNode(this.data.resultList[0]);
@@ -465,13 +468,13 @@ findElementByUuidNonRecursive = function(nodes, uuid) {
     }
 };
 
-findElementByName = function(nodes, name, container) {
+findElementByName = function(nodes, reg, container) {
     for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].name === name) {
+        if (reg.test(nodes[i].name)) {
             container.push(nodes[i].uuid);
         }
         if (nodes[i].childNodes.length) {
-            findElementByName(nodes[i].childNodes, name, container);
+            findElementByName(nodes[i].childNodes, reg, container);
         }
     }
 };
