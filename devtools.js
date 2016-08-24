@@ -240,12 +240,16 @@ propComponent = Regular.extend({
         this.$update();
         // select all when active
         var input = this.$refs.edit;
-        input.setSelectionRange(0, input.value.length);
+        if(type(this.data.value) === "String"){
+            input.setSelectionRange(1, input.value.length-1);
+        }else{
+            input.setSelectionRange(0, input.value.length);
+        }
     },
     onBlur: function(e) {
         this.data.editing = false;
         this.$update();
-        this.editDone(e.target.value);
+        this.editDone(e);
     },
     onEnter: function(e) {
         // press enter
@@ -254,11 +258,14 @@ propComponent = Regular.extend({
         }
     },
     // when editing is finished
-    editDone: function(v) {
+    editDone: function(e) {
+        var v = e.target.value;
         var tmp = this.data.value;
         try {
             tmp = JSON.parse(v);
-        } catch (e) {}
+        } catch (error) {
+            e.target.value = (type(tmp) ? JSON.stringify(tmp) : tmp);
+        }
 
         // if type is not primitive or new value equals original value, return
         if (!this.isPrimitive(tmp) || tmp === this.data.value) {
