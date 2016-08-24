@@ -88,7 +88,8 @@
         <div class="sidebar">
             <tabs source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></tabs>
             <div class="sidebar-content">
-                <div r-hide="{ tabSelected !== 'data' }">
+                {#if tabSelected == 'data'}
+                <div>
                     {#if currentNode.inspectable }
                         <div class='inspect' on-click={this.onInspectNode()}>
                             inspect
@@ -101,9 +102,20 @@
                         <jsonTree source="{ currentNode.computed }" />
                     </sidebarPane>
                 </div>
-                <div r-hide="{ tabSelected !== 'others' }">
-                    
+                {#elseif tabSelected == 'others' && currentNode && currentNode.others}
+                <div>
+                    <sidebarPane title="filters">
+                        <jsonTree source="{ currentNode.others._filters }" />
+                    </sidebarPane>
+                    <sidebarPane title="directives">
+                        <jsonTree source="{ currentNode.others._directives }" />
+                    </sidebarPane>
+                    <sidebarPane title="animations">
+                        <jsonTree source="{ currentNode.others._animations }" />
+                    </sidebarPane>
                 </div>
+                {#else}
+                {/if}
             </div>
         </div>
     </script>
