@@ -29,6 +29,7 @@ var findElementByName;
 var dom = Regular.dom;
 var foucsNode;
 var displayWarnning;
+var searchView;
 
 // Global Ref
 var lastSelected = null;
@@ -98,7 +99,7 @@ searchPathWarpper = function(nodes, uuid, path) {
     }
 };
 
-// on enter logic
+// on enter and on input logic
 Regular.event('enter', function(elem, fire) {
     function update(ev) {
         if (ev.which === 13) { // ENTER key
@@ -109,6 +110,16 @@ Regular.event('enter', function(elem, fire) {
     dom.on(elem, "keypress", update);
     return function destroy() { // return a destroy function
         dom.off(elem, "keypress", update);
+    };
+});
+
+Regular.event('input', function(elem, fire) {
+    function update(ev) {
+        fire(ev); // if key is enter , we fire the event;
+    }
+    dom.on(elem, "input", update);
+    return function destroy() { // return a destroy function
+        dom.off(elem, "input", update);
     };
 });
 
@@ -160,12 +171,24 @@ searchViewComponent = Regular.extend({
     data: {
         value: "",
         resultList: [],
-        index: 0
+        index: 0,
+        hasSearched: false
+    },
+    onInput: function() {
+        this.data.hasSearched = false;
+    },
+    onEnter: function() {
+        if (this.data.hasSearched) {
+            this.next(1);
+        } else {
+            this.search();
+        }
     },
     search: function() {
         this.data.resultList = [];
         this.data.index = 0;
         findElementByName(devtools.data.nodes, this.data.value, this.data.resultList);
+        this.data.hasSearched = true;
         if (this.data.resultList.length) {
             foucsNode(this.data.resultList[0]);
         }
@@ -178,6 +201,13 @@ searchViewComponent = Regular.extend({
             if (data.index === -1) data.index = data.resultList.length - 1;
             foucsNode(data.resultList[data.index]);
         }
+    },
+    reset: function() {
+        this.data.value = "";
+        this.data.resultList = [];
+        this.data.index = 0;
+        this.data.hasSearched = false;
+        this.$update();
     }
 });
 
@@ -230,19 +260,19 @@ propComponent = Regular.extend({
         });
     },
     onEdit: function() {
-        if(this.data.value == 'function'){
+        if (this.data.value === 'function') {
             return;
         }
-        if( !this.isPrimitive(this.data.value)) {
+        if (!this.isPrimitive(this.data.value)) {
             return;
         }
         this.data.editing = true;
         this.$update();
         // select all when active
         var input = this.$refs.edit;
-        if(type(this.data.value) === "String"){
-            input.setSelectionRange(1, input.value.length-1);
-        }else{
+        if (type(this.data.value) === "String") {
+            input.setSelectionRange(1, input.value.length - 1);
+        } else {
             input.setSelectionRange(0, input.value.length);
         }
     },
@@ -300,17 +330,15 @@ sidebarViewComponent = Regular.extend({
             name: "",
             uuid: "",
             data: {},
-            others:{}
+            others: {}
         };
         this.data.tabSource = [{
-                text: "data",
-                key: "data"
-            },
-            {
-                text: 'others',
-                key: 'others'
-            }
-        ];
+            text: "data",
+            key: "data"
+        }, {
+            text: 'others',
+            key: 'others'
+        }];
         // defaults to `data` pane
         this.data.tabSelected = 'data';
     },
@@ -355,18 +383,20 @@ sidebarViewComponent = Regular.extend({
             }
         );
     },
-    updateOthersData: function(uuid){
-        function getOthersData (uuid){
-            var othersNameArr = ['_directives','_filters', '_animations'];
-            var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) { return n.uuid === uuid })[0];
+    updateOthersData: function(uuid) {
+        function getOthersData(uuid) {
+            var othersNameArr = ['_directives', '_filters', '_animations'];
+            var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) {
+                return n.uuid === uuid;
+            })[0];
             if (node) {
                 var constructor = node.constructor;
                 var result = {};
                 for (var prop in constructor) {
-                    if ( othersNameArr.indexOf(prop) != -1) {
-                        var tempObj= {};
+                    if (othersNameArr.indexOf(prop) !== -1) {
+                        var tempObj = {};
                         for (var key in constructor[prop]) {
-                            //tempObj[key] =  constructor[prop][key]; can't be function
+                            // tempObj[key] =  constructor[prop][key]; can't be function
                             tempObj[key] = "function";
                         }
                         result[prop] = tempObj;
@@ -376,13 +406,13 @@ sidebarViewComponent = Regular.extend({
             }
         }
         chrome.devtools.inspectedWindow.eval(
-            "(" + getOthersData.toString() + ")" + "("  + JSON.stringify(uuid) + ")",
+            "(" + getOthersData.toString() + ")" + "(" + JSON.stringify(uuid) + ")",
             function(result, isException) {
                 if (isException) {
                     console.log(prefix + "Inspect Error: ", isException);
                     return;
                 }
-                this.data.currentNode.others =  result;
+                this.data.currentNode.others = result;
                 this.$update();
             }.bind(this)
         );
@@ -519,6 +549,8 @@ foucsNode = function(uuid) {
 elementView = devtools.$refs.elementView;
 // right sidebar view
 sidebarView = devtools.$refs.sidebarView;
+// searchView
+searchView = elementView.$refs.searchView;
 
 // register custom events
 devtools
@@ -565,6 +597,8 @@ devtools
         }
     }).$on("reload", function(event) {
         console.log(prefix + "On reload.");
+        console.log(searchView);
+        searchView.reset();
         // wait for the page to fully intialize
         setTimeout(function() {
             injectContentScript(event.tabId);

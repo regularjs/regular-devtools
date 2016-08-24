@@ -26,10 +26,16 @@
     </script>
     <script type='template/regular' id='searchView'>
         <div class="searchView">
-            <input type="text" r-model={value} on-enter={this.search()} class="searchView-input" placeholder="Search By Component Name"/>
+            <input type="text" r-model={value} on-enter={this.onEnter()} on-input={this.onInput()} class="searchView-input" placeholder="Search By Component Name"/>
             <div class="searchView-btns">
                 <div class="searchView-text">
-                    {resultList.length} results found
+                    {#if hasSearched && !resultList.length}
+                        Not found
+                    {#else}
+                        {#if resultList.length}
+                            {index + 1}/{resultList.length} found
+                        {/if}
+                    {/if}
                 </div>
                 <img src="/assets/search.svg" class="searchView-btn" on-click={this.search()} alt="search" title="Search"/>
                 <img src="/assets/prev.svg" class="searchView-btn" on-click={this.next(-1)} alt="prev" title="Previous result"/>
@@ -53,7 +59,7 @@
                 {/if}
             {/if}
             </div>
-            <searchView isolate></searchView>
+            <searchView isolate ref=searchView ></searchView>
         </div>
     </script>
     <script type='template/regular' id='element'>
