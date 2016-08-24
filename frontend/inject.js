@@ -247,7 +247,7 @@ var devtoolsModel = (function() {
                 } else {
                     node = {
                         uuid: ins[i].uuid,
-                        name: name || "root",
+                        name: ins[i].name || "Anonymous Component",
                         data: ins[i].data,
                         computed: computed,
                         childNodes: [],
