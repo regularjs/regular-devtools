@@ -165,10 +165,10 @@ searchViewComponent = Regular.extend({
     search: function() {
         this.data.resultList = [];
         this.data.index = 0;
-        console.log('search', this.data.value);
         findElementByName(devtools.data.nodes, this.data.value, this.data.resultList);
-        console.log(this.data.resultList);
-        foucsNode(this.data.resultList[0]);
+        if (this.data.resultList.length) {
+            foucsNode(this.data.resultList[0]);
+        }
     },
     next: function(dir) {
         var data = this.data;
@@ -204,7 +204,7 @@ propComponent = Regular.extend({
         hasChildren: {
             get: function(data) {
                 return ((this.type(data.value) === 'Array') || (this.type(data.value) === 'Object')) &&
-                    ((data.value.length || Object.keys(data.value).length))
+                    ((data.value.length || Object.keys(data.value).length));
             }
         }
     },
@@ -343,12 +343,19 @@ printInConsole = function(uuid) {
 };
 
 foucsNode = function(uuid) {
+    var elementViewDOM = document.querySelector(".elementTree");
+    var elementViewRect = elementViewDOM.getBoundingClientRect();
+    var evTop = elementViewRect.top;
+    var evHeight = elementViewRect.height;
     var node = findElementByUuid(devtools.data.nodes, uuid);
+    var path = [];
+    var i;
+    var currTop;
+
     sidebarView.data.currentNode = node;
     sidebarView.$update();
-    var path = [];
     searchPathWarpper(elementView._children, uuid, path);
-    for (var i = 0; i < path.length; i++) {
+    for (i = 0; i < path.length; i++) {
         path[i].data.opened = true;
     }
     if (lastSelected) {
@@ -356,7 +363,16 @@ foucsNode = function(uuid) {
     }
     lastSelected = path[0];
     path[0].data.selected = true;
+    printInConsole(uuid);
     elementView.$update();
+    currTop = path[0].group.children[0].last().getBoundingClientRect().top;
+    if ((currTop > evHeight) || (currTop < 0)) {
+        if (currTop < 0) {
+            elementViewDOM.scrollTop = Math.abs(currTop);
+        } else {
+            elementViewDOM.scrollTop += (currTop - evHeight);
+        }
+    }
 };
 
 // left element view
