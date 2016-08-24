@@ -1,5 +1,7 @@
 # Regular Developer Tools
 
+[![build][build-image]][build-url]
+
 > Regular Developer Tools is a Chrome Extension that allows real-time inspection of [Regular](http://regularjs.github.io/) components.
 
 *Regular Developer Tools is still in beta, any feedback is welcome* :clap:
@@ -48,3 +50,6 @@ Install from [Chrome Webstore](https://chrome.google.com/webstore/detail/regular
 ### License
 
 [MIT](https://github.com/regularjs/regular-devtools/blob/master/LICENSE)
+
+[build-image]: https://img.shields.io/circleci/project/regularjs/regular-devtools/master.svg?style=flat-square
+[build-url]: https://circleci.com/gh/regularjs/regular-devtools
