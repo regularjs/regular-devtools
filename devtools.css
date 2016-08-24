@@ -342,6 +342,7 @@ body {
     display: flex;
     align-items: center;
     color: #5a5a5a;
+    font-family: '.SFNSDisplay-Regular', 'Helvetica Neue', 'Lucida Grande', sans-serif;
 }
 .tabs-header-item.selected {
     border: 1px solid #ccc;
@@ -370,7 +371,8 @@ body {
     white-space: nowrap;
     overflow: hidden;
     color: #222;
-    font-size: 14px;
+    font-size: 12px;
+    font-family: '.SFNSDisplay-Regular', 'Helvetica Neue', 'Lucida Grande', sans-serif;
 }
 
 .sidebar-pane-content {

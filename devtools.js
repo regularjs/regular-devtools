@@ -28,10 +28,10 @@ var findElementByUuidNonRecursive;
 var findElementByName;
 var dom = Regular.dom;
 var foucsNode;
+var displayWarnning;
 
 // Global Ref
 var lastSelected = null;
-
 
 // Create a current inspected page unique connection to the background page, by its tabId
 backgroundPageConnection = chrome.runtime.connect({
@@ -189,6 +189,7 @@ jsonTreeComponent = Regular.extend({
     },
     config: function() {
         var self = this;
+
         function onClick(e) {
             self.$emit('checkClickOutside', e.target);
         }
@@ -221,22 +222,22 @@ propComponent = Regular.extend({
     config: function() {
         var self = this;
         this.$parent.$on('checkClickOutside', function(v) {
-            if( self.$refs && self.$refs.edit && !self.$refs.edit.contains(v) ) {
+            if (self.$refs && self.$refs.edit && !self.$refs.edit.contains(v)) {
                 self.data.editing = false;
                 self.$update();
             }
             self.$emit('checkClickOutside', v);
-        })
+        });
     },
     onEdit: function() {
-        if( !this.isPrimitive(this.data.value) ) {
+        if (!this.isPrimitive(this.data.value)) {
             return;
         }
         this.data.editing = true;
         this.$update();
         // select all when active
         var input = this.$refs.edit;
-        input.setSelectionRange(0, input.value.length)
+        input.setSelectionRange(0, input.value.length);
     },
     onBlur: function(e) {
         this.data.editing = false;
@@ -245,7 +246,7 @@ propComponent = Regular.extend({
     },
     onEnter: function(e) {
         // press enter
-        if( e.which === 13 ) {
+        if (e.which === 13) {
             this.$refs.edit.blur();
         }
     },
@@ -254,17 +255,16 @@ propComponent = Regular.extend({
         var tmp = this.data.value;
         try {
             tmp = JSON.parse(v);
-        } catch(e) {
-        }
-        
+        } catch (e) {}
+
         // if type is not primitive or new value equals original value, return
-        if( !this.isPrimitive(tmp) || tmp === this.data.value ) {
+        if (!this.isPrimitive(tmp) || tmp === this.data.value) {
             return;
         }
-        
+
         var parent = this;
-        while(parent = parent.$parent) {
-            if( parent.name === 'jsonTree' ) {
+        while (parent = parent.$parent) {
+            if (parent.name === 'jsonTree') {
                 parent.$emit('change', {
                     path: this.data.path,
                     value: tmp,
@@ -324,8 +324,9 @@ sidebarViewComponent = Regular.extend({
         };
         var uuid = this.data.currentNode.uuid;
         chrome.devtools.inspectedWindow.eval(
-            '(' + fn + ')(' + JSON.stringify(uuid) + ',' + JSON.stringify(e.path) + ',' + JSON.stringify(e.value) + ')',
-            { useContentScriptContext: true },
+            '(' + fn + ')(' + JSON.stringify(uuid) + ',' + JSON.stringify(e.path) + ',' + JSON.stringify(e.value) + ')', {
+                useContentScriptContext: true
+            },
             function() {}
         );
     },
@@ -431,6 +432,13 @@ printInConsole = function(uuid) {
     );
 };
 
+displayWarnning = function() {
+    if (elementView.data.loading) {
+        elementView.data.loading = false;
+        elementView.$update();
+    }
+};
+
 foucsNode = function(uuid) {
     var elementViewDOM = document.querySelector(".elementTree");
     var elementViewRect = elementViewDOM.getBoundingClientRect();
@@ -492,7 +500,6 @@ devtools
         this.data.nodes = nodes;
         var currNode = findElementByUuid(nodes, sidebarView.data.currentNode.uuid);
         if (currNode) {
-            // var node = snycObject(sidebarView.data.currentNode, currNode, {});
             sidebarView.data.currentNode = currNode;
             sidebarView.$update();
         } else {
@@ -515,6 +522,7 @@ devtools
         // wait for the page to fully intialize
         setTimeout(function() {
             injectContentScript(event.tabId);
+            setTimeout(displayWarnning, 4000);
         }, 2000);
     });
 
@@ -542,3 +550,6 @@ window.addEventListener("message", function(event) {
 }, false);
 
 injectContentScript();
+
+// waiting 4000ms, if still loading, remove loading and show warnning
+setTimeout(displayWarnning, 4000);
