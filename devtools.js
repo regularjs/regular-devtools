@@ -240,7 +240,11 @@ propComponent = Regular.extend({
         this.$update();
         // select all when active
         var input = this.$refs.edit;
-        input.setSelectionRange(0, input.value.length);
+        if(type(this.data.value) === "String"){
+            input.setSelectionRange(1, input.value.length-1);
+        }else{
+            input.setSelectionRange(0, input.value.length);
+        }
     },
     onBlur: function(e) {
         this.data.editing = false;
