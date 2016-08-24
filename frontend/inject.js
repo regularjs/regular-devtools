@@ -247,7 +247,7 @@ var devtoolsModel = (function() {
                 } else {
                     node = {
                         uuid: ins[i].uuid,
-                        name: name || "root",
+                        name: ins[i].name || "Anonymous Component",
                         data: ins[i].data,
                         computed: computed,
                         childNodes: [],
@@ -328,7 +328,7 @@ var devtoolsModel = (function() {
             var i;
             for (i = 0; i < ins.length; i++) {
                 if (ins[i].uuid === uuid) {
-                    console.log(ins[i]);
+                    window.$r = ins[i];
                 }
             }
         }

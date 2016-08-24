@@ -24,20 +24,36 @@
             <sidebarView ref=sidebarView isolate />
         </div>
     </script>
+    <script type='template/regular' id='searchView'>
+        <div class="searchView">
+            <input type="text" r-model={value} on-enter={this.search()} class="searchView-input" placeholder="Search By Component Name"/>
+            <div class="searchView-btns">
+                <div class="searchView-text">
+                    {resultList.length} results found
+                </div>
+                <img src="/assets/search.svg" class="searchView-btn" on-click={this.search()} alt="search" title="Search"/>
+                <img src="/assets/prev.svg" class="searchView-btn" on-click={this.next(-1)} alt="prev" title="Previous result"/>
+                <img src="/assets/next.svg" class="searchView-btn" on-click={this.next(1)} alt="next" title="Next result"/>
+            </div>
+        </div>
+    </script>
     <script type='template/regular' id='elementView'>
         <div class='elementView'>
-            {#if loading }
-                <img src='/assets/loading.svg' class='loading-img' />
-            {#else}
+            <div class="elementTree">
+                {#if loading }
+                    <img src='/assets/loading.svg' class='loading-img' />
+                {#else}
                 {#if nodes.length > 0}
-                {#list nodes as node}
-                    <element node={node} level={1}>
-                    </element>
-                {/list}
+                    {#list nodes as node}
+                        <element node={node} level={1}>
+                        </element>
+                    {/list}
                 {#else}
                     <div class="warnning">There is no Regular instance detected. Please check if you're using the latest version of Regularjs. </div>
                 {/if}
             {/if}
+            </div>
+            <searchView isolate></searchView>
         </div>
     </script>
     <script type='template/regular' id='element'>

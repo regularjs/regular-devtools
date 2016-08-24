@@ -16,6 +16,7 @@ var elementViewComponent;
 var propComponent;
 var sidebarViewComponent;
 var tabsComponent;
+var searchViewComponent;
 var devtools;
 var findElementByUuid;
 var sidebarView;
@@ -24,6 +25,9 @@ var snycArr;
 var printInConsole;
 var snycObject;
 var findElementByUuidNonRecursive;
+var findElementByName;
+var dom = Regular.dom;
+var foucsNode;
 
 // Global Ref
 var lastSelected = null;
@@ -94,7 +98,19 @@ searchPathWarpper = function(nodes, uuid, path) {
     }
 };
 
-
+// on enter logic
+Regular.event('enter', function(elem, fire) {
+    function update(ev) {
+        if (ev.which === 13) { // ENTER key
+            ev.preventDefault();
+            fire(ev); // if key is enter , we fire the event;
+        }
+    }
+    dom.on(elem, "keypress", update);
+    return function destroy() { // return a destroy function
+        dom.off(elem, "keypress", update);
+    };
+});
 
 // Regualr components for devtools' UI
 devtoolsViewComponent = Regular.extend({
@@ -138,6 +154,33 @@ elementViewComponent = Regular.extend({
     }
 });
 
+searchViewComponent = Regular.extend({
+    name: "searchView",
+    template: "#searchView",
+    data: {
+        value: "",
+        resultList: [],
+        index: 0
+    },
+    search: function() {
+        this.data.resultList = [];
+        this.data.index = 0;
+        findElementByName(devtools.data.nodes, this.data.value, this.data.resultList);
+        if (this.data.resultList.length) {
+            foucsNode(this.data.resultList[0]);
+        }
+    },
+    next: function(dir) {
+        var data = this.data;
+        if (data.resultList.length) {
+            data.index += dir;
+            if (data.index === data.resultList.length) data.index = 0;
+            if (data.index === -1) data.index = data.resultList.length - 1;
+            foucsNode(data.resultList[data.index]);
+        }
+    }
+});
+
 jsonTreeComponent = Regular.extend({
     name: "jsonTree",
     template: "#jsonTree",
@@ -171,7 +214,7 @@ propComponent = Regular.extend({
         hasChildren: {
             get: function(data) {
                 return ((this.type(data.value) === 'Array') || (this.type(data.value) === 'Object')) &&
-                    ((data.value.length || Object.keys(data.value).length))
+                    ((data.value.length || Object.keys(data.value).length));
             }
         }
     },
@@ -348,33 +391,16 @@ findElementByUuidNonRecursive = function(nodes, uuid) {
     }
 };
 
-//snycObject = function(oldObj, newObj, container) {
-//    for (var key in newObj) {
-//        if (!newObj.hasOwnProperty(key)) {
-//            continue;
-//        }
-//        if (oldObj[key]) {
-//            if (oldObj[key] === newObj[key]) {
-//                container[key] = oldObj[key];
-//            } else if (JSON.stringify(oldObj[key]) === JSON.stringify(newObj[key])) {
-//                container[key] = oldObj[key];
-//            } else if ((typeof(oldObj[key]) === "object") && (typeof(newObj[key]) === "object")) {
-//                if ((newObj[key] instanceof Array) && (oldObj[key] instanceof Array)) {
-//                    var temp = snycObject(oldObj[key], newObj[key], []);
-//                    container[key] = temp;
-//                } else {
-//                    var temp = snycObject(oldObj[key], newObj[key], {});
-//                    container[key] = temp;
-//                }
-//            } else {
-//                container[key] = newObj[key];
-//            }
-//        } else {
-//            container[key] = newObj[key];
-//        }
-//    }
-//    return container;
-//};
+findElementByName = function(nodes, name, container) {
+    for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].name === name) {
+            container.push(nodes[i].uuid);
+        }
+        if (nodes[i].childNodes.length) {
+            findElementByName(nodes[i].childNodes, name, container);
+        }
+    }
+};
 
 snycArr = function(oldArr, newArr, container) {
     for (var i = 0; i < newArr.length; i++) {
@@ -403,6 +429,39 @@ printInConsole = function(uuid) {
             }
         }
     );
+};
+
+foucsNode = function(uuid) {
+    var elementViewDOM = document.querySelector(".elementTree");
+    var elementViewRect = elementViewDOM.getBoundingClientRect();
+    var evTop = elementViewRect.top;
+    var evHeight = elementViewRect.height;
+    var node = findElementByUuid(devtools.data.nodes, uuid);
+    var path = [];
+    var i;
+    var currTop;
+
+    sidebarView.data.currentNode = node;
+    sidebarView.$update();
+    searchPathWarpper(elementView._children, uuid, path);
+    for (i = 0; i < path.length; i++) {
+        path[i].data.opened = true;
+    }
+    if (lastSelected) {
+        lastSelected.data.selected = false;
+    }
+    lastSelected = path[0];
+    path[0].data.selected = true;
+    printInConsole(uuid);
+    elementView.$update();
+    currTop = path[0].group.children[0].last().getBoundingClientRect().top;
+    if ((currTop > evHeight) || (currTop < 0)) {
+        if (currTop < 0) {
+            elementViewDOM.scrollTop = Math.abs(currTop);
+        } else {
+            elementViewDOM.scrollTop += (currTop - evHeight);
+        }
+    }
 };
 
 // left element view
@@ -449,25 +508,12 @@ devtools
     }).$on("currentNodeChange", function(uuid) {
         console.log(prefix + "On currentNodeChange.");
         if (sidebarView.data.currentNode.uuid !== uuid) {
-            var node = findElementByUuid(this.data.nodes, uuid);
-            sidebarView.data.currentNode = node;
-            sidebarView.$update();
-            var path = [];
-            searchPathWarpper(elementView._children, uuid, path);
-            for (var i = 0; i < path.length; i++) {
-                path[i].data.opened = true;
-            }
-            if (lastSelected) {
-                lastSelected.data.selected = false;
-            }
-            lastSelected = path[0];
-            path[0].data.selected = true;
-            elementView.$update();
+            foucsNode(uuid);
         }
     }).$on("reload", function(event) {
         console.log(prefix + "On reload.");
         // wait for the page to fully intialize
-        setTimeout(function(){
+        setTimeout(function() {
             injectContentScript(event.tabId);
         }, 2000);
     });
@@ -482,7 +528,7 @@ backgroundPageConnection.onMessage.addListener(function(message) {
     } else if (message.type === "pageReload") {
         elementView.data.loading = true;
         elementView.$update();
-        devtools.$emit("reload",{
+        devtools.$emit("reload", {
             tabId: message.tabId
         });
     }
