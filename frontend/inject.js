@@ -1,6 +1,8 @@
+var devtoolsModel;
+
 // listen for message from content script
 // ensure only executing window.addEventListener once
-if( !devtoolsModel ) {
+if (!devtoolsModel) {
     window.addEventListener('message', function(event) {
         // We only accept messages from ourselves
         if (event.source !== window)
@@ -9,8 +11,8 @@ if( !devtoolsModel ) {
         var data = event.data;
 
         if (data.type && (data.type === "FROM_CONTENT_SCRIPT")) {
-            if(data.action === 'UPDATE_INSTANCE') {
-                devtoolsModel && devtoolsModel.updateInstance(data.payload.uuid, data.payload.path, data.payload.value);
+            if (data.action === 'UPDATE_INSTANCE' && devtoolsModel) {
+                devtoolsModel.updateInstance(data.payload.uuid, data.payload.path, data.payload.value);
             }
         }
     }, false);
@@ -19,31 +21,31 @@ if( !devtoolsModel ) {
 // this is injected to the app page when the panel is activated.
 // this script serves as the model layer of the devtools
 // this lives in origin page context
-var devtoolsModel = (function() {
+devtoolsModel = (function() {
     var hook = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__;
     var ins = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins || [];
     var store = [];
     // node tree for DOM-Component search
-    var findElementByUuid;
+    // var findElementByUuid;
     // fetch all computed props from instance
     var fetchComputedProps;
     var nodeTree = [];
     var walker;
     var treeGen;
 
-    findElementByUuid = function(nodes, uuid) {
-        for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].uuid === uuid) {
-                return nodes[i];
-            }
-            if (nodes[i].childNodes.length) {
-                var result = findElementByUuid(nodes[i].childNodes, uuid);
-                if (result) {
-                    return result;
-                }
-            }
-        }
-    };
+    // findElementByUuid = function(nodes, uuid) {
+    //     for (var i = 0; i < nodes.length; i++) {
+    //         if (nodes[i].uuid === uuid) {
+    //             return nodes[i];
+    //         }
+    //         if (nodes[i].childNodes.length) {
+    //             var result = findElementByUuid(nodes[i].childNodes, uuid);
+    //             if (result) {
+    //                 return result;
+    //             }
+    //         }
+    //     }
+    // };
 
     fetchComputedProps = function(ins) {
         var computed = {};
@@ -317,7 +319,7 @@ var devtoolsModel = (function() {
                     break;
                 }
             }
-            
+
             if (!instance) return;
 
             // update instance data by path

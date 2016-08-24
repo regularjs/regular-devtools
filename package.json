@@ -6,6 +6,8 @@
   "directories": {
   },
   "scripts": {
+    "test": "npm run lint",
+    "lint": "eslint frontend backend entry.js devtools.js"
   },
   "repository": {
     "type": "git",

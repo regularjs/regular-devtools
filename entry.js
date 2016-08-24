@@ -11,7 +11,7 @@ chrome.devtools.panels.create("Regular",
                         extPanelWindow.postMessage({
                             type: "currNodeChange",
                             uuid: result
-                        }, "*")
+                        }, "*");
                     }
                 }
             );
