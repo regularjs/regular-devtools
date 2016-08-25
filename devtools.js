@@ -9,14 +9,7 @@ var prefix = "[Regular Devtools] ";
 var makeElementTree;
 var searchPath;
 var searchPathWarpper;
-var devtoolsViewComponent;
-var elementComponent;
-var jsonTreeComponent;
-var elementViewComponent;
-var propComponent;
-var sidebarViewComponent;
-var tabsComponent;
-var searchViewComponent;
+var DevtoolsViewComponent;
 var devtools;
 var findElementByUuid;
 var sidebarView;
@@ -123,14 +116,14 @@ Regular.event('input', function(elem, fire) {
 });
 
 // Regualr components for devtools' UI
-devtoolsViewComponent = Regular.extend({
+DevtoolsViewComponent = Regular.extend({
     template: "#devtoolsView",
     onRefresh: function() {
         chrome.devtools.inspectedWindow.reload();
     }
 });
 
-elementComponent = Regular.extend({
+Regular.extend({
     name: "element",
     template: "#element",
     data: {
@@ -155,7 +148,7 @@ elementComponent = Regular.extend({
     }
 });
 
-elementViewComponent = Regular.extend({
+Regular.extend({
     name: "elementView",
     template: "#elementView",
     data: {
@@ -164,7 +157,7 @@ elementViewComponent = Regular.extend({
     }
 });
 
-searchViewComponent = Regular.extend({
+Regular.extend({
     name: "searchView",
     template: "#searchView",
     data: {
@@ -214,7 +207,7 @@ searchViewComponent = Regular.extend({
     }
 });
 
-simpleJsonTreeComponent = Regular.extend({
+Regular.extend({
     name: 'simpleJsonTree',
     template: "#simpleJsonTree",
     data: {
@@ -222,7 +215,7 @@ simpleJsonTreeComponent = Regular.extend({
     }
 });
 
-jsonTreeComponent = Regular.extend({
+Regular.extend({
     name: "jsonTree",
     template: "#jsonTree",
     data: {
@@ -241,7 +234,7 @@ jsonTreeComponent = Regular.extend({
     }
 });
 
-propComponent = Regular.extend({
+Regular.extend({
     name: "jsonTreeProp",
     template: "#jsonTreeProp",
     data: {
@@ -313,8 +306,8 @@ propComponent = Regular.extend({
             return;
         }
 
-        var parent = this;
-        while (parent = parent.$parent) {
+        var parent = this.$parent;
+        while (parent) {
             if (parent.name === 'jsonTree') {
                 parent.$emit('change', {
                     path: this.data.path,
@@ -323,6 +316,7 @@ propComponent = Regular.extend({
                 });
                 break;
             }
+            parent = parent.$parent;
         }
         // TODO: maybe this can be deleted
         this.data.value = tmp;
@@ -332,7 +326,7 @@ propComponent = Regular.extend({
     type: type
 });
 
-sidebarViewComponent = Regular.extend({
+Regular.extend({
     name: 'sidebarView',
     template: '#sidebarView',
     config: function() {
@@ -383,7 +377,7 @@ sidebarViewComponent = Regular.extend({
     onInspectNode: function() {
         var uuid = this.data.currentNode.uuid;
         chrome.devtools.inspectedWindow.eval(
-            "var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) { return n.uuid === " + "'" + uuid + "'" + "})[0];" +
+            "var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) { return n.uuid === '" + uuid + "'})[0];" +
             "if (node) {" +
             "    inspect(node.group && node.group.children && node.group.children[0] && node.group.children[0].node && node.group.children[0].node() || node.parentNode);" +
             "}",
@@ -445,7 +439,7 @@ sidebarViewComponent = Regular.extend({
             }
         }
         chrome.devtools.inspectedWindow.eval(
-            "(" + getOthersData.toString() + ")" + "(" + JSON.stringify(uuid) + ")",
+            "(" + getOthersData.toString() + ")(" + JSON.stringify(uuid) + ")",
             function(result, isException) {
                 if (isException) {
                     console.log(prefix + "Inspect Error: ", isException);
@@ -458,7 +452,7 @@ sidebarViewComponent = Regular.extend({
     }
 });
 
-tabsComponent = Regular.extend({
+Regular.extend({
     name: 'tabs',
     template: '#tabs',
     onTabClick: function(key) {
@@ -469,13 +463,13 @@ tabsComponent = Regular.extend({
     }
 });
 
-var sidebarPaneComponent = Regular.extend({
+Regular.extend({
     name: 'sidebarPane',
     template: '#sidebarPane'
 });
 
 // init devtools
-devtools = new devtoolsViewComponent({
+devtools = new DevtoolsViewComponent({
     data: {
         nodes: []
     }
@@ -554,7 +548,6 @@ displayWarnning = function() {
 foucsNode = function(uuid) {
     var elementViewDOM = document.querySelector(".elementTree");
     var elementViewRect = elementViewDOM.getBoundingClientRect();
-    var evTop = elementViewRect.top;
     var evHeight = elementViewRect.height;
     var node = findElementByUuid(devtools.data.nodes, uuid);
     var path = [];
@@ -625,9 +618,11 @@ devtools
         }
     }).$on("elementViewReRender", function(nodes) {
         console.log(prefix + "On elementViewRerender.");
+        /* eslint-disable no-unused-vars */
         var oldArr = elementView.data.nodes;
         var newArr = makeElementTree(nodes, []);
         oldArr = snycArr(oldArr, newArr, []);
+        /* eslint-enable no-unused-vars */
         elementView.$update();
     }).$on("currentNodeChange", function(uuid) {
         console.log(prefix + "On currentNodeChange.");
