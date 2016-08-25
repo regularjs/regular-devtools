@@ -413,14 +413,18 @@ Regular.extend({
                             }
                             tempArr.sort(); // same level sort
                             tempArr.forEach(function(value){
-                               if(!tempObj[value]){  // level big will not show
+                               if(!tempObj[value]){  // same command big level not show
 
                                    if(curUI.constructor._addProtoInheritCache){
                                        tempObj[value] = "regular";
 
                                    }else if(curUI.reset && !curUI.__proto__.reset && curUI.__proto__.constructor._addProtoInheritCache){
-                                       // very low possible be developer's Component, but need to show RegularUI tag
-                                       tempObj[value] =  "regularUI";
+                                       var funStr = curUI.reset.toString();
+                                       if(funStr.indexOf("this.data = {}") != -1 && funStr.indexOf("this.config()") != -1){
+                                           tempObj[value] =  "regularUI";  // very low possible be developer's Component
+                                       }else {
+                                           tempObj[value] = curUI.name == undefined? '' : curUI.name;
+                                       }
                                    }
                                    else{
                                        tempObj[value] = curUI.name == undefined? '' : curUI.name; // same level same color

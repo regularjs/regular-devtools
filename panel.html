@@ -138,7 +138,7 @@
             {#list Object.keys(source) as k}
               <div class="json-tree-data">
                   <div class='json-tree-data-key'>
-                      <span class="key item">{k}:</span>
+                      <span class="key item">{k}{source[k] ===''? '': ':'}</span>
                       <span class='item gray'>{source[k]}</span>
                   </div>
               </div>
