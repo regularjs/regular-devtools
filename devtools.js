@@ -402,29 +402,27 @@ Regular.extend({
                         var tempObj = {};
                         var curObj = constructor[prop];
                         var curUI = constructor.prototype;
-                        var level = 0;
                         while (curObj && curUI) {
                             var tempArr = [];
-                            level++;
                             for (var key in curObj) {
                                 if (curObj.hasOwnProperty(key)) {
                                     tempArr.push(key);
                                 }
                             }
                             /* eslint-disable rule-name */
-                            
+
                             tempArr.sort(); // same level sort
                             tempArr.forEach(function(value) {
                                 if (!tempObj[value]) {  // same command big level not show
 
-                                    if (curUI.constructor._addProtoInheritCache){
+                                    if (curUI.constructor._addProtoInheritCache) {
                                         tempObj[value] = "regular";
 
-                                    } else if(curUI.reset && !curUI.__proto__.reset && curUI.__proto__.constructor._addProtoInheritCache){
+                                    } else if (curUI.reset && !curUI.__proto__.reset && curUI.__proto__.constructor._addProtoInheritCache) {
 
                                         var funStr = curUI.reset.toString();
-                                        if (funStr.indexOf("this.data = {}") !== -1 && funStr.indexOf("this.config()") !== -1){
-                                            tempObj[value] =  "regularUI";  // very low possible be developer's Component
+                                        if (funStr.indexOf("this.data = {}") !== -1 && funStr.indexOf("this.config()") !== -1) {
+                                            tempObj[value] = "regularUI";  // very low possible be developer's Component
                                         }else {
                                             tempObj[value] = curUI.name === undefined? '' : curUI.name;
                                         }
@@ -439,7 +437,6 @@ Regular.extend({
 
                             /* eslint-enable rule-name */
                         }
-
 
                         result[prop] = tempObj;
                     }
