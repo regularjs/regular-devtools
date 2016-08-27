@@ -268,6 +268,11 @@ body {
 	padding-right: 15px;
 }
 
+.json-tree-data .gray{
+	color: rgb(155, 147, 160);
+	padding-right: 15px;
+}
+
 .json-tree-data .others{
 	color: #444;
 	padding-right: 15px;

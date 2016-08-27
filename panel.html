@@ -111,13 +111,13 @@
                 {#elseif tabSelected == 'others' && currentNode && currentNode.others}
                 <div>
                     <sidebarPane title="filters">
-                        <jsonTree source="{ currentNode.others._filters }" />
+                        <simpleJsonTree source="{ currentNode.others._filters }" />
                     </sidebarPane>
                     <sidebarPane title="directives">
-                        <jsonTree source="{ currentNode.others._directives }" />
+                        <simpleJsonTree source="{ currentNode.others._directives }" />
                     </sidebarPane>
                     <sidebarPane title="animations">
-                        <jsonTree source="{ currentNode.others._animations }" />
+                        <simpleJsonTree source="{ currentNode.others._animations }" />
                     </sidebarPane>
                 </div>
                 {#else}
@@ -132,6 +132,20 @@
             {/list}
         </div>
     </script>
+
+    <script type='template/regular' id='simpleJsonTree'>
+        <div class='json-tree simpleJsonTree'>
+            {#list Object.keys(source) as k}
+              <div class="json-tree-data">
+                  <div class='json-tree-data-key'>
+                      <span class="key item">{k}{source[k] ===''? '': ':'}</span>
+                      <span class='item gray'>{source[k]}</span>
+                  </div>
+              </div>
+            {/list}
+        </div>
+    </script>
+
     <script type='template/regular' id='jsonTreeProp'>
         <div class='json-tree-data'>
             <div class='json-tree-data-key'>
