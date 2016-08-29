@@ -22,6 +22,7 @@ var dom = Regular.dom;
 var foucsNode;
 var displayWarnning;
 var searchView;
+var ready = false;
 
 // Global Ref
 var lastSelected = null;
@@ -413,13 +414,13 @@ Regular.extend({
 
                             tempArr.sort(); // same level sort
                             tempArr.forEach(function(value) {
-                                if (!tempObj[value]) {  // same command big level not show
+                                if (!tempObj[value]) { // same command big level not show
                                     if (curUI.constructor._addProtoInheritCache) {
                                         tempObj[value] = "regular";
                                     } else if (curUI.reset && !curUI.__proto__.reset && curUI.__proto__.constructor._addProtoInheritCache) {
                                         var funStr = curUI.reset.toString();
                                         if (funStr.indexOf("this.data = {}") !== -1 && funStr.indexOf("this.config()") !== -1) {
-                                            tempObj[value] = "regularUI";  // very low possible be developer's Component
+                                            tempObj[value] = "regularUI"; // very low possible be developer's Component
                                         } else {
                                             tempObj[value] = curUI.name === undefined ? '' : curUI.name;
                                         }
@@ -597,6 +598,7 @@ devtools
         sidebarView.updateOthersData(nodes[0].uuid);
         sidebarView.$update();
         elementView.$update();
+        ready = true;
     })
     .$on("clickElement", function(uuid) {
         if (uuid !== sidebarView.data.currentNode.uuid) {
@@ -632,8 +634,8 @@ devtools
             foucsNode(uuid);
         }
     }).$on("reload", function(event) {
+        ready = false;
         console.log(prefix + "On reload.");
-        console.log(searchView);
         searchView.reset();
         // wait for the page to fully intialize
         setTimeout(function() {
@@ -660,7 +662,7 @@ backgroundPageConnection.onMessage.addListener(function(message) {
 
 // listen for messge when switch from element tab to regular tab
 window.addEventListener("message", function(event) {
-    if (event.data.type === "currNodeChange") {
+    if (event.data.type === "currNodeChange" && ready) {
         devtools.$emit("currentNodeChange", event.data.uuid);
     }
 }, false);

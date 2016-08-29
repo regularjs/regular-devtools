@@ -25,27 +25,10 @@ devtoolsModel = (function() {
     var hook = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__;
     var ins = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins || [];
     var store = [];
-    // node tree for DOM-Component search
-    // var findElementByUuid;
-    // fetch all computed props from instance
     var fetchComputedProps;
     var nodeTree = [];
     var walker;
     var treeGen;
-
-    // findElementByUuid = function(nodes, uuid) {
-    //     for (var i = 0; i < nodes.length; i++) {
-    //         if (nodes[i].uuid === uuid) {
-    //             return nodes[i];
-    //         }
-    //         if (nodes[i].childNodes.length) {
-    //             var result = findElementByUuid(nodes[i].childNodes, uuid);
-    //             if (result) {
-    //                 return result;
-    //             }
-    //         }
-    //     }
-    // };
 
     fetchComputedProps = function(ins) {
         var computed = {};
@@ -55,6 +38,21 @@ devtoolsModel = (function() {
         return computed;
     };
 
+    // Returns true if it is a DOM node
+    function isNode(o) {
+        return (
+            typeof Node === "object" ? o instanceof Node :
+            o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
+        );
+    }
+
+    // Returns true if it is a DOM element
+    function isElement(o) {
+        return (
+            typeof HTMLElement === "object" ? o instanceof HTMLElement :
+            o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
+        );
+    }
     // setObjectByPath start
     // https://github.com/sindresorhus/dot-prop
     var isObj = function(arg) {
@@ -206,14 +204,18 @@ devtoolsModel = (function() {
     };
 
     // eliminate circular reference
-    var sanitize = function(store) {
-        var str = JSON.stringify(store, function(key, value) {
-            if (value instanceof Regular) {
-                return;
+    var sanitize = function(obj) {
+        return JSON.parse(JSON.stringify(obj, function(key, item) {
+            if ((item !== null && typeof item === "object")) {
+                if (Object.prototype.toString.call(item) === "[object Object]" && !item.constructor.prototype.hasOwnProperty("isPrototypeOf")) {
+                    return "[Circular]";
+                } else if (isNode(item) || isElement(item)) {
+                    return "[Circular]";
+                }
+                return item;
             }
-            return value;
-        });
-        return JSON.parse(str);
+            return item;
+        }));
     };
 
     var storeGen = function(flag) {
