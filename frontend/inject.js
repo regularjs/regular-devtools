@@ -137,9 +137,20 @@ devtoolsModel = (function() {
                 }
                 container.push(n);
             } else {
+                // if node.name not exists, find node name defined using Compnoent.component() on parent component
+                if (!node.name && node.$parent) {
+                    let obj = node.$parent.constructor._components;
+                    let keys = Object.keys(obj);
+                    for (let i = 0; i < keys.length; i++) {
+                        if (obj[keys[i]] === node.constructor) {
+                            node.name = keys[i];
+                            break;
+                        }
+                    }
+                }
                 n = {
                     uuid: node.uuid,
-                    name: node.name || "node",
+                    name: node.name || "Anonymous Component",
                     data: node.data,
                     childNodes: [],
                     inspectable: (node.node || node.group.children)
