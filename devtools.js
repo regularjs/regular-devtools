@@ -589,13 +589,15 @@ searchView = elementView.$refs.searchView;
 
 // register custom events
 devtools
-    .$on("initNodes", function(nodes) {
+    .$on("initNodes", function(nodesStr) {
         console.log(prefix + "On initNodes.");
+        let nodes = CircularJSON.parse(nodesStr);
         this.data.nodes = nodes;
         sidebarView.data.currentNode = nodes[0];
         elementView.data.loading = false;
         elementView.data.nodes = makeElementTree(nodes, []);
-        sidebarView.updateOthersData(nodes[0].uuid);
+        //sidebarView.updateOthersData(nodes[0].uuid);
+        console.log(sidebarView)
         sidebarView.$update();
         elementView.$update();
         ready = true;
@@ -608,8 +610,9 @@ devtools
             sidebarView.$update();
         }
         printInConsole(uuid);
-    }).$on("stateViewReRender", function(nodes) {
+    }).$on("stateViewReRender", function(nodesStr) {
         console.log(prefix + "On stateViewRender.");
+        let nodes = CircularJSON.parse(nodesStr);
         this.data.nodes = nodes;
         var currNode = findElementByUuid(nodes, sidebarView.data.currentNode.uuid);
         if (currNode) {
@@ -620,8 +623,9 @@ devtools
             sidebarView.updateOthersData(nodes[0].uuid);
             sidebarView.$update();
         }
-    }).$on("elementViewReRender", function(nodes) {
+    }).$on("elementViewReRender", function(nodesStr) {
         console.log(prefix + "On elementViewRerender.");
+        let nodes = CircularJSON.parse(nodesStr);
         /* eslint-disable no-unused-vars */
         var oldArr = elementView.data.nodes;
         var newArr = makeElementTree(nodes, []);

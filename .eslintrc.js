@@ -14,6 +14,7 @@ module.exports = {
     "globals": {
         "devtoolsModel": true,
         "chrome":true,
-        "Regular":true
+        "Regular":true,
+        "CircularJSON":true
     }
 };

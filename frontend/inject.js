@@ -29,6 +29,7 @@ devtoolsModel = (function() {
     var nodeTree = [];
     var walker;
     var treeGen;
+    var sanitize;
 
     fetchComputedProps = function(ins) {
         var computed = {};
@@ -215,19 +216,37 @@ devtoolsModel = (function() {
     };
 
     // eliminate circular reference
-    var sanitize = function(obj) {
-        return JSON.parse(JSON.stringify(obj, function(key, item) {
+    sanitize = function(obj) {
+        Object.keys(obj).map((key, index) => {
+            let item = obj[key];
             if ((item !== null && typeof item === "object")) {
                 if (Object.prototype.toString.call(item) === "[object Object]" && !item.constructor.prototype.hasOwnProperty("isPrototypeOf")) {
-                    return "[Circular]";
+                    obj[key] = "[Circular]";
                 } else if (isNode(item) || isElement(item)) {
-                    return "[Circular]";
+                    obj[key] = "[Circular]";
                 }
-                return item;
             }
-            return item;
-        }));
+            return key;
+        });
     };
+
+    /**
+    var sanitize = function(argument) {
+        // body...
+    };
+
+    var sanitizeValue = function(item) {
+        if ((item !== null && typeof item === "object")) {
+            if (Object.prototype.toString.call(item) === "[object Object]" && !item.constructor.prototype.hasOwnProperty("isPrototypeOf")) {
+                return "[Circular]";
+            } else if (isNode(item) || isElement(item)) {
+                return "[Circular]";
+            }
+        }
+        if 
+        return item;
+    };
+    **/
 
     var storeGen = function(flag) {
         var node;
@@ -277,8 +296,17 @@ devtoolsModel = (function() {
         if (flag) {
             return nodeTree;
         }
-        store = sanitize(store);
-        return store;
+        return CircularJSON.stringify(store, function(key, item) {
+            if ((item !== null && typeof item === "object")) {
+                if (Object.prototype.toString.call(item) === "[object Object]" && !item.constructor.prototype.hasOwnProperty("isPrototypeOf")) {
+                    return "[Circular]";
+                } else if (isNode(item) || isElement(item)) {
+                    return "[DOM node]";
+                }
+                return item;
+            }
+            return item;
+        });
     };
 
     // generate uuid for the first time

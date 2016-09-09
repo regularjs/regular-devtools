@@ -24,4 +24,6 @@ window.addEventListener("message", function(event) {
     }
 }, false);
 
+injectScript(chrome.extension.getURL('frontend/circular-json.js'), 'body');
 injectScript(chrome.extension.getURL('frontend/inject.js'), 'body');
+
