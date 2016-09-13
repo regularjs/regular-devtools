@@ -1,3 +1,5 @@
+'use strict';
+
 var devtoolsModel;
 
 // listen for message from content script
@@ -29,7 +31,8 @@ devtoolsModel = (function() {
     var nodeTree = [];
     var walker;
     var treeGen;
-    var sanitize;
+    var maskNode;
+    var getDomNode;
 
     fetchComputedProps = function(ins) {
         var computed = {};
@@ -102,6 +105,20 @@ devtoolsModel = (function() {
     };
     // setObjectByPath end
 
+    getDomNode = function(node) {
+        var container = [];
+        if (node.node && (typeof node.node === "object")) {
+            container.push(node.node);
+        } else if (node.group) {
+            for (let i = 0; i < node.group.children.length; i++) {
+                if (node.group.get(i).type) {
+                    container.push(node.group.get(i).node());
+                }
+            }
+        }
+        return container;
+    };
+
     walker = function(node, container, flag) {
         var n;
         var i;
@@ -124,15 +141,7 @@ devtoolsModel = (function() {
                     node: [],
                     ref: node
                 };
-                if (node.node && (typeof node.node === "object")) {
-                    n.node.push(node.node);
-                } else if (node.group) {
-                    for (i = 0; i < node.group.children.length; i++) {
-                        if (node.group.get(i).type) {
-                            n.node.push(node.group.get(i).node());
-                        }
-                    }
-                }
+                n.node = getDomNode(n);
                 if (node.group) {
                     treeGen(node, n.childNodes, flag);
                 }
@@ -154,7 +163,7 @@ devtoolsModel = (function() {
                     name: node.name || "Anonymous Component",
                     data: node.data,
                     childNodes: [],
-                    inspectable: (node.node || node.group.children)
+                    inspectable: false
                 };
                 if (node.node) {
                     n.inspectable = true;
@@ -215,39 +224,6 @@ devtoolsModel = (function() {
         }
     };
 
-    // eliminate circular reference
-    sanitize = function(obj) {
-        Object.keys(obj).map((key, index) => {
-            let item = obj[key];
-            if ((item !== null && typeof item === "object")) {
-                if (Object.prototype.toString.call(item) === "[object Object]" && !item.constructor.prototype.hasOwnProperty("isPrototypeOf")) {
-                    obj[key] = "[Circular]";
-                } else if (isNode(item) || isElement(item)) {
-                    obj[key] = "[Circular]";
-                }
-            }
-            return key;
-        });
-    };
-
-    /**
-    var sanitize = function(argument) {
-        // body...
-    };
-
-    var sanitizeValue = function(item) {
-        if ((item !== null && typeof item === "object")) {
-            if (Object.prototype.toString.call(item) === "[object Object]" && !item.constructor.prototype.hasOwnProperty("isPrototypeOf")) {
-                return "[Circular]";
-            } else if (isNode(item) || isElement(item)) {
-                return "[Circular]";
-            }
-        }
-        if 
-        return item;
-    };
-    **/
-
     var storeGen = function(flag) {
         var node;
         if (!flag) {
@@ -307,6 +283,38 @@ devtoolsModel = (function() {
             }
             return item;
         });
+    };
+
+    var highLighter = function(uuid) {
+        if (!uuid) {
+            if (maskNode) {
+                document.querySelector("body").removeChild(maskNode);
+                maskNode = null;
+            }
+            return;
+        }
+
+        // find node by uuid
+        var node = ins.filter(function(n) {
+            return n.uuid === uuid;
+        })[0];
+
+        var domNode = getDomNode(node)[0];
+        var rect = domNode.getBoundingClientRect();
+        if (maskNode) {
+            document.querySelector("body").removeChild(maskNode);
+        }
+
+        // draw mask
+        maskNode = document.createElement("div");
+        maskNode.style.position = "absolute";
+        maskNode.style.left = rect.left + "px";
+        maskNode.style.top = rect.top + "px";
+        maskNode.style.width = rect.width + "px";
+        maskNode.style.height = rect.height + "px";
+        maskNode.style.backgroundColor = "rgba(145, 183, 228, 0.6)";
+        maskNode.style.zIndex = 999;
+        document.querySelector("body").appendChild(maskNode);
     };
 
     // generate uuid for the first time
@@ -374,7 +382,8 @@ devtoolsModel = (function() {
                     window.$r = ins[i]; // console output $component as curUI component
                 }
             }
-        }
+        },
+        highLighter: highLighter
     };
 })();
 

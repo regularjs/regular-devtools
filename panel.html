@@ -51,7 +51,7 @@
                 {#else}
                 {#if nodes.length > 0}
                     {#list nodes as node}
-                        <element node={node} level={1}>
+                        <element node={node} level={1} >
                         </element>
                     {/list}
                 {#else}
@@ -64,7 +64,7 @@
     </script>
     <script type='template/regular' id='element'>
         <div class="element purple {selected ? 'selected' : 'element-tag'}"
-        style="padding-left:{level*30}px;}" on-click={this.onClick(node)}>
+        style="padding-left:{level*30}px;}" on-click={this.onClick(node)} on-mouseenter={this.onMouseEnter(node.uuid, node.inspectable)}>
             <div class="borderline"></div>
             <img src="/assets/arrow.svg"
             style="margin-left: -10px;"

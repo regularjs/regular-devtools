@@ -55,6 +55,7 @@ makeElementTree = function(nodes, container) {
             name: nodes[i].name,
             uuid: nodes[i].uuid,
             shadowFlag: nodes[i].shadowFlag,
+            inspectable: nodes[i].inspectable,
             childNodes: []
         };
         container.push(node);
@@ -116,6 +117,16 @@ Regular.event('input', function(elem, fire) {
     };
 });
 
+Regular.event('mouseenter', function(elem, fire) {
+    function update(ev) {
+        fire(ev);
+    }
+    dom.on(elem, "mouseenter", update);
+    return function destroy() { // return a destroy function
+        dom.off(elem, "mouseenter", update);
+    };
+});
+
 // Regualr components for devtools' UI
 DevtoolsViewComponent = Regular.extend({
     template: "#devtoolsView",
@@ -130,6 +141,9 @@ Regular.extend({
     data: {
         selected: false,
         opened: false
+    },
+    onMouseEnter: function(uuid, inspectable) {
+        sidebarView.highLightNode(uuid, inspectable);
     },
     onClick: function(node) {
         if (lastSelected) {
@@ -351,7 +365,6 @@ Regular.extend({
     onTabChange: function(key) {
         this.data.tabSelected = key;
         console.log(prefix + "Tab is Changed to", key);
-        // TODO: switch tab pane content here
         this.$update();
     },
     onDataChange: function(e) {
@@ -382,6 +395,17 @@ Regular.extend({
             "if (node) {" +
             "    inspect(node.group && node.group.children && node.group.children[0] && node.group.children[0].node && node.group.children[0].node() || node.parentNode);" +
             "}",
+            function(result, isException) {
+                if (isException) {
+                    console.log(prefix + "Inspect Error: ", isException);
+                }
+            }
+        );
+    },
+    highLightNode: function(uuid, inspectable) {
+        var evalStr = inspectable ? "devtoolsModel.highLighter('" + uuid + "')" : "devtoolsModel.highLighter()";
+        chrome.devtools.inspectedWindow.eval(
+            evalStr,
             function(result, isException) {
                 if (isException) {
                     console.log(prefix + "Inspect Error: ", isException);
@@ -596,8 +620,7 @@ devtools
         sidebarView.data.currentNode = nodes[0];
         elementView.data.loading = false;
         elementView.data.nodes = makeElementTree(nodes, []);
-        //sidebarView.updateOthersData(nodes[0].uuid);
-        console.log(sidebarView)
+        sidebarView.updateOthersData(nodes[0].uuid);
         sidebarView.$update();
         elementView.$update();
         ready = true;
@@ -629,7 +652,7 @@ devtools
         /* eslint-disable no-unused-vars */
         var oldArr = elementView.data.nodes;
         var newArr = makeElementTree(nodes, []);
-        oldArr = snycArr(oldArr, newArr, []);
+        elementView.data.nodes = snycArr(oldArr, newArr, []);
         /* eslint-enable no-unused-vars */
         elementView.$update();
     }).$on("currentNodeChange", function(uuid) {

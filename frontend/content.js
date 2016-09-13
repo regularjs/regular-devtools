@@ -19,7 +19,6 @@ window.addEventListener("message", function(event) {
         return;
 
     if (event.data.type && (event.data.type === "FROM_PAGE")) {
-        console.log(port);
         port.postMessage(event.data.data);
     }
 }, false);
