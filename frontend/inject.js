@@ -32,7 +32,9 @@ devtoolsModel = (function() {
     var walker;
     var treeGen;
     var maskNode;
+    var labelNode;
     var getDomNode;
+    var setLabelPositon;
 
     fetchComputedProps = function(ins) {
         var computed = {};
@@ -141,7 +143,7 @@ devtoolsModel = (function() {
                     node: [],
                     ref: node
                 };
-                n.node = getDomNode(n);
+                n.node = getDomNode(node);
                 if (node.group) {
                     treeGen(node, n.childNodes, flag);
                 }
@@ -289,7 +291,9 @@ devtoolsModel = (function() {
         if (!uuid) {
             if (maskNode) {
                 document.querySelector("body").removeChild(maskNode);
+                document.querySelector("body").removeChild(labelNode);
                 maskNode = null;
+                labelNode = null;
             }
             return;
         }
@@ -303,18 +307,75 @@ devtoolsModel = (function() {
         var rect = domNode.getBoundingClientRect();
         if (maskNode) {
             document.querySelector("body").removeChild(maskNode);
+            document.querySelector("body").removeChild(labelNode);
         }
 
         // draw mask
         maskNode = document.createElement("div");
         maskNode.style.position = "absolute";
         maskNode.style.left = rect.left + "px";
-        maskNode.style.top = rect.top + "px";
-        maskNode.style.width = rect.width + "px";
+        maskNode.style.top = rect.top + window.scrollY + "px";
+        maskNode.style.width = rect.width + window.scrollX + "px";
         maskNode.style.height = rect.height + "px";
         maskNode.style.backgroundColor = "rgba(145, 183, 228, 0.6)";
         maskNode.style.zIndex = 999;
         document.querySelector("body").appendChild(maskNode);
+
+        // draw label
+        var demensionStr = "\n" + rect.width + " x " + rect.height;
+        labelNode = document.createElement("div");
+        labelNode.textContent = (node.name || "Anonymous") + demensionStr;
+        labelNode.style.backgroundColor = "#272931";
+        labelNode.style.color = "#fff";
+        labelNode.style.position = "absolute";
+        labelNode.style.width = "100px";
+        labelNode.style.lineHeight = "20px";
+        labelNode.style.fontSize = "12px";
+        labelNode.style.borderRadius = "2px";
+        labelNode.style.zIndex = 999;
+        labelNode.style.textAlign = "center";
+        setLabelPositon(labelNode, rect);
+        document.querySelector("body").appendChild(labelNode);
+    };
+
+    setLabelPositon = function(node, rect) {
+        var w = Math.max(document.documentElement.clientWidth,
+            window.innerWidth || 0);
+        var h = Math.max(document.documentElement.clientHeight,
+            window.innerHeight || 0);
+
+        // detect if rect resides in the viewport
+        if (rect.top >= 0 && rect.top <= h && rect.left >= 0 && rect.left <= w) {
+            // set vertical
+            if (rect.top > 60) {
+                node.style.top = rect.top - 40 + "px";
+            } else if ((h - rect.top - rect.height) > 60) {
+                node.style.top = rect.top + rect.height + "px";
+            } else {
+                node.style.top = rect.top + "px";
+            }
+
+            // set horizontal
+            if ((w - rect.left) > 100) {
+                node.style.left = rect.left - 100 + "px";
+            } else if ((h - rect.left - rect.width) > 100) {
+                node.style.left = rect.left + rect.width + "px";
+            } else {
+                node.style.left = rect.left + "px";
+            }
+        } else {
+            if (rect.top < 0) {
+                node.style.top = window.scrollY + "px";
+            } else {
+                node.style.top = window.scrollY + h - 40 + "px";
+            }
+
+            if (rect.left < 0) {
+                node.style.left = window.scrollX + "px";
+            } else {
+                node.style.left = window.scrollX + w - 100 + "px";
+            }
+        }
     };
 
     // generate uuid for the first time
