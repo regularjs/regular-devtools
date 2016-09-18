@@ -292,8 +292,24 @@ body {
     height: 100%;
 }
 
+.sidebar-header {
+	font-size: 20px;
+	line-height: 30px;
+	display: flex;
+}
+
+.sidebar-header .name {
+	flex-grow: 1;
+	padding-left: 10px;
+}
+
+.sidebar-header .hint {
+	font-size: 13px;
+	padding-right: 10px;
+}
+
 .sidebar-content {
-    height: -webkit-calc(100% - 31px);
+    height: -webkit-calc(100% - 61px);
     overflow-y: auto;
     font-size: 20px;
 }

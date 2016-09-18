@@ -127,6 +127,16 @@ Regular.event('mouseenter', function(elem, fire) {
     };
 });
 
+Regular.event('mouseleave', function(elem, fire) {
+    function update(ev) {
+        fire(ev);
+    }
+    dom.on(elem, "mouseleave", update);
+    return function destroy() { // return a destroy function
+        dom.off(elem, "mouseleave", update);
+    };
+});
+
 // Regualr components for devtools' UI
 DevtoolsViewComponent = Regular.extend({
     template: "#devtoolsView",
@@ -169,6 +179,9 @@ Regular.extend({
     data: {
         nodes: [],
         loading: true
+    },
+    onMouseLeave: function() {
+        sidebarView.highLightNode(null, false);
     }
 });
 

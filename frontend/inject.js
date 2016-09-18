@@ -348,33 +348,36 @@ devtoolsModel = (function() {
         if (rect.top >= 0 && rect.top <= h && rect.left >= 0 && rect.left <= w) {
             // set vertical
             if (rect.top > 60) {
-                node.style.top = rect.top - 40 + "px";
+                node.style.top = rect.top - 45 + "px";
             } else if ((h - rect.top - rect.height) > 60) {
-                node.style.top = rect.top + rect.height + "px";
+                node.style.top = rect.top + rect.height + 5 + "px";
             } else {
                 node.style.top = rect.top + "px";
             }
 
             // set horizontal
-            if ((w - rect.left) > 100) {
-                node.style.left = rect.left - 100 + "px";
-            } else if ((h - rect.left - rect.width) > 100) {
-                node.style.left = rect.left + rect.width + "px";
+            if (rect.left > 120) {
+                node.style.left = rect.left + "px";
+            } else if ((h - rect.left - rect.width) > 120) {
+                node.style.left = rect.left + "px";
             } else {
                 node.style.left = rect.left + "px";
             }
         } else {
             if (rect.top < 0) {
                 node.style.top = window.scrollY + "px";
-            } else {
+            } else if (rect.top > h) {
                 node.style.top = window.scrollY + h - 40 + "px";
             }
 
             if (rect.left < 0) {
                 node.style.left = window.scrollX + "px";
-            } else {
+            } else if (rect.left > w) {
                 node.style.left = window.scrollX + w - 100 + "px";
             }
+
+            if (!node.style.left) node.style.left = rect.left + "px";
+            if (!node.style.top) node.style.top = rect.top + "px";
         }
     };
 
