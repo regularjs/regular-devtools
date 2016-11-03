@@ -362,9 +362,10 @@ Regular.extend({
         this.data.currentNode = {
             name: "",
             uuid: "",
-            data: {},
-            others: {}
+            data: {}
         };
+        // others for currentNode
+        this.data.others = {};
         this.data.tabSource = [{
             text: "data",
             key: "data"
@@ -485,7 +486,7 @@ Regular.extend({
                     console.log(prefix + "Inspect Error: ", isException);
                     return;
                 }
-                this.data.currentNode.others = result;
+                this.data.others = result;
                 this.$update();
             }.bind(this)
         );
@@ -653,6 +654,7 @@ devtools
         var currNode = findElementByUuid(nodes, sidebarView.data.currentNode.uuid);
         if (currNode) {
             sidebarView.data.currentNode = currNode;
+            sidebarView.updateOthersData(currNode.uuid);
             sidebarView.$update();
         } else {
             sidebarView.data.currentNode = nodes[0];

@@ -1,7 +1,8 @@
-
 var Todo = Regular.extend({
-  template: "#todo"
+    template: "#todo"
 });
+
+Todo.filter("test", function () {});
 
 var TodoMVC = Regular.extend({
     template: '#todomvc', // id | template string | preparsed ast
