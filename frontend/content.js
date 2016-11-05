@@ -6,11 +6,16 @@ var port = chrome.runtime.connect({
 });
 
 function injectScript(file, node) {
-    var th = document.getElementsByTagName(node)[0];
-    var s = document.createElement('script');
-    s.setAttribute('type', 'text/javascript');
-    s.setAttribute('src', file);
-    th.appendChild(s);
+    return new Promise(function(resolve, reject) {
+        var th = document.getElementsByTagName(node)[0];
+        var s = document.createElement('script');
+        s.setAttribute('type', 'text/javascript');
+        s.setAttribute('src', file);
+        th.appendChild(s);
+        s.onload = function() {
+            resolve();
+        };
+    });
 }
 
 window.addEventListener("message", function(event) {
@@ -23,6 +28,7 @@ window.addEventListener("message", function(event) {
     }
 }, false);
 
-injectScript(chrome.extension.getURL('frontend/circular-json.js'), 'body');
-injectScript(chrome.extension.getURL('frontend/inject.js'), 'body');
-
+injectScript(chrome.extension.getURL('frontend/circular-json.js'), 'body')
+    .then(function() {
+        injectScript(chrome.extension.getURL('frontend/inject.js'), 'body');
+    });
