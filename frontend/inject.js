@@ -367,7 +367,7 @@ devtoolsModel = (function() {
             if (rect.top < 0) {
                 node.style.top = window.scrollY + "px";
             } else if (rect.top > h) {
-                node.style.top = window.scrollY + h - 29 + "px";
+                node.style.top = window.scrollY + h - 24 + "px";
             }
 
             if (rect.left < 0) {
