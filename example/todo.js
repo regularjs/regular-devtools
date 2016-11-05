@@ -18,3 +18,55 @@ var todos = [
 var app = new TodoMVC({
     data: {todos: todos}
 }).$inject("#todoapp")
+
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);
+new TodoMVC({
+    data: {todos: todos}
+}).$inject(document.body);

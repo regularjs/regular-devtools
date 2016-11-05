@@ -322,18 +322,18 @@ devtoolsModel = (function() {
         document.querySelector("body").appendChild(maskNode);
 
         // draw label
-        var demensionStr = "\n" + rect.width + " x " + rect.height;
+        var demensionStr = "\n" + rect.width.toFixed(0) + "×" + rect.height.toFixed(0);
         labelNode = document.createElement("div");
         labelNode.textContent = (node.name || "Anonymous") + demensionStr;
         labelNode.style.backgroundColor = "#272931";
         labelNode.style.color = "#fff";
         labelNode.style.position = "absolute";
-        labelNode.style.width = "100px";
-        labelNode.style.lineHeight = "20px";
+        labelNode.style.padding = "0 10px";
+        labelNode.style.height = "24px";
+        labelNode.style.lineHeight = "24px";
         labelNode.style.fontSize = "12px";
         labelNode.style.borderRadius = "2px";
         labelNode.style.zIndex = 999;
-        labelNode.style.textAlign = "center";
         setLabelPositon(labelNode, rect);
         document.querySelector("body").appendChild(labelNode);
     };
@@ -347,12 +347,12 @@ devtoolsModel = (function() {
         // detect if rect resides in the viewport
         if (rect.top >= 0 && rect.top <= h && rect.left >= 0 && rect.left <= w) {
             // set vertical
-            if (rect.top > 60) {
-                node.style.top = rect.top - 45 + "px";
-            } else if ((h - rect.top - rect.height) > 60) {
-                node.style.top = rect.top + rect.height + 5 + "px";
+            if (rect.top > 34) {
+                node.style.top = window.scrollY + rect.top - 29 + "px";
+            } else if ((h - rect.top - rect.height) > 34) {
+                node.style.top = window.scrollY + rect.top + rect.height + 5 + "px";
             } else {
-                node.style.top = rect.top + "px";
+                node.style.top = window.scrollY + rect.top + "px";
             }
 
             // set horizontal
@@ -367,7 +367,7 @@ devtoolsModel = (function() {
             if (rect.top < 0) {
                 node.style.top = window.scrollY + "px";
             } else if (rect.top > h) {
-                node.style.top = window.scrollY + h - 40 + "px";
+                node.style.top = window.scrollY + h - 29 + "px";
             }
 
             if (rect.left < 0) {
