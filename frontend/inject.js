@@ -304,7 +304,7 @@ devtoolsModel = (function() {
         })[0];
 
         var domNode = getDomNode(node)[0] || node.parentNode;
-        if ( !domNode ) {
+        if (!domNode) {
             return;
         }
 

@@ -20,8 +20,10 @@
                     <img src='/assets/refresh.svg' on-click={this.onRefresh()} class='devtoolsHeader-refresh' title="Refresh"/>
                 </div>
             </div>
-            <elementView ref=elementView isolate />
-            <sidebarView ref=sidebarView isolate />
+            <div class="devtoolsMain">
+                <elementView ref=elementView isolate />
+                <sidebarView ref=sidebarView isolate />
+            </div>
         </div>
     </script>
     <script type='template/regular' id='searchView'>
