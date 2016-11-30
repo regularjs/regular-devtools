@@ -303,7 +303,11 @@ devtoolsModel = (function() {
             return n.uuid === uuid;
         })[0];
 
-        var domNode = getDomNode(node)[0];
+        var domNode = getDomNode(node)[0] || node.parentNode;
+        if ( !domNode ) {
+            return;
+        }
+
         var rect = domNode.getBoundingClientRect();
         if (maskNode) {
             document.querySelector("body").removeChild(maskNode);
