@@ -121,21 +121,22 @@ devtoolsModel = (function() {
         return container;
     };
 
+    function isASTElement(node) {
+        return node.type && node.group;
+    }
+
+    function isASTGroup(node) {
+        return node.children;
+    }
+
+    function isRegularInstance(node) {
+        return node.uuid;
+    }
+
     walker = function(node, container, flag) {
         var n;
         var i;
-        // node is a element
-        if (node.type && node.group) {
-            for (i = 0; i < node.group.children.length; i++) {
-                walker(node.group.children[i], container, flag);
-            }
-            // node is a Group
-        } else if (node.children) {
-            for (i = 0; i < node.children.length; i++) {
-                walker(node.children[i], container, flag);
-            }
-            // node is a regular instance
-        } else if (node.uuid) {
+        if (isRegularInstance(node)) {
             if (flag) {
                 n = {
                     uuid: node.uuid,
@@ -188,6 +189,14 @@ devtoolsModel = (function() {
                 if (node.group) {
                     treeGen(node, n.childNodes);
                 }
+            }
+        } else if (isASTElement(node)) {
+            for (i = 0; i < node.group.children.length; i++) {
+                walker(node.group.children[i], container, flag);
+            }
+        } else if (isASTGroup(node)) {
+            for (i = 0; i < node.children.length; i++) {
+                walker(node.children[i], container, flag);
             }
         }
     };
