@@ -6,6 +6,8 @@
   "directories": {
   },
   "scripts": {
+    "build": "bili src/devtools/devtools.js --out-dir dist",
+    "watch": "bili src/devtools/devtools.js --watch",
     "test": "npm run lint",
     "lint": "eslint frontend backend entry.js devtools.js"
   },
