@@ -2,7 +2,7 @@
 
 > Regular Developer Tools is a Chrome Extension that allows real-time inspection of [Regular](http://regularjs.github.io/) components.
 
-*Regular Developer Tools is still in beta, any feedback is welcome* :clap:
+*Regular Developer Tools v2.0 is under active development, any feedback is welcome* :clap:
 
 ### Overview
 
@@ -34,16 +34,19 @@ Install from [Chrome Webstore](https://chrome.google.com/webstore/detail/regular
 
 ### Development
 
-+ **Step1** Clone this repo
-+ **Step2** Open Google Chrome and navigate to `chrome://extensions/`
-+ **Step3** Check Developement mode checkbox in right corner
-+ **Step4** Click `Load unpacked extension` and load the folder you just cloned.
++ **Step1** Clone this repo.
++ **Step2** Open Google Chrome and navigate to `chrome://extensions/`.
++ **Step3** Check Developement mode checkbox in right corner.
++ **Step4** Under devtool's development directory, run `npm install && npm run build`.
++ **Step5** Click `Load unpacked extension` and load the folder you just cloned.
++ **Step6** When developping, run `npm run watch`.
 
 ### Change Log
 
 #### v0.1 2016-07-26
 
 #### v0.2 2016-08-24
+
 
 ### License
 
