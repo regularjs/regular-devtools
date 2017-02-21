@@ -30,14 +30,14 @@ Your project must use a custom build of regularjs(before Regular v0.5.0 is relea
 
 ### Installation
 
-Install from [Chrome Webstore](https://chrome.google.com/webstore/detail/regular-developer-tools/ehlcoecgkhfjffhmdhmhbjkjjpaecmam)
+Install from [Chrome Web Store](https://chrome.google.com/webstore/detail/regular-developer-tools/ehlcoecgkhfjffhmdhmhbjkjjpaecmam)
 
 ### Manual Installation
 
-+ **Step1** Clone this repo.
-+ **Step2** Open Google Chrome and navigate to `chrome://extensions/`.
-+ **Step3** Check Developement mode checkbox in right corner.
-+ **Step4** Click `Load unpacked extension` and load the folder you just cloned.
++ **Step 1** Clone this repo.
++ **Step 2** Open Google Chrome and navigate to `chrome://extensions/`.
++ **Step 3** Check Developement mode checkbox in right corner.
++ **Step 4** Click `Load unpacked extension` and load the folder you just cloned.
 
 ### Development
 
