@@ -3,11 +3,9 @@ import {CircularJSONCtor} from "../devtools/circular-json.js";
 
 const CircularJSON = CircularJSONCtor(JSON, RegExp)
 
-var devtoolsModel;
-
 // listen for message from content script
 // ensure only executing window.addEventListener once
-if (!devtoolsModel) {
+if (!window.devtoolsModel) {
     window.addEventListener('message', function(event) {
         // We only accept messages from ourselves
         if (event.source !== window)
@@ -16,8 +14,8 @@ if (!devtoolsModel) {
         var data = event.data;
 
         if (data.type && (data.type === "FROM_CONTENT_SCRIPT")) {
-            if (data.action === 'UPDATE_INSTANCE' && devtoolsModel) {
-                devtoolsModel.updateInstance(data.payload.uuid, data.payload.path, data.payload.value);
+            if (data.action === 'UPDATE_INSTANCE' && window.devtoolsModel) {
+                window.devtoolsModel.updateInstance(data.payload.uuid, data.payload.path, data.payload.value);
             }
         }
     }, false);
@@ -26,7 +24,7 @@ if (!devtoolsModel) {
 // this is injected to the app page when the panel is activated.
 // this script serves as the model layer of the devtools
 // this lives in origin page context
-devtoolsModel = (function() {
+window.devtoolsModel = (function() {
     var hook = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__;
     var ins = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins || [];
     var store = [];
@@ -467,4 +465,4 @@ devtoolsModel = (function() {
     };
 })();
 
-devtoolsModel.init();
+window.devtoolsModel.init();

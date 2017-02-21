@@ -28,7 +28,6 @@
     "bili": "^0.14.0",
     "concurrently": "^3.3.0",
     "eslint": "^3.2.2",
-    "eslint-config-google": "^0.6.0",
-    "rollup": "^0.41.4"
+    "eslint-config-google": "^0.6.0"
   }
 }
