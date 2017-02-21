@@ -32,16 +32,25 @@ Your project must use a custom build of regularjs(before Regular v0.5.0 is relea
 
 Install from [Chrome Webstore](https://chrome.google.com/webstore/detail/regular-developer-tools/ehlcoecgkhfjffhmdhmhbjkjjpaecmam)
 
-### Development
+### Manual Installation
 
 + **Step1** Clone this repo.
 + **Step2** Open Google Chrome and navigate to `chrome://extensions/`.
 + **Step3** Check Developement mode checkbox in right corner.
-+ **Step4** Under devtool's development directory, run `npm install && npm run build`.
-+ **Step5** Click `Load unpacked extension` and load the folder you just cloned.
-+ **Step6** During developping, run `npm run watch`.
++ **Step4** Click `Load unpacked extension` and load the folder you just cloned.
 
-### ChangeLog
+### Development
+
+```bash
+# Install dependencies
+$ npm install
+# Build and watch file changes
+$ npm run watch
+# Build for production
+$ npm run build
+```
+
+### Changelog
 
 [CHANGELOG](CHANGELOG.md)
 
