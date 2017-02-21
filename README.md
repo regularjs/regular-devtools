@@ -26,7 +26,7 @@ Some GIFs to show you how Regular Devtools works.
 
 ### Prerequisition
 
-Your project must use a custom build of regularjs(before Regular v0.5.0 is released). You can find it in [`/libs/regular.js`](https://github.com/regularjs/regular-devtools/blob/master/lib/regular.js)
+Your project must use a custom build of regularjs(before Regular v0.5.0 is released). You can find it in [`/lib/regular.js`](https://github.com/regularjs/regular-devtools/blob/master/lib/regular.js)
 
 ### Installation
 
