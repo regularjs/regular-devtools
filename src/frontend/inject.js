@@ -1,4 +1,7 @@
 'use strict';
+import {CircularJSONCtor} from "../devtools/circular-json.js";
+
+const CircularJSON = CircularJSONCtor(JSON, RegExp)
 
 var devtoolsModel;
 

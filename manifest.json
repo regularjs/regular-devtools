@@ -3,13 +3,13 @@
 
     "name": "Regular Developer Tools",
     "description": "A Chrome extension for inspecting regularjs compoents",
-    "version": "0.1",
+    "version": "2.0",
     "devtools_page": "devtools.html",
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 
     "background": {
         "persistent": true,
-        "scripts": ["/backend/background.js"]
+        "scripts": ["./src/backend/background.js"]
     },
 
     "browser_action": {
@@ -21,7 +21,7 @@
 		"128": "/assets/regular.png"
     },
 
-    "web_accessible_resources": ["/frontend/inject.js", "/frontend/content.js", "/frontend/hook.js", "/frontend/circular-json.js"],
+    "web_accessible_resources": ["/src/frontend/inject.js", "/src/frontend/content.js", "/src/frontend/hook.js", "/dist/inject.bundle.js"],
 
     "permissions": [
         "http://*/*",
@@ -31,7 +31,7 @@
 
     "content_scripts": [{
         "matches": ["<all_urls>"],
-        "js": ["/frontend/hook.js"],
+        "js": ["./src/frontend/hook.js"],
         "run_at": "document_start"
     }]
 }

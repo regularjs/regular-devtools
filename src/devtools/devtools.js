@@ -1,6 +1,7 @@
 // the real devtools script
 // the UI layer of devtools
-import { CircularJSON } from "./circular-json.js"
+import {CircularJSONCtor} from "./circular-json.js";
+const CircularJSON = CircularJSONCtor(JSON, RegExp)
 
 var backgroundPageConnection;
 var injectContentScript;
@@ -36,7 +37,7 @@ backgroundPageConnection = chrome.runtime.connect({
 injectContentScript = function(tabId) {
     backgroundPageConnection.postMessage({
         tabId: tabId || chrome.devtools.inspectedWindow.tabId,
-        file: "/frontend/content.js"
+        file: "/src/frontend/content.js"
     });
 };
 

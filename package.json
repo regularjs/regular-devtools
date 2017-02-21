@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "description": "Regular Developer Tools is a Chrome Extension that allows real-time inspection of [Regular](http://regularjs.github.io/) components.",
   "main": "devtools.js",
-  "directories": {
-  },
+  "directories": {},
   "scripts": {
-    "build": "bili src/devtools/devtools.js --out-dir dist --name devtools.bundle --format umd --exports none",
-    "watch": "npm run build -- --watch",
+    "build": "npm run devtool-build && npm run inject-build",
+    "devtool-build":"bili src/devtools/devtools.js --out-dir dist --name devtools.bundle --format umd --exports none",
+    "inject-build":"bili src/frontend/inject.js --out-dir dist --name inject.bundle --format umd --exports none",
+    "devtool-watch":"devtool-build -- --watch",
+    "inject-watch":"inject-watch -- --watch",
     "test": "npm run lint",
     "lint": "eslint frontend backend entry.js devtools.js"
   },
@@ -22,7 +24,9 @@
   },
   "homepage": "https://github.com/regularjs/regular-devtools#readme",
   "devDependencies": {
+    "bili": "^0.14.0",
     "eslint": "^3.2.2",
-    "eslint-config-google": "^0.6.0"
+    "eslint-config-google": "^0.6.0",
+    "rollup": "^0.41.4"
   }
 }
