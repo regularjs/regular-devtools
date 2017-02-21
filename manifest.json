@@ -23,11 +23,7 @@
 
     "web_accessible_resources": ["/src/frontend/inject.js", "/src/frontend/content.js", "/src/frontend/hook.js", "/dist/inject.bundle.js"],
 
-    "permissions": [
-        "http://*/*",
-        "https://*/*",
-        "file://*"
-    ],
+    "permissions": ["<all_urls>"],
 
     "content_scripts": [{
         "matches": ["<all_urls>"],

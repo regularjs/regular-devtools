@@ -39,14 +39,11 @@ Install from [Chrome Webstore](https://chrome.google.com/webstore/detail/regular
 + **Step3** Check Developement mode checkbox in right corner.
 + **Step4** Under devtool's development directory, run `npm install && npm run build`.
 + **Step5** Click `Load unpacked extension` and load the folder you just cloned.
-+ **Step6** When developping, run `npm run watch`.
++ **Step6** During developping, run `npm run watch`.
 
-### Change Log
+### ChangeLog
 
-#### v0.1 2016-07-26
-
-#### v0.2 2016-08-24
-
+[CHANGELOG](CHANGELOG.md)
 
 ### License
 
