@@ -4,7 +4,7 @@ import Regular from "regularjs";
 import CircularJSON from "../shared/circular-json";
 import log from '../shared/log';
 import {enter, input, mouseenter, mouseleave} from './events';
-import {printInConsole, findElementByUuid, findElementByName, findElementByUuidNonRecursive, inspectNodeByUUID} from './utils';
+import {printInConsole, findElementByUuid, findElementByName, findElementByUuidNonRecursive, inspectNodeByUUID, updateInstanceByUUIDAndPath} from './utils';
 
 // components
 import DevtoolsViewComponent from './components/DevtoolsView';
@@ -223,29 +223,12 @@ Regular.extend({
     },
     onTabChange(key) {
         this.data.tabSelected = key;
-        log("Tab is Changed to", key);
         this.$update();
+        log("Tab is Changed to", key);
     },
-    onDataChange(e) {
-        // send message to page, update instance by uuid and path
-        var fn = function(uuid, path, value) {
-            window.postMessage({
-                type: 'FROM_CONTENT_SCRIPT',
-                action: 'UPDATE_INSTANCE',
-                payload: {
-                    uuid: uuid,
-                    path: path,
-                    value: value
-                }
-            }, '*');
-        };
-        var uuid = this.data.currentNode.uuid;
-        chrome.devtools.inspectedWindow.eval(
-            '(' + fn + ')(' + JSON.stringify(uuid) + ',' + JSON.stringify(e.path) + ',' + JSON.stringify(e.value) + ')', {
-                useContentScriptContext: true
-            },
-            function() {}
-        );
+    onDataChange({path, value}) {
+        const uuid = this.data.currentNode.uuid;
+        updateInstanceByUUIDAndPath({uuid, path, value});
     },
     onInspectNode: uuid => inspectNodeByUUID(uuid),
     highLightNode(uuid, inspectable) {
