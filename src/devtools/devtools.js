@@ -3,8 +3,13 @@
 import Regular from "regularjs";
 import CircularJSON from "../shared/circular-json";
 import log from '../shared/log';
-import {isPrimitive, type} from './utils';
 import {enter, input, mouseenter, mouseleave} from './events';
+
+// components
+import SidebarPane from './components/SidebarPane';
+import SimpleJsonTree from './components/SimpleJsonTree';
+import JsonTree from './components/JsonTree';
+import Tabs from './components/Tabs';
 
 // register events
 Regular.use(enter);
@@ -12,6 +17,7 @@ Regular.use(input);
 Regular.use(mouseenter);
 Regular.use(mouseleave);
 
+// variables
 var backgroundPageConnection;
 var injectContentScript;
 var makeElementTree;
@@ -267,186 +273,6 @@ Regular.extend({
 });
 
 Regular.extend({
-    name: 'simpleJsonTree',
-    template: `
-        <div class='json-tree simpleJsonTree'>
-            {#list Object.keys(source) as k}
-              <div class="json-tree-data">
-                  <div class='json-tree-data-key'>
-                      <span class="key item">{k}{source[k] ===''? '': ':'}</span>
-                      <span class='item gray'>{source[k]}</span>
-                  </div>
-              </div>
-            {/list}
-        </div>
-    `,
-    data: {
-        source: {}
-    }
-});
-
-Regular.extend({
-    name: "jsonTree",
-    template: `
-        <div class='json-tree'>
-            {#list Object.keys(source) as k}
-                <jsonTreeProp path={k} key={k} value={source[k]} />
-            {/list}
-        </div>
-    `,
-    data: {
-        source: {}
-    },
-    config: function() {
-        var self = this;
-
-        function onClick(e) {
-            self.$emit('checkClickOutside', e.target);
-        }
-        document.addEventListener('click', onClick, false);
-        this.$on('$destroy', function() {
-            document.removeEventListener('click', onClick, false);
-        });
-    }
-});
-
-Regular.extend({
-    name: "jsonTreeProp",
-    template: `
-        <div class='json-tree-data'>
-            <div class='json-tree-data-key'>
-                <img
-                    src="/assets/arrow.svg"
-                    alt="arrow"
-                    class="arrow item {opened ? 'arrow-down' : null} {hasChildren ? '': 'hide'}"
-                    on-click={opened = !opened}
-                />
-                <span class="key item" on-click={opened = !opened}>{key + ':'}</span>
-
-                <span on-dblclick="{ this.onEdit() }">
-                {#if !editing}
-                    {#if this.isPrimitive(value)}
-                        {#if type === 'String'}
-                            <span class='item string'>"{value}"</span>
-                        {#else}
-                            <span class='item primitive'>{value}</span>
-                        {/if}
-                    {#elseif type === 'Array'}
-                        <span class='item others'>Array[{value.length}]</span>
-                    {#else}
-                        <span class='item others'>{type}</span>
-                    {/if}
-                {/if}
-                <input
-                    r-hide="{ !editing }"
-                    class="edit"
-                    type="text"
-                    value="{ type === 'String' ? JSON.stringify(value) : value }"
-                    on-blur="{ this.onBlur($event) }"
-                    on-keyup="{ this.onEnter($event) }"
-                    ref="edit"
-                >
-                </span>
-            </div>
-            {#if opened && hasChildren}
-            <div class='json-tree-data-props' style='padding-left:20px'>
-                {#list Object.keys(value) as k}
-                    <jsonTreeProp path={path + '.' + k} key={k} value={value[k]} padding={true} />
-                {/list}
-            </div>
-            {/if}
-        </div>
-    `,
-    data: {
-        opened: false
-    },
-    computed: {
-        type: {
-            get: function(data) {
-                return this.type(data.value);
-            }
-        },
-        hasChildren: {
-            get: function(data) {
-                return ((this.type(data.value) === 'Array') || (this.type(data.value) === 'Object')) &&
-                    ((data.value.length || Object.keys(data.value).length));
-            }
-        }
-    },
-    config: function() {
-        var self = this;
-        this.$parent.$on('checkClickOutside', function(v) {
-            if (self.$refs && self.$refs.edit && !self.$refs.edit.contains(v)) {
-                self.data.editing = false;
-                self.$update();
-            }
-            self.$emit('checkClickOutside', v);
-        });
-    },
-    onEdit: function() {
-        if (this.data.value === 'function') {
-            return;
-        }
-        if (!this.isPrimitive(this.data.value)) {
-            return;
-        }
-        this.data.editing = true;
-        this.$update();
-        // select all when active
-        var input = this.$refs.edit;
-        if (type(this.data.value) === "String") {
-            input.setSelectionRange(1, input.value.length - 1);
-        } else {
-            input.setSelectionRange(0, input.value.length);
-        }
-    },
-    onBlur: function(e) {
-        this.data.editing = false;
-        this.$update();
-        this.editDone(e);
-    },
-    onEnter: function(e) {
-        // press enter
-        if (e.which === 13) {
-            this.$refs.edit.blur();
-        }
-    },
-    // when editing is finished
-    editDone: function(e) {
-        var v = e.target.value;
-        var tmp = this.data.value;
-        try {
-            tmp = JSON.parse(v);
-        } catch (error) {
-            e.target.value = (type(tmp) ? JSON.stringify(tmp) : tmp);
-        }
-
-        // if type is not primitive or new value equals original value, return
-        if (!this.isPrimitive(tmp) || tmp === this.data.value) {
-            return;
-        }
-
-        var parent = this.$parent;
-        while (parent) {
-            if (parent.name === 'jsonTree') {
-                parent.$emit('change', {
-                    path: this.data.path,
-                    value: tmp,
-                    oldValue: this.data.value
-                });
-                break;
-            }
-            parent = parent.$parent;
-        }
-        // TODO: maybe this can be deleted
-        this.data.value = tmp;
-        this.$update();
-    },
-    isPrimitive: isPrimitive,
-    type: type
-});
-
-Regular.extend({
     name: 'sidebarView',
     template: `
         <div class="sidebar">
@@ -454,7 +280,7 @@ Regular.extend({
                 <div class="name item">&lt;{currentNode.name}&gt;</div>
                 <div class="hint item">$r in the console</div>
             </div>
-            <tabs source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></tabs>
+            <Tabs source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></Tabs>
             <div class="sidebar-content">
                 {#if tabSelected == 'data'}
                 <div>
@@ -463,24 +289,24 @@ Regular.extend({
                             inspect
                         </div>
                     {/if}
-                    <sidebarPane title="normal">
-                        <jsonTree source="{ currentNode.data }" on-change="{ this.onDataChange($event) }" />
-                    </sidebarPane>
-                    <sidebarPane title="computed">
-                        <jsonTree source="{ currentNode.computed }" />
-                    </sidebarPane>
+                    <SidebarPane title="normal">
+                        <JsonTree source="{ currentNode.data }" on-change="{ this.onDataChange($event) }" />
+                    </SidebarPane>
+                    <SidebarPane title="computed">
+                        <JsonTree source="{ currentNode.computed }" />
+                    </SidebarPane>
                 </div>
                 {#elseif tabSelected == 'others' && currentNode && others}
                 <div>
-                    <sidebarPane title="filters">
-                        <simpleJsonTree source="{ others._filters }" />
-                    </sidebarPane>
-                    <sidebarPane title="directives">
-                        <simpleJsonTree source="{ others._directives }" />
-                    </sidebarPane>
-                    <sidebarPane title="animations">
-                        <simpleJsonTree source="{ others._animations }" />
-                    </sidebarPane>
+                    <SidebarPane title="filters">
+                        <SimpleJsonTree source="{ others._filters }" />
+                    </SidebarPane>
+                    <SidebarPane title="directives">
+                        <SimpleJsonTree source="{ others._directives }" />
+                    </SidebarPane>
+                    <SidebarPane title="animations">
+                        <SimpleJsonTree source="{ others._animations }" />
+                    </SidebarPane>
                 </div>
                 {#else}
                 {/if}
@@ -621,44 +447,11 @@ Regular.extend({
             }.bind(this)
         );
     }
-});
-
-Regular.extend({
-    name: 'tabs',
-    template: `
-        <div class="tabs">
-            <div class="tabs-header">
-                <div class="tabs-header-items">
-                    {#list source as s}
-                        <div class="tabs-header-item { selected === s.key ? 'selected' : '' }" on-click="{ this.onTabClick( s.key ) }">
-                            { s.text }
-                        </div>
-                    {/list}
-                </div>
-            </div>
-        </div>
-    `,
-    onTabClick: function(key) {
-        if (this.data.selected === key) {
-            return;
-        }
-        this.$emit('change', key);
-    }
-});
-
-Regular.extend({
-    name: 'sidebarPane',
-    template: `
-        <div class="sidebar-pane">
-            <div class="sidebar-pane-header">
-                { title }
-            </div>
-            <div class="sidebar-pane-content">
-                {#inc this.$body}
-            </div>
-        </div>
-    `
-});
+})
+.component('SidebarPane', SidebarPane)
+.component('SimpleJsonTree', SimpleJsonTree)
+.component('Tabs', Tabs)
+.component('JsonTree', JsonTree);
 
 // init devtools
 devtools = new DevtoolsViewComponent({
