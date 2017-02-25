@@ -4,12 +4,15 @@ import Regular from "regularjs";
 import CircularJSON from "../shared/circular-json";
 import log from '../shared/log';
 import {enter, input, mouseenter, mouseleave} from './events';
+import {printInConsole, findElementByUuid, findElementByName, findElementByUuidNonRecursive} from './utils';
 
 // components
+import DevtoolsViewComponent from './components/DevtoolsView';
 import SidebarPane from './components/SidebarPane';
 import SimpleJsonTree from './components/SimpleJsonTree';
 import JsonTree from './components/JsonTree';
 import Tabs from './components/Tabs';
+import Element from './components/Element';
 
 // register events
 Regular.use(enter);
@@ -21,24 +24,14 @@ Regular.use(mouseleave);
 var backgroundPageConnection;
 var injectContentScript;
 var makeElementTree;
-var searchPath;
-var searchPathWarpper;
-var DevtoolsViewComponent;
 var devtools;
-var findElementByUuid;
 var sidebarView;
 var elementView;
 var snycArr;
-var printInConsole;
-var findElementByUuidNonRecursive;
-var findElementByName;
 var foucsNode;
 var displayWarnning;
 var searchView;
 var ready = false;
-
-// Global Ref
-var lastSelected = null;
 
 // Create a current inspected page unique connection to the background page, by its tabId
 backgroundPageConnection = chrome.runtime.connect({
@@ -69,111 +62,6 @@ makeElementTree = function(nodes, container) {
     return container;
 };
 
-searchPath = function(nodes, uuid, path) {
-    for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].data.node.uuid === uuid) {
-            path.push(nodes[i]);
-            return true;
-        } else if (nodes[i]._children.length > 0) {
-            if (searchPath(nodes[i]._children, uuid, path)) {
-                path.push(nodes[i]);
-                return true;
-            }
-        }
-    }
-    return false;
-};
-
-searchPathWarpper = function(nodes, uuid, path) {
-    for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].data.node.uuid === uuid) {
-            path.push(nodes[i]);
-            return path;
-        } else if (searchPath(nodes[i]._children, uuid, path)) {
-            path.push(nodes[i]);
-            return path;
-        }
-    }
-};
-
-// Regualr components for devtools' UI
-DevtoolsViewComponent = Regular.extend({
-    template: `
-        <div class='regualrDevtools'>
-            <div class='devtoolsHeader no-space'>
-                <div class="devtoolsHeader-container logo">
-                    Regular Devtools
-                </div>
-                <div class="devtoolsHeader-container refresh">
-                    <img src='/assets/refresh.svg' on-click={this.onRefresh()} class='devtoolsHeader-refresh' title="Refresh"/>
-                </div>
-            </div>
-            <div class="devtoolsMain">
-                <elementView ref=elementView isolate />
-                <sidebarView ref=sidebarView isolate />
-            </div>
-        </div>
-    `,
-    onRefresh: function() {
-        chrome.devtools.inspectedWindow.reload();
-    }
-});
-
-Regular.extend({
-    name: "element",
-    template: `
-        <div class="element purple {selected ? 'selected' : 'element-tag'}"
-        style="padding-left:{level*30}px;}" on-click={this.onClick(node)} on-mouseenter={this.onMouseEnter(node.uuid, node.inspectable)}>
-            <div class="borderline"></div>
-            <img src="/assets/arrow.svg"
-            style="margin-left: -10px;"
-            alt="arrow" on-click={opened = !opened}
-            class="arrow ele-item {opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}"/>
-            <span class="tag ele-item">&lt;</span>
-            <span class="tagname ele-item">{node.name}
-            </span>
-            <span class="tag ele-item">&gt;{#if node.shadowFlag }<span class="ele-include">#inc</span>{/if}</span>
-        </div>
-        {#if node.childNodes.length > 0} {#list node.childNodes as n}
-        <div style={opened ? '' : "display:none;"} class={node.shadowFlag ? 'include-border':null}>
-            <element node={n} level={level+1} ></element>
-        </div>
-        {/list}
-        {/if}
-        {#if node.childNodes.length > 0}
-        <div class="element purple"
-        style="padding-left:{level*30}px;{opened ? null : 'display:none;'}">
-            <span class="tag ele-item">&lt;/</span>
-            <span class="tagname ele-item">{node.name}</span>
-            <span class="tag ele-item">&gt;</span>
-        </div>
-        {/if}
-    `,
-    data: {
-        selected: false,
-        opened: false
-    },
-    onMouseEnter: function(uuid, inspectable) {
-        sidebarView.highLightNode(uuid, inspectable);
-    },
-    onClick: function(node) {
-        if (lastSelected) {
-            if (lastSelected === this) {
-                return;
-            }
-            this.data.selected = true;
-            if (!findElementByUuid(this.$root.data.nodes,
-                    lastSelected.data.node.uuid)) {
-                lastSelected = null;
-            } else {
-                lastSelected.data.selected = false;
-            }
-        }
-        lastSelected = this;
-        this.$root.$emit("clickElement", node.uuid);
-    }
-});
-
 Regular.extend({
     name: "elementView",
     template: `
@@ -202,7 +90,8 @@ Regular.extend({
     onMouseLeave: function() {
         sidebarView.highLightNode(null, false);
     }
-});
+})
+.component('element', Element);
 
 Regular.extend({
     name: "searchView",
@@ -456,43 +345,10 @@ Regular.extend({
 // init devtools
 devtools = new DevtoolsViewComponent({
     data: {
-        nodes: []
+        nodes: [],
+        lastSelected: null
     }
 }).$inject("#devtoolsInject");
-
-// more utility functions
-findElementByUuid = function(nodes, uuid) {
-    for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].uuid === uuid) {
-            return nodes[i];
-        }
-        if (nodes[i].childNodes.length) {
-            var result = findElementByUuid(nodes[i].childNodes, uuid);
-            if (result) {
-                return result;
-            }
-        }
-    }
-};
-
-findElementByUuidNonRecursive = function(nodes, uuid) {
-    for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].uuid === uuid) {
-            return nodes[i];
-        }
-    }
-};
-
-findElementByName = function(nodes, reg, container) {
-    for (var i = 0; i < nodes.length; i++) {
-        if (reg.test(nodes[i].name)) {
-            container.push(nodes[i].uuid);
-        }
-        if (nodes[i].childNodes.length) {
-            findElementByName(nodes[i].childNodes, reg, container);
-        }
-    }
-};
 
 snycArr = function(oldArr, newArr, container) {
     for (var i = 0; i < newArr.length; i++) {
@@ -512,53 +368,10 @@ snycArr = function(oldArr, newArr, container) {
     return container;
 };
 
-printInConsole = function(uuid) {
-    chrome.devtools.inspectedWindow.eval(
-        "devtoolsModel.print('" + uuid + "')",
-        function(result, isException) {
-            if (isException) {
-                log("Inspect Error: ", isException);
-            }
-        }
-    );
-};
-
 displayWarnning = function() {
     if (elementView.data.loading) {
         elementView.data.loading = false;
         elementView.$update();
-    }
-};
-
-foucsNode = function(uuid) {
-    var elementViewDOM = document.querySelector(".elementTree");
-    var elementViewRect = elementViewDOM.getBoundingClientRect();
-    var evHeight = elementViewRect.height;
-    var node = findElementByUuid(devtools.data.nodes, uuid);
-    var path = [];
-    var i;
-    var currTop;
-
-    sidebarView.data.currentNode = node;
-    sidebarView.$update();
-    searchPathWarpper(elementView._children, uuid, path);
-    for (i = 0; i < path.length; i++) {
-        path[i].data.opened = true;
-    }
-    if (lastSelected) {
-        lastSelected.data.selected = false;
-    }
-    lastSelected = path[0];
-    path[0].data.selected = true;
-    printInConsole(uuid);
-    elementView.$update();
-    currTop = path[0].group.children[0].last().getBoundingClientRect().top;
-    if ((currTop > evHeight) || (currTop < 0)) {
-        if (currTop < 0) {
-            elementViewDOM.scrollTop = Math.abs(currTop);
-        } else {
-            elementViewDOM.scrollTop += (currTop - evHeight);
-        }
     }
 };
 

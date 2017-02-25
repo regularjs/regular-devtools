@@ -15,6 +15,8 @@ module.exports = {
         "devtoolsModel": true,
         "chrome":true,
         "Regular":true,
-        "CircularJSON":true
+        "CircularJSON":true,
+        "lastSelected":true,
+        "sidebarView":true
     }
 };
