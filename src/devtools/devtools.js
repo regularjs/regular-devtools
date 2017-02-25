@@ -1,14 +1,12 @@
 // the real devtools script
 // the UI layer of devtools
-import {CircularJSONCtor} from "./circular-json.js";
 import Regular from "regularjs";
-const CircularJSON = CircularJSONCtor(JSON, RegExp); // eslint-disable-line new-cap
+import CircularJSON from "../shared/circular-json";
+import log from '../shared/log';
+import {isPrimitive, type} from './utils';
 
 var backgroundPageConnection;
 var injectContentScript;
-var isPrimitive;
-var type;
-var prefix = "[Regular Devtools] ";
 var makeElementTree;
 var searchPath;
 var searchPathWarpper;
@@ -40,16 +38,6 @@ injectContentScript = function(tabId) {
         tabId: tabId || chrome.devtools.inspectedWindow.tabId,
         file: "/src/frontend/content.js"
     });
-};
-
-// Util
-isPrimitive = function(arg) {
-    var type = typeof arg;
-    return arg === null || (type !== "object" && type !== "function");
-};
-
-type = function(obj) {
-    return Object.prototype.toString.call(obj).slice(8, -1);
 };
 
 makeElementTree = function(nodes, container) {
@@ -558,7 +546,7 @@ Regular.extend({
     },
     onTabChange: function(key) {
         this.data.tabSelected = key;
-        console.log(prefix + "Tab is Changed to", key);
+        log("Tab is Changed to", key);
         this.$update();
     },
     onDataChange: function(e) {
@@ -591,7 +579,7 @@ Regular.extend({
             "}",
             function(result, isException) {
                 if (isException) {
-                    console.log(prefix + "Inspect Error: ", isException);
+                    log("Inspect Error: ", isException);
                 }
             }
         );
@@ -602,7 +590,7 @@ Regular.extend({
             evalStr,
             function(result, isException) {
                 if (isException) {
-                    console.log(prefix + "Inspect Error: ", isException);
+                    log("Inspect Error: ", isException);
                 }
             }
         );
@@ -663,7 +651,7 @@ Regular.extend({
             "(" + getOthersData.toString() + ")(" + JSON.stringify(uuid) + ")",
             function(result, isException) {
                 if (isException) {
-                    console.log(prefix + "Inspect Error: ", isException);
+                    log("Inspect Error: ", isException);
                     return;
                 }
                 this.data.others = result;
@@ -774,7 +762,7 @@ printInConsole = function(uuid) {
         "devtoolsModel.print('" + uuid + "')",
         function(result, isException) {
             if (isException) {
-                console.log(prefix + "Inspect Error: ", isException);
+                log("Inspect Error: ", isException);
             }
         }
     );
@@ -829,7 +817,7 @@ searchView = elementView.$refs.searchView;
 // register custom events
 devtools
     .$on("initNodes", function(nodesStr) {
-        console.log(prefix + "On initNodes.");
+        log("On initNodes.");
         let nodes = CircularJSON.parse(nodesStr);
         this.data.nodes = nodes;
         sidebarView.data.currentNode = nodes[0];
@@ -849,7 +837,7 @@ devtools
         }
         printInConsole(uuid);
     }).$on("stateViewReRender", function(nodesStr) {
-        console.log(prefix + "On stateViewRender.");
+        log("On stateViewRender.");
         let nodes = CircularJSON.parse(nodesStr);
         this.data.nodes = nodes;
         var currNode = findElementByUuid(nodes, sidebarView.data.currentNode.uuid);
@@ -863,7 +851,7 @@ devtools
             sidebarView.$update();
         }
     }).$on("elementViewReRender", function(nodesStr) {
-        console.log(prefix + "On elementViewRerender.");
+        log("On elementViewRerender.");
         let nodes = CircularJSON.parse(nodesStr);
         /* eslint-disable no-unused-vars */
         var oldArr = elementView.data.nodes;
@@ -872,13 +860,13 @@ devtools
         /* eslint-enable no-unused-vars */
         elementView.$update();
     }).$on("currentNodeChange", function(uuid) {
-        console.log(prefix + "On currentNodeChange.");
+        log("On currentNodeChange.");
         if (sidebarView.data.currentNode.uuid !== uuid) {
             foucsNode(uuid);
         }
     }).$on("reload", function(event) {
         ready = false;
-        console.log(prefix + "On reload.");
+        log("On reload.");
         searchView.reset();
         // wait for the page to fully intialize
         setTimeout(function() {

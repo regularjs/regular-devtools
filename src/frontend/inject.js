@@ -1,7 +1,4 @@
-'use strict';
-import {CircularJSONCtor} from "../devtools/circular-json.js";
-
-const CircularJSON = CircularJSONCtor(JSON, RegExp); // eslint-disable-line new-cap
+import CircularJSON from "../shared/circular-json";
 
 // listen for message from content script
 // ensure only executing window.addEventListener once
