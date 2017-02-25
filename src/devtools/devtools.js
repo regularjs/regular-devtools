@@ -4,7 +4,7 @@ import Regular from "regularjs";
 import CircularJSON from "../shared/circular-json";
 import log from '../shared/log';
 import {enter, input, mouseenter, mouseleave} from './events';
-import {printInConsole, findElementByUuid, findElementByName, findElementByUuidNonRecursive} from './utils';
+import {printInConsole, findElementByUuid, findElementByName, findElementByUuidNonRecursive, inspectNodeByUUID} from './utils';
 
 // components
 import DevtoolsViewComponent from './components/DevtoolsView';
@@ -174,7 +174,7 @@ Regular.extend({
                 {#if tabSelected == 'data'}
                 <div>
                     {#if currentNode.inspectable }
-                        <div class='inspect' on-click={this.onInspectNode()}>
+                        <div class='inspect' on-click={this.onInspectNode(currentNode.uuid)}>
                             inspect
                         </div>
                     {/if}
@@ -202,7 +202,7 @@ Regular.extend({
             </div>
         </div>
     `,
-    config: function() {
+    config() {
         // defaultValue of currentNode
         this.data.currentNode = {
             name: "",
@@ -221,12 +221,12 @@ Regular.extend({
         // defaults to `data` pane
         this.data.tabSelected = 'data';
     },
-    onTabChange: function(key) {
+    onTabChange(key) {
         this.data.tabSelected = key;
         log("Tab is Changed to", key);
         this.$update();
     },
-    onDataChange: function(e) {
+    onDataChange(e) {
         // send message to page, update instance by uuid and path
         var fn = function(uuid, path, value) {
             window.postMessage({
@@ -247,21 +247,8 @@ Regular.extend({
             function() {}
         );
     },
-    onInspectNode: function() {
-        var uuid = this.data.currentNode.uuid;
-        chrome.devtools.inspectedWindow.eval(
-            "var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) { return n.uuid === '" + uuid + "'})[0];" +
-            "if (node) {" +
-            "    inspect(node.group && node.group.children && node.group.children[0] && node.group.children[0].node && node.group.children[0].node() || node.parentNode);" +
-            "}",
-            function(result, isException) {
-                if (isException) {
-                    log("Inspect Error: ", isException);
-                }
-            }
-        );
-    },
-    highLightNode: function(uuid, inspectable) {
+    onInspectNode: uuid => inspectNodeByUUID(uuid),
+    highLightNode(uuid, inspectable) {
         var evalStr = inspectable ? "devtoolsModel.highLighter('" + uuid + "')" : "devtoolsModel.highLighter()";
         chrome.devtools.inspectedWindow.eval(
             evalStr,
@@ -272,7 +259,7 @@ Regular.extend({
             }
         );
     },
-    updateOthersData: function(uuid) {
+    updateOthersData(uuid) {
         function getOthersData(uuid) {
             var othersNameArr = ['_directives', '_filters', '_animations'];
             var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) {

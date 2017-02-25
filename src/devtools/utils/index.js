@@ -3,6 +3,7 @@ import type from './type.js';
 import searchPath from './searchPath.js';
 import printInConsole from './printInConsole.js';
 import {findElementByUuid, findElementByName, findElementByUuidNonRecursive} from './findElement.js';
+import {inspectNodeByUUID} from './inspectNode';
 
 export {
     isPrimitive,
@@ -11,5 +12,6 @@ export {
     printInConsole,
     findElementByUuid,
     findElementByName,
-    findElementByUuidNonRecursive
+    findElementByUuidNonRecursive,
+    inspectNodeByUUID
 };
