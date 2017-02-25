@@ -28,7 +28,6 @@ var devtools;
 var sidebarView;
 var elementView;
 var snycArr;
-var focusNode;
 var displayWarnning;
 var searchView;
 var ready = false;
@@ -140,7 +139,7 @@ Regular.extend({
         findElementByName(devtools.data.nodes, reg, this.data.resultList);
         this.data.hasSearched = true;
         if (this.data.resultList.length) {
-            focusNode(this.data.resultList[0]);
+            devtools.focusNode(this.data.resultList[0]);
         }
     },
     next: function(dir) {
@@ -149,7 +148,7 @@ Regular.extend({
             data.index += dir;
             if (data.index === data.resultList.length) data.index = 0;
             if (data.index === -1) data.index = data.resultList.length - 1;
-            focusNode(data.resultList[data.index]);
+            devtools.focusNode(data.resultList[data.index]);
         }
     },
     reset: function() {
@@ -400,7 +399,7 @@ devtools
     }).$on("currentNodeChange", function(uuid) {
         log("On currentNodeChange.");
         if (sidebarView.data.currentNode.uuid !== uuid) {
-            focusNode(uuid);
+            devtools.focusNode(uuid);
         }
     }).$on("reload", function(event) {
         ready = false;

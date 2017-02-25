@@ -22,7 +22,7 @@ const DevtoolsViewComponent = Regular.extend({
     onRefresh: function() {
         chrome.devtools.inspectedWindow.reload();
     },
-    foucsNode: function(uuid) {
+    focusNode: function(uuid) {
         var elementViewDOM = document.querySelector(".elementTree");
         var elementViewRect = elementViewDOM.getBoundingClientRect();
         var evHeight = elementViewRect.height;
@@ -32,7 +32,7 @@ const DevtoolsViewComponent = Regular.extend({
         var currTop;
         let lastSelected = this.data.lastSelected;
         const sidebarView = this.$refs.sidebarView;
-        const elementView = this.$refs.sidebarView;
+        const elementView = this.$refs.elementView;
 
         sidebarView.data.currentNode = node;
         sidebarView.$update();
@@ -43,7 +43,7 @@ const DevtoolsViewComponent = Regular.extend({
         if (lastSelected) {
             lastSelected.data.selected = false;
         }
-        this.devtools.data.lastSelected = path[0];
+        this.data.lastSelected = path[0];
         path[0].data.selected = true;
         printInConsole(uuid);
         elementView.$update();

@@ -15,7 +15,7 @@ const searchPath = function(nodes, uuid, path) {
 
 export default function searchPathWarpper(nodes, uuid, path) {
     for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].data.node.uuid === uuid) {
+        if (nodes[i].data.node && nodes[i].data.node.uuid === uuid) {
             path.push(nodes[i]);
             return path;
         } else if (searchPath(nodes[i]._children, uuid, path)) {
