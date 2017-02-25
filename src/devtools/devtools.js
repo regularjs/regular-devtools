@@ -4,6 +4,13 @@ import Regular from "regularjs";
 import CircularJSON from "../shared/circular-json";
 import log from '../shared/log';
 import {isPrimitive, type} from './utils';
+import {enter, input, mouseenter, mouseleave} from './events';
+
+// register events
+Regular.use(enter);
+Regular.use(input);
+Regular.use(mouseenter);
+Regular.use(mouseleave);
 
 var backgroundPageConnection;
 var injectContentScript;
@@ -19,7 +26,6 @@ var snycArr;
 var printInConsole;
 var findElementByUuidNonRecursive;
 var findElementByName;
-var dom = Regular.dom;
 var foucsNode;
 var displayWarnning;
 var searchView;
@@ -83,50 +89,6 @@ searchPathWarpper = function(nodes, uuid, path) {
         }
     }
 };
-
-// on enter and on input logic
-Regular.event('enter', function(elem, fire) {
-    function update(ev) {
-        if (ev.which === 13) { // ENTER key
-            ev.preventDefault();
-            fire(ev); // if key is enter , we fire the event;
-        }
-    }
-    dom.on(elem, "keypress", update);
-    return function destroy() { // return a destroy function
-        dom.off(elem, "keypress", update);
-    };
-});
-
-Regular.event('input', function(elem, fire) {
-    function update(ev) {
-        fire(ev); // if key is enter , we fire the event;
-    }
-    dom.on(elem, "input", update);
-    return function destroy() { // return a destroy function
-        dom.off(elem, "input", update);
-    };
-});
-
-Regular.event('mouseenter', function(elem, fire) {
-    function update(ev) {
-        fire(ev);
-    }
-    dom.on(elem, "mouseenter", update);
-    return function destroy() { // return a destroy function
-        dom.off(elem, "mouseenter", update);
-    };
-});
-
-Regular.event('mouseleave', function(elem, fire) {
-    function update(ev) {
-        fire(ev);
-    }
-    dom.on(elem, "mouseleave", update);
-    return function destroy() { // return a destroy function
-        dom.off(elem, "mouseleave", update);
-    };
-});
 
 // Regualr components for devtools' UI
 DevtoolsViewComponent = Regular.extend({
