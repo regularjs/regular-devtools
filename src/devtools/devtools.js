@@ -1,7 +1,7 @@
 // the real devtools script
 // the UI layer of devtools
 import {CircularJSONCtor} from "./circular-json.js";
-const CircularJSON = CircularJSONCtor(JSON, RegExp)
+const CircularJSON = CircularJSONCtor(JSON, RegExp); // eslint-disable-line new-cap
 
 var backgroundPageConnection;
 var injectContentScript;
@@ -141,7 +141,22 @@ Regular.event('mouseleave', function(elem, fire) {
 
 // Regualr components for devtools' UI
 DevtoolsViewComponent = Regular.extend({
-    template: "#devtoolsView",
+    template: `
+        <div class='regualrDevtools'>
+            <div class='devtoolsHeader no-space'>
+                <div class="devtoolsHeader-container logo">
+                    Regular Devtools
+                </div>
+                <div class="devtoolsHeader-container refresh">
+                    <img src='/assets/refresh.svg' on-click={this.onRefresh()} class='devtoolsHeader-refresh' title="Refresh"/>
+                </div>
+            </div>
+            <div class="devtoolsMain">
+                <elementView ref=elementView isolate />
+                <sidebarView ref=sidebarView isolate />
+            </div>
+        </div>
+    `,
     onRefresh: function() {
         chrome.devtools.inspectedWindow.reload();
     }
@@ -149,7 +164,34 @@ DevtoolsViewComponent = Regular.extend({
 
 Regular.extend({
     name: "element",
-    template: "#element",
+    template: `
+        <div class="element purple {selected ? 'selected' : 'element-tag'}"
+        style="padding-left:{level*30}px;}" on-click={this.onClick(node)} on-mouseenter={this.onMouseEnter(node.uuid, node.inspectable)}>
+            <div class="borderline"></div>
+            <img src="/assets/arrow.svg"
+            style="margin-left: -10px;"
+            alt="arrow" on-click={opened = !opened}
+            class="arrow ele-item {opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}"/>
+            <span class="tag ele-item">&lt;</span>
+            <span class="tagname ele-item">{node.name}
+            </span>
+            <span class="tag ele-item">&gt;{#if node.shadowFlag }<span class="ele-include">#inc</span>{/if}</span>
+        </div>
+        {#if node.childNodes.length > 0} {#list node.childNodes as n}
+        <div style={opened ? '' : "display:none;"} class={node.shadowFlag ? 'include-border':null}>
+            <element node={n} level={level+1} ></element>
+        </div>
+        {/list}
+        {/if}
+        {#if node.childNodes.length > 0}
+        <div class="element purple"
+        style="padding-left:{level*30}px;{opened ? null : 'display:none;'}">
+            <span class="tag ele-item">&lt;/</span>
+            <span class="tagname ele-item">{node.name}</span>
+            <span class="tag ele-item">&gt;</span>
+        </div>
+        {/if}
+    `,
     data: {
         selected: false,
         opened: false
@@ -177,7 +219,25 @@ Regular.extend({
 
 Regular.extend({
     name: "elementView",
-    template: "#elementView",
+    template: `
+        <div class='elementView' on-mouseleave={this.onMouseLeave()}>
+            <div class="elementTree">
+                {#if loading }
+                    <img src='/assets/loading.svg' class='loading-img' />
+                {#else}
+                {#if nodes.length > 0}
+                    {#list nodes as node}
+                        <element node={node} level={1} >
+                        </element>
+                    {/list}
+                {#else}
+                    <div class="warnning">There is no Regular instance detected. Please check if you are using the latest version of Regularjs. Or try reloading Regular Devtools</div>
+                {/if}
+            {/if}
+            </div>
+            <searchView isolate ref=searchView ></searchView>
+        </div>
+    `,
     data: {
         nodes: [],
         loading: true
@@ -189,7 +249,25 @@ Regular.extend({
 
 Regular.extend({
     name: "searchView",
-    template: "#searchView",
+    template: `
+        <div class="searchView">
+            <input type="text" r-model={value} on-enter={this.onEnter()} on-input={this.onInput()} class="searchView-input" placeholder="Search By Component Name"/>
+            <div class="searchView-btns">
+                <div class="searchView-text">
+                    {#if hasSearched && !resultList.length}
+                        Not found
+                    {#else}
+                        {#if resultList.length}
+                            {index + 1}/{resultList.length} found
+                        {/if}
+                    {/if}
+                </div>
+                <img src="/assets/search.svg" class="searchView-btn" on-click={this.search()} alt="search" title="Search"/>
+                <img src="/assets/prev.svg" class="searchView-btn" on-click={this.next(-1)} alt="prev" title="Previous result"/>
+                <img src="/assets/next.svg" class="searchView-btn" on-click={this.next(1)} alt="next" title="Next result"/>
+            </div>
+        </div>
+    `,
     data: {
         value: "",
         resultList: [],
@@ -239,7 +317,18 @@ Regular.extend({
 
 Regular.extend({
     name: 'simpleJsonTree',
-    template: "#simpleJsonTree",
+    template: `
+        <div class='json-tree simpleJsonTree'>
+            {#list Object.keys(source) as k}
+              <div class="json-tree-data">
+                  <div class='json-tree-data-key'>
+                      <span class="key item">{k}{source[k] ===''? '': ':'}</span>
+                      <span class='item gray'>{source[k]}</span>
+                  </div>
+              </div>
+            {/list}
+        </div>
+    `,
     data: {
         source: {}
     }
@@ -247,7 +336,13 @@ Regular.extend({
 
 Regular.extend({
     name: "jsonTree",
-    template: "#jsonTree",
+    template: `
+        <div class='json-tree'>
+            {#list Object.keys(source) as k}
+                <jsonTreeProp path={k} key={k} value={source[k]} />
+            {/list}
+        </div>
+    `,
     data: {
         source: {}
     },
@@ -266,7 +361,51 @@ Regular.extend({
 
 Regular.extend({
     name: "jsonTreeProp",
-    template: "#jsonTreeProp",
+    template: `
+        <div class='json-tree-data'>
+            <div class='json-tree-data-key'>
+                <img
+                    src="/assets/arrow.svg"
+                    alt="arrow"
+                    class="arrow item {opened ? 'arrow-down' : null} {hasChildren ? '': 'hide'}"
+                    on-click={opened = !opened}
+                />
+                <span class="key item" on-click={opened = !opened}>{key + ':'}</span>
+
+                <span on-dblclick="{ this.onEdit() }">
+                {#if !editing}
+                    {#if this.isPrimitive(value)}
+                        {#if type === 'String'}
+                            <span class='item string'>"{value}"</span>
+                        {#else}
+                            <span class='item primitive'>{value}</span>
+                        {/if}
+                    {#elseif type === 'Array'}
+                        <span class='item others'>Array[{value.length}]</span>
+                    {#else}
+                        <span class='item others'>{type}</span>
+                    {/if}
+                {/if}
+                <input
+                    r-hide="{ !editing }"
+                    class="edit"
+                    type="text"
+                    value="{ type === 'String' ? JSON.stringify(value) : value }"
+                    on-blur="{ this.onBlur($event) }"
+                    on-keyup="{ this.onEnter($event) }"
+                    ref="edit"
+                >
+                </span>
+            </div>
+            {#if opened && hasChildren}
+            <div class='json-tree-data-props' style='padding-left:20px'>
+                {#list Object.keys(value) as k}
+                    <jsonTreeProp path={path + '.' + k} key={k} value={value[k]} padding={true} />
+                {/list}
+            </div>
+            {/if}
+        </div>
+    `,
     data: {
         opened: false
     },
@@ -358,7 +497,45 @@ Regular.extend({
 
 Regular.extend({
     name: 'sidebarView',
-    template: '#sidebarView',
+    template: `
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="name item">&lt;{currentNode.name}&gt;</div>
+                <div class="hint item">$r in the console</div>
+            </div>
+            <tabs source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></tabs>
+            <div class="sidebar-content">
+                {#if tabSelected == 'data'}
+                <div>
+                    {#if currentNode.inspectable }
+                        <div class='inspect' on-click={this.onInspectNode()}>
+                            inspect
+                        </div>
+                    {/if}
+                    <sidebarPane title="normal">
+                        <jsonTree source="{ currentNode.data }" on-change="{ this.onDataChange($event) }" />
+                    </sidebarPane>
+                    <sidebarPane title="computed">
+                        <jsonTree source="{ currentNode.computed }" />
+                    </sidebarPane>
+                </div>
+                {#elseif tabSelected == 'others' && currentNode && others}
+                <div>
+                    <sidebarPane title="filters">
+                        <simpleJsonTree source="{ others._filters }" />
+                    </sidebarPane>
+                    <sidebarPane title="directives">
+                        <simpleJsonTree source="{ others._directives }" />
+                    </sidebarPane>
+                    <sidebarPane title="animations">
+                        <simpleJsonTree source="{ others._animations }" />
+                    </sidebarPane>
+                </div>
+                {#else}
+                {/if}
+            </div>
+        </div>
+    `,
     config: function() {
         // defaultValue of currentNode
         this.data.currentNode = {
@@ -497,7 +674,19 @@ Regular.extend({
 
 Regular.extend({
     name: 'tabs',
-    template: '#tabs',
+    template: `
+        <div class="tabs">
+            <div class="tabs-header">
+                <div class="tabs-header-items">
+                    {#list source as s}
+                        <div class="tabs-header-item { selected === s.key ? 'selected' : '' }" on-click="{ this.onTabClick( s.key ) }">
+                            { s.text }
+                        </div>
+                    {/list}
+                </div>
+            </div>
+        </div>
+    `,
     onTabClick: function(key) {
         if (this.data.selected === key) {
             return;
@@ -508,7 +697,16 @@ Regular.extend({
 
 Regular.extend({
     name: 'sidebarPane',
-    template: '#sidebarPane'
+    template: `
+        <div class="sidebar-pane">
+            <div class="sidebar-pane-header">
+                { title }
+            </div>
+            <div class="sidebar-pane-content">
+                {#inc this.$body}
+            </div>
+        </div>
+    `
 });
 
 // init devtools
