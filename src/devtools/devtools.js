@@ -28,7 +28,7 @@ var devtools;
 var sidebarView;
 var elementView;
 var snycArr;
-var foucsNode;
+var focusNode;
 var displayWarnning;
 var searchView;
 var ready = false;
@@ -140,7 +140,7 @@ Regular.extend({
         findElementByName(devtools.data.nodes, reg, this.data.resultList);
         this.data.hasSearched = true;
         if (this.data.resultList.length) {
-            foucsNode(this.data.resultList[0]);
+            focusNode(this.data.resultList[0]);
         }
     },
     next: function(dir) {
@@ -149,7 +149,7 @@ Regular.extend({
             data.index += dir;
             if (data.index === data.resultList.length) data.index = 0;
             if (data.index === -1) data.index = data.resultList.length - 1;
-            foucsNode(data.resultList[data.index]);
+            focusNode(data.resultList[data.index]);
         }
     },
     reset: function() {
@@ -430,7 +430,7 @@ devtools
     }).$on("currentNodeChange", function(uuid) {
         log("On currentNodeChange.");
         if (sidebarView.data.currentNode.uuid !== uuid) {
-            foucsNode(uuid);
+            focusNode(uuid);
         }
     }).$on("reload", function(event) {
         ready = false;
