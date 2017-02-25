@@ -1184,6 +1184,10 @@ registry-url@^3.0.3:
   dependencies:
     rc "^1.0.1"
 
+regularjs@0.5.2:
+  version "0.5.2"
+  resolved "https://registry.npmjs.org/regularjs/-/regularjs-0.5.2.tgz#6a5f71390431f0e346a235d4b623f6f685c85b44"
+
 repeat-string@^1.5.2:
   version "1.6.1"
   resolved "https://registry.npmjs.org/repeat-string/-/repeat-string-1.6.1.tgz#8dcae470e1c88abc2d600fff4a776286da75e637"

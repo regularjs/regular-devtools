@@ -1,6 +1,7 @@
 // the real devtools script
 // the UI layer of devtools
 import {CircularJSONCtor} from "./circular-json.js";
+import Regular from "regularjs";
 const CircularJSON = CircularJSONCtor(JSON, RegExp); // eslint-disable-line new-cap
 
 var backgroundPageConnection;

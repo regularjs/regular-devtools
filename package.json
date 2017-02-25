@@ -7,7 +7,7 @@
     "build": "npm run devtool-build && npm run inject-build",
     "devtool-build": "bili src/devtools/devtools.js --out-dir dist --name devtools.bundle --format umd --exports none",
     "inject-build": "bili src/frontend/inject.js --out-dir dist --name inject.bundle --format umd --exports none",
-    "watch":"concurrently \"npm run devtool-watch\" \"npm run inject-watch\"",
+    "watch": "concurrently \"npm run devtool-watch\" \"npm run inject-watch\"",
     "devtool-watch": "npm run devtool-build -- --watch",
     "inject-watch": "npm run inject-build -- --watch",
     "test": "npm run lint",
@@ -27,6 +27,7 @@
     "bili": "^0.14.0",
     "concurrently": "^3.3.0",
     "eslint": "^3.2.2",
-    "eslint-config-google": "^0.6.0"
+    "eslint-config-google": "^0.6.0",
+    "regularjs": "0.5.2"
   }
 }
