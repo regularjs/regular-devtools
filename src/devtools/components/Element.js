@@ -57,4 +57,6 @@ const Element = Regular.extend({
     }
 });
 
+Element.component('element', Element);
+
 export default Element;
