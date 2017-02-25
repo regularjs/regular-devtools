@@ -44,15 +44,16 @@ const Element = Regular.extend({
             if (lastSelected === this) {
                 return;
             }
-            this.data.selected = true;
+
             if (!findElementByUuid(this.$root.data.nodes,
                     lastSelected.data.node.uuid)) {
-                lastSelected = null;
+                this.$root.data.lastSelected = null;
             } else {
                 lastSelected.data.selected = false;
             }
         }
-        lastSelected = this;
+        this.data.selected = true;
+        this.$root.data.lastSelected = this;
         this.$root.$emit("clickElement", node.uuid);
     }
 });
