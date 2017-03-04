@@ -4,17 +4,20 @@ import Regular from "regularjs";
 import CircularJSON from "../shared/circular-json";
 import log from '../shared/log';
 import {enter, input, mouseenter, mouseleave} from './events';
-import {printInConsole, findElementByUuid, findElementByName, findElementByUuidNonRecursive, inspectNodeByUUID, updateInstanceByUUIDAndPath} from './utils';
+import {
+    printInConsole,
+    findElementByUuid, findElementByName, findElementByUuidNonRecursive,
+    inspectNodeByUUID,
+    updateInstanceByUUIDAndPath,
+    highlightNode,
+    getOthersData
+} from './utils';
 
 // components
 import DevtoolsViewComponent from './components/DevtoolsView';
-import SidebarPane from './components/SidebarPane';
-import SimpleJsonTree from './components/SimpleJsonTree';
-import JsonTree from './components/JsonTree';
-import Tabs from './components/Tabs';
 import Element from './components/Element';
 
-// register events
+// register custom events
 Regular.use(enter);
 Regular.use(input);
 Regular.use(mouseenter);
@@ -160,157 +163,6 @@ Regular.extend({
     }
 });
 
-Regular.extend({
-    name: 'sidebarView',
-    template: `
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="name item">&lt;{currentNode.name}&gt;</div>
-                <div class="hint item">$r in the console</div>
-            </div>
-            <Tabs source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></Tabs>
-            <div class="sidebar-content">
-                {#if tabSelected == 'data'}
-                <div>
-                    {#if currentNode.inspectable }
-                        <div class='inspect' on-click={this.onInspectNode(currentNode.uuid)}>
-                            inspect
-                        </div>
-                    {/if}
-                    <SidebarPane title="normal">
-                        <JsonTree source="{ currentNode.data }" on-change="{ this.onDataChange($event) }" />
-                    </SidebarPane>
-                    <SidebarPane title="computed">
-                        <JsonTree source="{ currentNode.computed }" />
-                    </SidebarPane>
-                </div>
-                {#elseif tabSelected == 'others' && currentNode && others}
-                <div>
-                    <SidebarPane title="filters">
-                        <SimpleJsonTree source="{ others._filters }" />
-                    </SidebarPane>
-                    <SidebarPane title="directives">
-                        <SimpleJsonTree source="{ others._directives }" />
-                    </SidebarPane>
-                    <SidebarPane title="animations">
-                        <SimpleJsonTree source="{ others._animations }" />
-                    </SidebarPane>
-                </div>
-                {#else}
-                {/if}
-            </div>
-        </div>
-    `,
-    config() {
-        // defaultValue of currentNode
-        this.data.currentNode = {
-            name: "",
-            uuid: "",
-            data: {}
-        };
-        // others for currentNode
-        this.data.others = {};
-        this.data.tabSource = [{
-            text: "data",
-            key: "data"
-        }, {
-            text: 'others',
-            key: 'others'
-        }];
-        // defaults to `data` pane
-        this.data.tabSelected = 'data';
-    },
-    onTabChange(key) {
-        this.data.tabSelected = key;
-        this.$update();
-        log("Tab is Changed to", key);
-    },
-    onDataChange({path, value}) {
-        const uuid = this.data.currentNode.uuid;
-        updateInstanceByUUIDAndPath({uuid, path, value});
-    },
-    onInspectNode: uuid => inspectNodeByUUID(uuid),
-    highLightNode(uuid, inspectable) {
-        var evalStr = inspectable ? "devtoolsModel.highLighter('" + uuid + "')" : "devtoolsModel.highLighter()";
-        chrome.devtools.inspectedWindow.eval(
-            evalStr,
-            function(result, isException) {
-                if (isException) {
-                    log("Inspect Error: ", isException);
-                }
-            }
-        );
-    },
-    updateOthersData(uuid) {
-        function getOthersData(uuid) {
-            var othersNameArr = ['_directives', '_filters', '_animations'];
-            var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) {
-                return n.uuid === uuid;
-            })[0];
-            if (node) {
-                var constructor = node.constructor;
-                var result = {};
-                for (var prop in constructor) {
-                    if (constructor.hasOwnProperty(prop) && othersNameArr.indexOf(prop) !== -1) {
-                        var tempObj = {};
-                        var curObj = constructor[prop];
-                        var curUI = constructor.prototype;
-                        while (curObj && curUI) {
-                            var tempArr = [];
-                            for (var key in curObj) {
-                                if (curObj.hasOwnProperty(key)) {
-                                    tempArr.push(key);
-                                }
-                            }
-                            /* eslint-disable no-proto, no-loop-func */
-
-                            tempArr.sort(); // same level sort
-                            tempArr.forEach(function(value) {
-                                if (!tempObj[value]) { // same command big level not show
-                                    if (curUI.constructor._addProtoInheritCache) {
-                                        tempObj[value] = "regular";
-                                    } else if (curUI.reset && !curUI.__proto__.reset && curUI.__proto__.constructor._addProtoInheritCache) {
-                                        var funStr = curUI.reset.toString();
-                                        if (funStr.indexOf("this.data = {}") !== -1 && funStr.indexOf("this.config()") !== -1) {
-                                            tempObj[value] = "regularUI"; // very low possible be developer's Component
-                                        } else {
-                                            tempObj[value] = curUI.name === undefined ? '' : curUI.name;
-                                        }
-                                    } else {
-                                        tempObj[value] = curUI.name === undefined ? '' : curUI.name; // same level same color
-                                    }
-                                }
-                            });
-                            curObj = curObj.__proto__;
-                            curUI = curUI.__proto__;
-
-                            /* eslint-enable no-proto, no-loop-func*/
-                        }
-
-                        result[prop] = tempObj;
-                    }
-                }
-                return result;
-            }
-        }
-        chrome.devtools.inspectedWindow.eval(
-            "(" + getOthersData.toString() + ")(" + JSON.stringify(uuid) + ")",
-            function(result, isException) {
-                if (isException) {
-                    log("Inspect Error: ", isException);
-                    return;
-                }
-                this.data.others = result;
-                this.$update();
-            }.bind(this)
-        );
-    }
-})
-.component('SidebarPane', SidebarPane)
-.component('SimpleJsonTree', SimpleJsonTree)
-.component('Tabs', Tabs)
-.component('JsonTree', JsonTree);
-
 // init devtools
 devtools = new DevtoolsViewComponent({
     data: {
@@ -351,7 +203,24 @@ sidebarView = devtools.$refs.sidebarView;
 // searchView
 searchView = elementView.$refs.searchView;
 
-// register custom events
+// listen for custom events
+sidebarView
+    .$on("dataChange", ({uuid, path, value}) => {
+        updateInstanceByUUIDAndPath({uuid, path, value});
+    })
+    .$on("inspectNode", uuid => {
+        inspectNodeByUUID(uuid);
+    })
+    .$on("highlightNode", ({uuid, inspectable}) => {
+        highlightNode(uuid, inspectable);
+    })
+    .$on("updateOthersData", uuid => {
+        getOthersData(uuid).then(data => {
+            sidebarView.data.others = data;
+            sidebarView.$update();
+        });
+    });
+
 devtools
     .$on("initNodes", function(nodesStr) {
         log("On initNodes.");
@@ -360,7 +229,7 @@ devtools
         sidebarView.data.currentNode = nodes[0];
         elementView.data.loading = false;
         elementView.data.nodes = makeElementTree(nodes, []);
-        sidebarView.updateOthersData(nodes[0].uuid);
+        sidebarView.$emit('updateOthersData', nodes[0].uuid);
         sidebarView.$update();
         elementView.$update();
         ready = true;
@@ -369,7 +238,7 @@ devtools
         if (uuid !== sidebarView.data.currentNode.uuid) {
             var node = findElementByUuid(this.data.nodes, uuid);
             sidebarView.data.currentNode = node;
-            sidebarView.updateOthersData(uuid);
+            sidebarView.$emit('updateOthersData', uuid);
             sidebarView.$update();
         }
         printInConsole(uuid);
@@ -380,11 +249,11 @@ devtools
         var currNode = findElementByUuid(nodes, sidebarView.data.currentNode.uuid);
         if (currNode) {
             sidebarView.data.currentNode = currNode;
-            sidebarView.updateOthersData(currNode.uuid);
+            sidebarView.$emit('updateOthersData', currNode.uuid);
             sidebarView.$update();
         } else {
             sidebarView.data.currentNode = nodes[0];
-            sidebarView.updateOthersData(nodes[0].uuid);
+            sidebarView.$emit('updateOthersData', nodes[0].uuid);
             sidebarView.$update();
         }
     }).$on("elementViewReRender", function(nodesStr) {

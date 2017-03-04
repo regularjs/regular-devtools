@@ -1,4 +1,5 @@
 import Regular from 'regularjs';
+import SidebarView from './SidebarView';
 import {findElementByUuid, searchPath, printInConsole} from '../utils';
 
 // Regualr components for devtools' UI
@@ -15,7 +16,7 @@ const DevtoolsViewComponent = Regular.extend({
             </div>
             <div class="devtoolsMain">
                 <elementView ref=elementView isolate />
-                <sidebarView ref=sidebarView isolate />
+                <SidebarView ref=sidebarView isolate />
             </div>
         </div>
     `,
@@ -57,5 +58,7 @@ const DevtoolsViewComponent = Regular.extend({
         }
     }
 });
+
+DevtoolsViewComponent.component('SidebarView', SidebarView);
 
 export default DevtoolsViewComponent;
