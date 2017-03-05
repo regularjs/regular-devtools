@@ -7,7 +7,9 @@ const ElementView = Regular.extend({
         <div class='elementView' on-mouseleave={this.onMouseLeave()}>
             <div class="elementTree">
                 {#if loading }
-                    <img src='/assets/loading.svg' class='loading-img' />
+                    <div class="loading-img">
+                        <div class="mdl-spinner mdl-js-spinner is-active"></div>
+                    </div>
                 {#else}
                 {#if nodes.length > 0}
                     {#list nodes as node}
@@ -15,7 +17,7 @@ const ElementView = Regular.extend({
                         </element>
                     {/list}
                 {#else}
-                    <div class="warnning">There is no Regular instance detected. Please check if you are using the latest version of Regularjs. Or try reloading Regular Devtools</div>
+                    <div class="warnning roboto">There is no Regular instance detected. Please check if you are using the latest version of Regularjs. Or try reloading Regular Devtools</div>
                 {/if}
             {/if}
             </div>

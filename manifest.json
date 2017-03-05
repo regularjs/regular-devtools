@@ -21,7 +21,15 @@
 		"128": "/assets/regular.png"
     },
 
-    "web_accessible_resources": ["/src/frontend/inject.js", "/src/frontend/content.js", "/src/frontend/hook.js", "/dist/inject.bundle.js"],
+    "web_accessible_resources": [
+        "/src/frontend/inject.js", 
+        "/src/frontend/content.js", 
+        "/src/frontend/hook.js", 
+        "/dist/inject.bundle.js",
+        "/lib/material.min.js",
+        "/lib/material.min.css",
+        "/lib/Roboto-Regular.ttf"
+    ],
 
     "permissions": ["<all_urls>"],
 

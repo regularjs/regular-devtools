@@ -3,7 +3,7 @@ import {findElementByName} from '../utils';
 
 const SearchView = Regular.extend({
     template: `
-        <div class="searchView">
+        <div class="searchView roboto">
             <input type="text" r-model={value} on-enter={this.onEnter()} on-input={this.onInput()} class="searchView-input" placeholder="Search By Component Name"/>
             <div class="searchView-btns">
                 <div class="searchView-text">

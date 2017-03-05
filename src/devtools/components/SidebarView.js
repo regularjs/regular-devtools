@@ -8,7 +8,7 @@ import log from '../../shared/log';
 const SidebarView = Regular.extend({
     template: `
         <div class="sidebar">
-            <div class="sidebar-header">
+            <div class="sidebar-header roboto">
                 <div class="name item">&lt;{currentNode.name}&gt;</div>
                 <div class="hint item">$r in the console</div>
             </div>
