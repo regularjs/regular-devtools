@@ -7,7 +7,6 @@ import {enter, input, mouseenter, mouseleave} from './events';
 import {
     printInConsole,
     findElementByUuid,
-    findElementByUuidNonRecursive,
     inspectNodeByUUID,
     updateInstanceByUUIDAndPath,
     highlightNode,
