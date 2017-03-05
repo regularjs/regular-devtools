@@ -11,7 +11,8 @@ import {
     updateInstanceByUUIDAndPath,
     highlightNode,
     getOthersData,
-    makeElementTree
+    makeElementTree,
+    syncArr
 } from './utils';
 
 // components
@@ -29,7 +30,6 @@ var injectContentScript;
 var devtools;
 var sidebarView;
 var elementView;
-var snycArr;
 var displayWarnning;
 var searchView;
 var ready = false;
@@ -127,7 +127,7 @@ devtools
         /* eslint-disable no-unused-vars */
         var oldArr = elementView.data.nodes;
         var newArr = makeElementTree(nodes, []);
-        elementView.data.nodes = snycArr(oldArr, newArr, []);
+        elementView.data.nodes = syncArr(oldArr, newArr, []);
         /* eslint-enable no-unused-vars */
         elementView.$update();
     }).$on("currentNodeChange", function(uuid) {

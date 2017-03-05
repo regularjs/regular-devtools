@@ -57,7 +57,7 @@ const getOthersDataStr = getOthersData.toString();
 export default function(uuid) {
     return new Promise((resolve, reject) => {
         chrome.devtools.inspectedWindow.eval(
-            "(" + getOthersDataStr + ")(" + JSON.stringify(uuid) + ")",
+            `(${getOthersDataStr})(${JSON.stringify(uuid)})`,
             function(result, isException) {
                 if (isException) {
                     log("Inspect Error: ", isException);

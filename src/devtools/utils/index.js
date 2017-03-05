@@ -8,7 +8,7 @@ import {highlightNode} from './highlightNode';
 import {updateInstanceByUUIDAndPath} from './updateInstance';
 import getOthersData from './getOthersData';
 import makeElementTree from './makeElementTree';
-import snycArr from './snycArr';
+import syncArr from './syncArr';
 
 export {
     isPrimitive,
@@ -23,5 +23,5 @@ export {
     highlightNode,
     getOthersData,
     makeElementTree,
-    snycArr
+    syncArr
 };
