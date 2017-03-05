@@ -6,17 +6,17 @@ import log from '../shared/log';
 import {enter, input, mouseenter, mouseleave} from './events';
 import {
     printInConsole,
-    findElementByUuid, findElementByName, findElementByUuidNonRecursive,
+    findElementByUuid,
+    findElementByUuidNonRecursive,
     inspectNodeByUUID,
     updateInstanceByUUIDAndPath,
     highlightNode,
-    getOthersData
+    getOthersData,
+    makeElementTree
 } from './utils';
 
 // components
 import DevtoolsViewComponent from './components/DevtoolsView';
-import Element from './components/Element';
-import SearchView from './components/SearchView';
 
 // register custom events
 Regular.use(enter);
@@ -27,7 +27,6 @@ Regular.use(mouseleave);
 // variables
 var backgroundPageConnection;
 var injectContentScript;
-var makeElementTree;
 var devtools;
 var sidebarView;
 var elementView;
@@ -48,55 +47,6 @@ injectContentScript = function(tabId) {
     });
 };
 
-makeElementTree = function(nodes, container) {
-    for (var i = 0; i < nodes.length; i++) {
-        var node = {
-            name: nodes[i].name,
-            uuid: nodes[i].uuid,
-            shadowFlag: nodes[i].shadowFlag,
-            inspectable: nodes[i].inspectable,
-            childNodes: []
-        };
-        container.push(node);
-        if (nodes[i].childNodes.length) {
-            makeElementTree(nodes[i].childNodes, node.childNodes);
-        }
-    }
-    return container;
-};
-
-Regular.extend({
-    name: "elementView",
-    template: `
-        <div class='elementView' on-mouseleave={this.onMouseLeave()}>
-            <div class="elementTree">
-                {#if loading }
-                    <img src='/assets/loading.svg' class='loading-img' />
-                {#else}
-                {#if nodes.length > 0}
-                    {#list nodes as node}
-                        <element node={node} level={1} >
-                        </element>
-                    {/list}
-                {#else}
-                    <div class="warnning">There is no Regular instance detected. Please check if you are using the latest version of Regularjs. Or try reloading Regular Devtools</div>
-                {/if}
-            {/if}
-            </div>
-            <searchView isolate ref=searchView ></searchView>
-        </div>
-    `,
-    data: {
-        nodes: [],
-        loading: true
-    },
-    onMouseLeave: function() {
-        sidebarView.highLightNode(null, false);
-    }
-})
-.component('element', Element)
-.component('searchView', SearchView);
-
 // init devtools
 devtools = new DevtoolsViewComponent({
     data: {
@@ -104,24 +54,6 @@ devtools = new DevtoolsViewComponent({
         lastSelected: null
     }
 }).$inject("#devtoolsInject");
-
-snycArr = function(oldArr, newArr, container) {
-    for (var i = 0; i < newArr.length; i++) {
-        var newNode = newArr[i];
-        var oldNode = findElementByUuidNonRecursive(oldArr, newArr[i].uuid);
-        if (oldNode) {
-            if (JSON.stringify(oldNode) !== JSON.stringify(newNode)) {
-                oldNode.name = newNode.name;
-                oldNode.shadowFlag = newNode.shadowFlag;
-                oldNode.childNodes = snycArr(oldNode.childNodes, newNode.childNodes, []);
-            }
-            container.push(oldNode);
-        } else {
-            container.push(newNode);
-        }
-    }
-    return container;
-};
 
 displayWarnning = function() {
     if (elementView.data.loading) {

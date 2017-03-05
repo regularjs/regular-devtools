@@ -7,6 +7,8 @@ import {inspectNodeByUUID} from './inspectNode';
 import {highlightNode} from './highlightNode';
 import {updateInstanceByUUIDAndPath} from './updateInstance';
 import getOthersData from './getOthersData';
+import makeElementTree from './makeElementTree';
+import snycArr from './snycArr';
 
 export {
     isPrimitive,
@@ -19,5 +21,7 @@ export {
     inspectNodeByUUID,
     updateInstanceByUUIDAndPath,
     highlightNode,
-    getOthersData
+    getOthersData,
+    makeElementTree,
+    snycArr
 };
