@@ -31,6 +31,7 @@ const JsonTreeProp = Regular.extend({
                     r-hide="{ !editing }"
                     class="edit"
                     type="text"
+                    spellcheck="false"
                     value="{ type === 'String' ? JSON.stringify(value) : value }"
                     on-blur="{ this.onBlur($event) }"
                     on-keyup="{ this.onEnter($event) }"
@@ -51,16 +52,13 @@ const JsonTreeProp = Regular.extend({
         opened: false
     },
     computed: {
-        type: {
-            get: function(data) {
-                return this.type(data.value);
-            }
+        type() {
+            return type(this.data.value);
         },
-        hasChildren: {
-            get: function(data) {
-                return ((this.type(data.value) === 'Array') || (this.type(data.value) === 'Object')) &&
-                    ((data.value.length || Object.keys(data.value).length));
-            }
+        hasChildren() {
+            var data = this.data;
+            return ((type(data.value) === 'Array') || (type(data.value) === 'Object')) &&
+                ((data.value.length || Object.keys(data.value).length));
         }
     },
     config: function() {
@@ -77,48 +75,54 @@ const JsonTreeProp = Regular.extend({
         if (this.data.value === 'function') {
             return;
         }
-        if (!this.isPrimitive(this.data.value)) {
+        if (!isPrimitive(this.data.value)) {
             return;
         }
         this.data.editing = true;
-        this.$update();
-        // select all when active
-        var input = this.$refs.edit;
-        if (type(this.data.value) === "String") {
-            input.setSelectionRange(1, input.value.length - 1);
-        } else {
-            input.setSelectionRange(0, input.value.length);
-        }
+        // focus and selectRange after UI updated
+        setTimeout(() => {
+            // select all when active
+            var $edit = this.$refs.edit;
+            $edit.focus();
+            if (type(this.data.value) === "String") {
+                $edit.setSelectionRange(1, $edit.value.length - 1);
+            } else {
+                $edit.setSelectionRange(0, $edit.value.length);
+            }
+        }, 0);
     },
     onBlur: function(e) {
         this.data.editing = false;
-        this.$update();
-        this.editDone(e);
+        this._sync(e);
     },
     onEnter: function(e) {
-        // press enter
+        // Enter
         if (e.which === 13) {
             this.$refs.edit.blur();
         }
     },
     // when editing is finished
-    editDone: function(e) {
-        var v = e.target.value;
-        var tmp = this.data.value;
+    _sync: function(e) {
+        var tmp;
         try {
-            tmp = JSON.parse(v);
+            tmp = JSON.parse(e.target.value);
         } catch (error) {
-            e.target.value = (type(tmp) ? JSON.stringify(tmp) : tmp);
+            const value = this.data.value;
+            if (type(value)) {
+                e.target.value = JSON.stringify(value);
+            } else {
+                e.target.value = value;
+            }
         }
 
         // if not primitive or new value equals original one, return
-        if (!this.isPrimitive(tmp) || tmp === this.data.value) {
+        if (!isPrimitive(tmp) || tmp === this.data.value) {
             return;
         }
 
         var parent = this.$parent;
         while (parent) {
-            if (typeof parent.isJsonTree === 'function' && parent.isJsonTree() === true) {
+            if (isJsonTree(parent)) {
                 parent.$emit('change', {
                     path: this.data.path,
                     value: tmp,
@@ -128,12 +132,15 @@ const JsonTreeProp = Regular.extend({
             }
             parent = parent.$parent;
         }
-        // TODO: maybe this can be deleted
+
+        function isJsonTree(context) {
+            return typeof context.isJsonTree === 'function' && context.isJsonTree() === true;
+        }
+
         this.data.value = tmp;
         this.$update();
     },
-    isPrimitive: isPrimitive,
-    type: type
+    isPrimitive: isPrimitive
 });
 
 JsonTreeProp.component('JsonTreeProp', JsonTreeProp);
