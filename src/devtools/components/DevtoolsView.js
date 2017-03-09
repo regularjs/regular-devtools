@@ -7,7 +7,7 @@ import {findElementByUuid, searchPath, printInConsole} from '../utils';
 const DevtoolsViewComponent = Regular.extend({
     template: `
         <div class='regualrDevtools'>
-            <div class='devtoolsHeader no-space roboto'>
+            <div class='devtoolsHeader roboto'>
                 <div class="devtoolsHeader-container logo">
                     Regular Devtools
                 </div>
