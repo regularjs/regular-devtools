@@ -25,31 +25,34 @@ const DevtoolsViewComponent = Regular.extend({
         chrome.devtools.inspectedWindow.reload();
     },
     focusNode: function(uuid) {
-        var elementViewDOM = document.querySelector(".elementTree");
-        var elementViewRect = elementViewDOM.getBoundingClientRect();
-        var evHeight = elementViewRect.height;
-        var node = findElementByUuid(this.data.nodes, uuid);
-        var path = [];
-        var i;
-        var currTop;
-        let lastSelected = this.data.lastSelected;
+        const elementViewDOM = document.querySelector(".elementTree");
+        const {height: evHeight} = elementViewDOM.getBoundingClientRect();
+
         const sidebarView = this.$refs.sidebarView;
         const elementView = this.$refs.elementView;
 
-        sidebarView.data.currentNode = node;
-        sidebarView.$update();
-        searchPath(elementView._children, uuid, path);
-        for (i = 0; i < path.length; i++) {
-            path[i].data.opened = true;
+        // unselect last selected
+        if (this.data.lastSelected) {
+            this.data.lastSelected.data.selected = false;
         }
-        if (lastSelected) {
-            lastSelected.data.selected = false;
+
+        // update sidebarView
+        sidebarView.data.currentNode = findElementByUuid(this.data.nodes, uuid);
+        sidebarView.$update();
+
+        // update elementView
+        const path = [];
+        searchPath(elementView._children, uuid, path);
+        for (let i = 0; i < path.length; i++) {
+            path[i].data.opened = true;
         }
         this.data.lastSelected = path[0];
         path[0].data.selected = true;
         printInConsole(uuid);
         elementView.$update();
-        currTop = path[0].group.children[0].last().getBoundingClientRect().top;
+
+        // scroll into view
+        const currTop = path[0].group.children[0].last().getBoundingClientRect().top;
         if ((currTop > evHeight) || (currTop < 0)) {
             if (currTop < 0) {
                 elementViewDOM.scrollTop = Math.abs(currTop);

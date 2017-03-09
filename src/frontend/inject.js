@@ -455,6 +455,7 @@ window.devtoolsModel = (function() {
             for (i = 0; i < ins.length; i++) {
                 if (ins[i].uuid === uuid) {
                     window.$r = ins[i]; // console output $component as curUI component
+                    break;
                 }
             }
         },

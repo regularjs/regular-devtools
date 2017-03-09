@@ -1,6 +1,6 @@
 import log from '../../shared/log';
 
-export default function printInConsole(uuid) {
+export default function(uuid) {
     chrome.devtools.inspectedWindow.eval(
         `devtoolsModel.print(${JSON.stringify(uuid)})`,
         function(result, isException) {
