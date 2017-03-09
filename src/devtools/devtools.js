@@ -25,67 +25,41 @@ Regular.use(mouseenter);
 Regular.use(mouseleave);
 
 // variables
-var backgroundPageConnection;
-var injectContentScript;
-var devtools;
-var sidebarView;
-var elementView;
-var displayWarnning;
-var searchView;
-var ready = false;
+let ready = false;
 
 // Create a current inspected page unique connection to the background page, by its tabId
-backgroundPageConnection = chrome.runtime.connect({
+const backgroundPageConnection = chrome.runtime.connect({
     name: "devToBackCon_" + chrome.devtools.inspectedWindow.tabId
 });
-
-injectContentScript = function(tabId) {
-    backgroundPageConnection.postMessage({
-        tabId: tabId || chrome.devtools.inspectedWindow.tabId,
-        file: "/src/frontend/content.js"
-    });
-};
-
-// init devtools
-devtools = new DevtoolsViewComponent({
+// devtools
+const devtools = new DevtoolsViewComponent({
     data: {
         nodes: [],
         lastSelected: null
     }
 }).$inject("#devtoolsInject");
+// left element view
+const elementView = devtools.$refs.elementView;
+// right sidebar view
+const sidebarView = devtools.$refs.sidebarView;
+// searchView
+const searchView = elementView.$refs.searchView;
 
-displayWarnning = function() {
+function injectContentScript(tabId) {
+    backgroundPageConnection.postMessage({
+        tabId: tabId || chrome.devtools.inspectedWindow.tabId,
+        file: "/src/frontend/content.js"
+    });
+}
+
+function displayWarning() {
     if (elementView.data.loading) {
         elementView.data.loading = false;
         elementView.$update();
     }
-};
-
-// left element view
-elementView = devtools.$refs.elementView;
-// right sidebar view
-sidebarView = devtools.$refs.sidebarView;
-// searchView
-searchView = elementView.$refs.searchView;
+}
 
 // listen for custom events
-sidebarView
-    .$on("dataChange", ({uuid, path, value}) => {
-        updateInstanceByUUIDAndPath({uuid, path, value});
-    })
-    .$on("inspectNode", uuid => {
-        inspectNodeByUUID(uuid);
-    })
-    .$on("highlightNode", ({uuid, inspectable}) => {
-        highlightNode(uuid, inspectable);
-    })
-    .$on("updateOthersData", uuid => {
-        getOthersData(uuid).then(data => {
-            sidebarView.data.others = data;
-            sidebarView.$update();
-        });
-    });
-
 devtools
     .$on("initNodes", function(nodesStr) {
         log("On initNodes.");
@@ -107,7 +81,8 @@ devtools
             sidebarView.$update();
         }
         printInConsole(uuid);
-    }).$on("stateViewReRender", function(nodesStr) {
+    })
+    .$on("stateViewReRender", function(nodesStr) {
         log("On stateViewRender.");
         let nodes = CircularJSON.parse(nodesStr);
         this.data.nodes = nodes;
@@ -121,7 +96,8 @@ devtools
             sidebarView.$emit('updateOthersData', nodes[0].uuid);
             sidebarView.$update();
         }
-    }).$on("elementViewReRender", function(nodesStr) {
+    })
+    .$on("elementViewReRender", function(nodesStr) {
         log("On elementViewRerender.");
         let nodes = CircularJSON.parse(nodesStr);
         /* eslint-disable no-unused-vars */
@@ -130,20 +106,39 @@ devtools
         elementView.data.nodes = syncArr(oldArr, newArr, []);
         /* eslint-enable no-unused-vars */
         elementView.$update();
-    }).$on("currentNodeChange", function(uuid) {
+    })
+    .$on("currentNodeChange", function(uuid) {
         log("On currentNodeChange.");
         if (sidebarView.data.currentNode.uuid !== uuid) {
             devtools.focusNode(uuid);
         }
-    }).$on("reload", function(event) {
+    })
+    .$on("reload", function(event) {
         ready = false;
         log("On reload.");
         searchView.reset();
         // wait for the page to fully intialize
         setTimeout(function() {
             injectContentScript(event.tabId);
-            setTimeout(displayWarnning, 4000);
+            setTimeout(displayWarning, 4000);
         }, 2000);
+    });
+
+sidebarView
+    .$on("dataChange", ({uuid, path, value}) => {
+        updateInstanceByUUIDAndPath({uuid, path, value});
+    })
+    .$on("inspectNode", uuid => {
+        inspectNodeByUUID(uuid);
+    })
+    .$on("highlightNode", ({uuid, inspectable}) => {
+        highlightNode(uuid, inspectable);
+    })
+    .$on("updateOthersData", uuid => {
+        getOthersData(uuid).then(data => {
+            sidebarView.data.others = data;
+            sidebarView.$update();
+        });
     });
 
 backgroundPageConnection.onMessage.addListener(function(message) {
@@ -171,5 +166,5 @@ window.addEventListener("message", function(event) {
 
 injectContentScript();
 
-// waiting 4000ms, if still loading, remove loading and show warnning
-setTimeout(displayWarnning, 4000);
+// waiting 4000ms, if still loading, remove loading and show warning
+setTimeout(displayWarning, 4000);
