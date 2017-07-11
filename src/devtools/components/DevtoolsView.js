@@ -12,7 +12,8 @@ const DevtoolsViewComponent = Regular.extend({
                     Regular Devtools
                 </div>
                 <div class="devtoolsHeader-container refresh">
-                    <img src='/assets/refresh.svg' on-click={this.onRefresh()} class='devtoolsHeader-refresh' title="Refresh"/>
+                    <img id='tt1' src='/assets/refresh.svg' on-click={this.onRefresh()} class='devtoolsHeader-refresh'/>
+                    <div r-md="" class="mdl-tooltip mdl-tooltip--large" data-mdl-for="tt1">Reload</div>
                 </div>
             </div>
             <div class="devtoolsMain">

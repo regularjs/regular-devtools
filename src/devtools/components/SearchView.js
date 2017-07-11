@@ -4,7 +4,10 @@ import {findElementByName} from '../utils';
 const SearchView = Regular.extend({
     template: `
         <div class="searchView roboto">
-            <input type="text" r-model={value} on-enter={this.onEnter()} on-input={this.onInput()} class="searchView-input" placeholder="Search By Component Name"/>
+            <div  r-md=""  class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label searchView-md">
+                <input class="mdl-textfield__input searchView-md-input" r-model={value} on-enter={this.onEnter()} on-input={this.onInput()} type="text" id="sample3">
+                <label class="mdl-textfield__label searchView-md-label" for="sample3">Search By Component Name</label>
+            </div>
             <div class="searchView-btns">
                 <div class="searchView-text">
                     {#if hasSearched && !resultList.length}

@@ -24,6 +24,12 @@ Regular.use(input);
 Regular.use(mouseenter);
 Regular.use(mouseleave);
 
+// directive for MDL component registeration
+Regular.directive('r-md', function(elem, value){
+  componentHandler.upgradeElement(elem);
+  console.log("r-md")
+})
+
 // variables
 let ready = false;
 

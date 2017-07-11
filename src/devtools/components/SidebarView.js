@@ -12,7 +12,7 @@ const SidebarView = Regular.extend({
                 <div class="sidebar__header-left">&lt;{currentNode.name}&gt;</div>
                 <div class="sidebar__header-right">$r in the console</div>
             </div>
-            <Tabs source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></Tabs>
+            <Tabs currentIndex={ currentTabIndex } source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></Tabs>
             <div class="sidebar__content">
                 {#if tabSelected == 'data'}
                 <div>
@@ -21,10 +21,10 @@ const SidebarView = Regular.extend({
                             inspect
                         </div>
                     {/if}
-                    <SidebarPane title="normal">
+                    <SidebarPane title="Normal">
                         <JsonTree source="{ currentNode.data }" on-change="{ this.onDataChange($event) }" />
                     </SidebarPane>
-                    <SidebarPane title="computed">
+                    <SidebarPane title="Computed">
                         <JsonTree source="{ currentNode.computed }" />
                     </SidebarPane>
                 </div>
@@ -55,14 +55,30 @@ const SidebarView = Regular.extend({
         // others for currentNode
         this.data.others = {};
         this.data.tabSource = [{
-            text: "data",
+            text: "Data",
             key: "data"
         }, {
-            text: 'others',
+            text: 'Others',
             key: 'others'
         }];
         // defaults to `data` pane
         this.data.tabSelected = 'data';
+    },
+    computed: {
+        currentTabIndex: {
+            get: function(){
+               return this.getCurrentTabIndex()
+            }
+        } 
+    },
+    getCurrentTabIndex(){
+        const source = this.data.tabSource
+        for (let i=0;i<source.length;i++) {
+            if (this.data.tabSelected === source[i].key) {
+                return i
+            }
+        }
+        return 0
     },
     onTabChange(key) {
         this.data.tabSelected = key;

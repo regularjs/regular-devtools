@@ -6,10 +6,11 @@ const Tabs = Regular.extend({
             <div class="tabs-header">
                 <div class="tabs-header-items">
                     {#list source as s}
-                        <div class="tabs-header-item { selected === s.key ? 'selected' : '' }" on-click="{ this.onTabClick( s.key ) }">
+                        <div class="tabs-header-item" on-click="{ this.onTabClick( s.key ) }">
                             { s.text }
                         </div>
                     {/list}
+                    <div class="tab-indicator" style="{ 'transform:translateX(' + currentIndex*60 + 'px)'}"></div>
                 </div>
             </div>
         </div>

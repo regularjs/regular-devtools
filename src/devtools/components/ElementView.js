@@ -8,7 +8,7 @@ const ElementView = Regular.extend({
             <div class="elementTree">
                 {#if loading }
                     <div class="loading-img">
-                        <div class="mdl-spinner mdl-js-spinner is-active"></div>
+                        <div r-md="" class="mdl-spinner mdl-js-spinner is-active"></div>
                     </div>
                 {#else}
                 {#if nodes.length > 0}
