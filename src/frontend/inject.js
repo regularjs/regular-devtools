@@ -39,7 +39,7 @@ window.devtoolsModel = (function() {
         Object.keys(ins.computed).forEach(function(v) {
             try {
                 computed[v] = ins.$get(v);
-            }catch {
+            }catch (e) {
                 computed[v] = undefined;
             }
         });
