@@ -37,7 +37,11 @@ window.devtoolsModel = (function() {
     fetchComputedProps = function(ins) {
         var computed = {};
         Object.keys(ins.computed).forEach(function(v) {
-            computed[v] = ins.$get(v);
+            try {
+                computed[v] = ins.$get(v);
+            }catch {
+                computed[v] = undefined;
+            }
         });
         return computed;
     };
