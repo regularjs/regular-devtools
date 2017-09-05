@@ -1,6 +1,8 @@
 import CircularJSON from "../shared/circular-json";
 import { findElementByUuid } from '../devtools/utils';
 
+window.CircularJSON = CircularJSON;
+
 // listen for message from content script
 // ensure only executing window.addEventListener once
 if (!window.devtoolsModel) {
@@ -34,6 +36,21 @@ window.devtoolsModel = (function() {
     var getDomNode;
     var getNodesByUUID;
     var setLabelPositon;
+    
+
+    var stringifyStore = function(store) {
+        return CircularJSON.stringify(store, function(key, item) {
+            if ((item !== null && typeof item === "object")) {
+                if (Object.prototype.toString.call(item) === "[object Object]" && !item.constructor.prototype.hasOwnProperty("isPrototypeOf")) {
+                    return "[Circular]";
+                } else if (isNode(item) || isElement(item)) {
+                    return "[DOM node]";
+                }
+                return item;
+            }
+            return item;
+        });
+    }
 
     fetchComputedProps = function(ins) {
         var computed = {};
@@ -270,17 +287,7 @@ window.devtoolsModel = (function() {
             }
         }
 
-        return CircularJSON.stringify(store, function(key, item) {
-            if ((item !== null && typeof item === "object")) {
-                if (Object.prototype.toString.call(item) === "[object Object]" && !item.constructor.prototype.hasOwnProperty("isPrototypeOf")) {
-                    return "[Circular]";
-                } else if (isNode(item) || isElement(item)) {
-                    return "[DOM node]";
-                }
-                return item;
-            }
-            return item;
-        });
+        return stringifyStore(store);
     };
 
     var highLighter = function(uuid) {
@@ -300,7 +307,7 @@ window.devtoolsModel = (function() {
         })[0];
 
         var domNode = getNodesByUUID(uuid)[0];
-        console.log(domNode)
+
         if (!domNode) {
             return;
         }
@@ -323,7 +330,7 @@ window.devtoolsModel = (function() {
         maskNode.style.backgroundColor = "rgba(145, 183, 228, 0.6)";
         maskNode.style.zIndex = 999;
         document.querySelector("body").appendChild(maskNode);
-        console.log(maskNode)
+
         // draw label
         var demensionStr = "\n" + rect.width.toFixed(0) + "×" + rect.height.toFixed(0);
         labelNode = document.createElement("div");
@@ -451,7 +458,8 @@ window.devtoolsModel = (function() {
                 }
             }
         },
-        highLighter: highLighter
+        highLighter: highLighter,
+        stringify: stringifyStore 
     };
 })();
 

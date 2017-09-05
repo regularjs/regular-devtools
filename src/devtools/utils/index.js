@@ -6,6 +6,7 @@ import {findElementByUuid, findElementByName, findElementByUuidNonRecursive} fro
 import {inspectNodeByUUID} from './inspectNode';
 import {highlightNode} from './highlightNode';
 import {updateInstanceByUUIDAndPath} from './updateInstance';
+import getData from './getData';
 import getOthersData from './getOthersData';
 import makeElementTree from './makeElementTree';
 import syncArr from './syncArr';
@@ -21,6 +22,7 @@ export {
     inspectNodeByUUID,
     updateInstanceByUUIDAndPath,
     highlightNode,
+    getData,
     getOthersData,
     makeElementTree,
     syncArr

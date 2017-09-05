@@ -60,7 +60,7 @@ export default function(uuid) {
             `(${getOthersDataStr})(${JSON.stringify(uuid)})`,
             function(result, isException) {
                 if (isException) {
-                    log("Inspect Error: ", isException);
+                    log("Get Others Data Error: ", isException);
                     reject(isException);
                     return;
                 }

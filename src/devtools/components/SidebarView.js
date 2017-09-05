@@ -25,7 +25,7 @@ const SidebarView = Regular.extend({
                         <JsonTree source="{ currentNode.data }" on-change="{ this.onDataChange($event) }" />
                     </SidebarPane>
                     <SidebarPane title="Computed">
-                        <JsonTree source="{ currentNode.computed }" />
+       
                     </SidebarPane>
                 </div>
                 {#elseif tabSelected == 'others' && currentNode && others}

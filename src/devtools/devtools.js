@@ -11,6 +11,7 @@ import {
     inspectNodeByUUID,
     updateInstanceByUUIDAndPath,
     highlightNode,
+    getData,
     getOthersData,
     makeElementTree,
     syncArr
@@ -74,18 +75,17 @@ devtools
         sidebarView.data.currentNode = nodes[0];
         elementView.data.loading = false;
         elementView.data.nodes = makeElementTree(nodes, []);
-        // sidebarView.$emit('updateOthersData', nodes[0].uuid);
+        sidebarView.$emit('updateData', nodes[0].uuid);
         // sidebarView.$update();
         elementView.$update();
         ready = true;
     })
     .$on("clickElement", function(uuid) {
-        // if (uuid !== sidebarView.data.currentNode.uuid) {
-        //     var node = findElementByUuid(this.data.nodes, uuid);
-        //     sidebarView.data.currentNode = node;
-        //     sidebarView.$emit('updateOthersData', uuid);
-        //     sidebarView.$update();
-        // }
+        if (uuid !== sidebarView.data.currentNode.uuid) {
+            var node = findElementByUuid(this.data.nodes, uuid);
+            sidebarView.$emit('updateData', uuid);
+            // sidebarView.$update();
+        }
         printInConsole(uuid);
     })
     .$on("stateViewReRender", function(nodesStr) {
@@ -140,6 +140,14 @@ sidebarView
     })
     .$on("highlightNode", ({uuid, inspectable}) => {
         highlightNode(uuid, inspectable);
+    })
+    .$on("updateData", uuid => {
+        getData(uuid).then(data => {
+            let currentNode = CircularJSON.parse(data);
+            console.log(currentNode);
+            sidebarView.data.currentNode = currentNode;
+            sidebarView.$update();
+        });
     })
     .$on("updateOthersData", uuid => {
         getOthersData(uuid).then(data => {
