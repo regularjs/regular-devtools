@@ -1,4 +1,5 @@
 import CircularJSON from "../shared/circular-json";
+import { findElementByUuid } from '../devtools/utils';
 
 // listen for message from content script
 // ensure only executing window.addEventListener once
@@ -26,12 +27,12 @@ window.devtoolsModel = (function() {
     var ins = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins || [];
     var store = [];
     var fetchComputedProps;
-    var nodeTree = [];
     var walker;
     var treeGen;
     var maskNode;
     var labelNode;
     var getDomNode;
+    var getNodesByUUID;
     var setLabelPositon;
 
     fetchComputedProps = function(ins) {
@@ -120,8 +121,13 @@ window.devtoolsModel = (function() {
                 }
             }
         }
+        
         return container;
     };
+
+    getNodesByUUID = function(uuid) {
+        return findElementByUuid(store, uuid).node;
+    } 
 
     function isASTElement(node) {
         return node.type && node.group;
@@ -138,76 +144,72 @@ window.devtoolsModel = (function() {
     walker = function(node, container, flag) {
         var n;
         var i;
-        if (isRegularInstance(node)) {
-            if (flag) {
-                n = {
-                    uuid: node.uuid,
-                    childNodes: [],
-                    node: [],
-                    ref: node
-                };
-                n.node = getDomNode(node);
-                if (node.group) {
-                    treeGen(node, n.childNodes, flag);
-                }
-                container.push(n);
-            } else {
-                // if node.name not exists, find node name defined using Compnoent.component() on parent component
-                if (!node.name && node.$parent) {
-                    let obj = node.$parent.constructor._components;
-                    let keys = Object.keys(obj);
-                    for (let i = 0; i < keys.length; i++) {
-                        if (obj[keys[i]] === node.constructor) {
-                            node.name = keys[i];
-                            break;
-                        }
-                    }
-                }
-                n = {
-                    uuid: node.uuid,
-                    name: node.name || "Anonymous Component",
-                    data: node.data,
-                    childNodes: [],
-                    inspectable: false
-                };
-                if (node.node) {
-                    n.inspectable = true;
-                } else if (node.group.children) {
-                    for (i = 0; i < node.group.children.length; i++) {
-                        if (node.group.get(i).type) {
-                            n.inspectable = true;
-                            break;
-                        }
-                    }
-                }
-                if (node.$outer) {
-                    n.shadowFlag = true;
-                }
 
-                // fetch all computed props
-                n.computed = fetchComputedProps(node);
-                node.visited = true;
-                container.push(n);
-                if (node.group) {
-                    treeGen(node, n.childNodes);
+        if (isRegularInstance(node)) {
+            // if node.name not exists, find node name defined using Compnoent.component() on parent component
+            if (!node.name && node.$parent) {
+                let obj = node.$parent.constructor._components;
+                let keys = Object.keys(obj);
+                for (let i = 0; i < keys.length; i++) {
+                    if (obj[keys[i]] === node.constructor) {
+                        node.name = keys[i];
+                        break;
+                    }
                 }
             }
+            n = {
+                uuid: node.uuid,
+                name: node.name || "Anonymous Component",
+                childNodes: [],
+                inspectable: false
+            };
+            
+            n.node = getDomNode(node);
+
+            if (node.$outer) {
+                n.shadowFlag = true;
+            }
+
+            // fetch all computed props
+            // n.computed = fetchComputedProps(node);
+            node.visited = true;
+            if (node.group) {
+                treeGen(node, n.childNodes);
+            }
+            
+            if (n.node.length === 0) {
+                // if (n.name === "dashboardProvider") {
+                //     debugger
+                // }
+                for (let i=0;i<n.childNodes.length;i++) {
+                    if (n.childNodes[i].node.length > 0) {
+                        n.node = n.childNodes[i].node;
+                        break;
+                    }
+                }
+            }
+            
+            if (n.node.length) {
+                n.inspectable = true;
+            } 
+
+            container.push(n);
         } else if (isASTElement(node)) {
             for (i = 0; i < node.group.children.length; i++) {
-                walker(node.group.children[i], container, flag);
+                walker(node.group.children[i], container);
             }
         } else if (isASTGroup(node)) {
             for (i = 0; i < node.children.length; i++) {
-                walker(node.children[i], container, flag);
+                walker(node.children[i], container);
             }
         }
     };
 
-    treeGen = function(root, container, flag) {
+    treeGen = function(root, container) {
         var tree = container || [];
         if (root.group) {
             for (var i = 0; i < root.group.children.length; i++) {
-                walker(root.group.children[i], tree, flag);
+                walker(root.group.children[i], tree);
             }
         }
         return tree;
@@ -238,53 +240,36 @@ window.devtoolsModel = (function() {
     };
 
     var storeGen = function(flag) {
+        
         var node;
-        if (!flag) {
-            store = [];
-        } else {
-            nodeTree = [];
-        }
+        store = [];
         for (var i = 0; i < ins.length; i++) {
             if (ins[i].$root === ins[i]) {
                 // fetch all computed props
-                var computed = fetchComputedProps(ins[i]);
-                if (flag && ins[i].parentNode) {
-                    node = {
-                        uuid: ins[i].uuid,
-                        childNodes: [],
-                        node: [],
-                        computed: computed
-                    };
-                    var body = document.body;
-                    if (ins[i].parentNode === body) {
-                        for (var j = 0; j < ins[i].group.children.length; j++) {
-                            if (ins[i].group.get(j).type) {
-                                node.node.push(ins[i].group.get(j).node());
-                            }
+                // var computed = fetchComputedProps(ins[i]);
+                node = {
+                    uuid: ins[i].uuid,
+                    name: ins[i].name || "Anonymous Component",
+                    childNodes: [],
+                    node: [],
+                    inspectable: !!ins[i].parentNode
+                };
+                var body = document.body;
+                if (ins[i].parentNode === body) {
+                    for (var j = 0; j < ins[i].group.children.length; j++) {
+                        if (ins[i].group.get(j).type) {
+                            node.node.push(ins[i].group.get(j).node());
                         }
-                    } else {
-                        node.node.push(ins[i].parentNode);
                     }
-                    treeGen(ins[i], node.childNodes, flag);
-                    nodeTree.push(node);
                 } else {
-                    node = {
-                        uuid: ins[i].uuid,
-                        name: ins[i].name || "Anonymous Component",
-                        data: ins[i].data,
-                        computed: computed,
-                        childNodes: [],
-                        inspectable: !!ins[i].parentNode
-                    };
-                    ins[i].visited = true;
-                    treeGen(ins[i], node.childNodes);
-                    store.push(node);
+                    node.node.push(ins[i].parentNode);
                 }
+                ins[i].visited = true;
+                treeGen(ins[i], node.childNodes);
+                store.push(node);
             }
         }
-        if (flag) {
-            return nodeTree;
-        }
+
         return CircularJSON.stringify(store, function(key, item) {
             if ((item !== null && typeof item === "object")) {
                 if (Object.prototype.toString.call(item) === "[object Object]" && !item.constructor.prototype.hasOwnProperty("isPrototypeOf")) {
@@ -299,6 +284,7 @@ window.devtoolsModel = (function() {
     };
 
     var highLighter = function(uuid) {
+
         if (!uuid) {
             if (maskNode) {
                 document.querySelector("body").removeChild(maskNode);
@@ -309,12 +295,12 @@ window.devtoolsModel = (function() {
             return;
         }
 
-        // find node by uuid
         var node = ins.filter(function(n) {
             return n.uuid === uuid;
         })[0];
 
-        var domNode = getDomNode(node)[0] || node.parentNode;
+        var domNode = getNodesByUUID(uuid)[0];
+        console.log(domNode)
         if (!domNode) {
             return;
         }
@@ -323,8 +309,10 @@ window.devtoolsModel = (function() {
         if (maskNode) {
             document.querySelector("body").removeChild(maskNode);
             document.querySelector("body").removeChild(labelNode);
+            maskNode = null;
+            labelNode = null;
         }
-
+        
         // draw mask
         maskNode = document.createElement("div");
         maskNode.style.position = "absolute";
@@ -335,7 +323,7 @@ window.devtoolsModel = (function() {
         maskNode.style.backgroundColor = "rgba(145, 183, 228, 0.6)";
         maskNode.style.zIndex = 999;
         document.querySelector("body").appendChild(maskNode);
-
+        console.log(maskNode)
         // draw label
         var demensionStr = "\n" + rect.width.toFixed(0) + "×" + rect.height.toFixed(0);
         labelNode = document.createElement("div");
@@ -436,7 +424,7 @@ window.devtoolsModel = (function() {
             }, "*");
         },
         getNodeTree: function() {
-            return storeGen(true);
+            return store;
         },
         updateInstance: function(uuid, path, value) {
             // find instance by uuid

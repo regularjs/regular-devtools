@@ -2,6 +2,7 @@
 // the UI layer of devtools
 import Regular from "regularjs";
 import CircularJSON from "../shared/circular-json";
+import he from 'he';
 import log from '../shared/log';
 import {enter, input, mouseenter, mouseleave} from './events';
 import {
@@ -27,7 +28,6 @@ Regular.use(mouseleave);
 // directive for MDL component registeration
 Regular.directive('r-md', function(elem, value){
   componentHandler.upgradeElement(elem);
-  console.log("r-md")
 })
 
 // variables
@@ -74,18 +74,18 @@ devtools
         sidebarView.data.currentNode = nodes[0];
         elementView.data.loading = false;
         elementView.data.nodes = makeElementTree(nodes, []);
-        sidebarView.$emit('updateOthersData', nodes[0].uuid);
-        sidebarView.$update();
+        // sidebarView.$emit('updateOthersData', nodes[0].uuid);
+        // sidebarView.$update();
         elementView.$update();
         ready = true;
     })
     .$on("clickElement", function(uuid) {
-        if (uuid !== sidebarView.data.currentNode.uuid) {
-            var node = findElementByUuid(this.data.nodes, uuid);
-            sidebarView.data.currentNode = node;
-            sidebarView.$emit('updateOthersData', uuid);
-            sidebarView.$update();
-        }
+        // if (uuid !== sidebarView.data.currentNode.uuid) {
+        //     var node = findElementByUuid(this.data.nodes, uuid);
+        //     sidebarView.data.currentNode = node;
+        //     sidebarView.$emit('updateOthersData', uuid);
+        //     sidebarView.$update();
+        // }
         printInConsole(uuid);
     })
     .$on("stateViewReRender", function(nodesStr) {
@@ -106,6 +106,7 @@ devtools
     .$on("elementViewReRender", function(nodesStr) {
         log("On elementViewRerender.");
         let nodes = CircularJSON.parse(nodesStr);
+        
         /* eslint-disable no-unused-vars */
         var oldArr = elementView.data.nodes;
         var newArr = makeElementTree(nodes, []);
@@ -149,10 +150,10 @@ sidebarView
 
 backgroundPageConnection.onMessage.addListener(function(message) {
     if (message.type === "dataUpdate") {
-        devtools.$emit("stateViewReRender", message.nodes);
+        // devtools.$emit("stateViewReRender", message.nodes);
     } else if (message.type === "reRender") {
         devtools.$emit("elementViewReRender", message.nodes);
-    } else if (message.type === "initNodes") {
+    } else if (message.type === "initNodes") {        
         devtools.$emit("initNodes", message.nodes);
     } else if (message.type === "pageReload") {
         elementView.data.loading = true;

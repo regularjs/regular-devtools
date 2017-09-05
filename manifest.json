@@ -31,7 +31,7 @@
         "/lib/Roboto-Regular.ttf"
     ],
 
-    "permissions": ["<all_urls>"],
+    "permissions": ["<all_urls>", "debugger"],
 
     "content_scripts": [{
         "matches": ["<all_urls>"],
