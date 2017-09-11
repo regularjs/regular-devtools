@@ -279,7 +279,9 @@ window.devtoolsModel = (function() {
                         }
                     }
                 } else {
-                    node.node.push(ins[i].parentNode);
+                    if (ins[i].parentNode) {
+                      node.node.push(ins[i].parentNode);
+                    }
                 }
                 ins[i].visited = true;
                 treeGen(ins[i], node.childNodes);
@@ -402,8 +404,7 @@ window.devtoolsModel = (function() {
                 window.postMessage({
                     type: "FROM_PAGE",
                     data: {
-                        type: "dataUpdate",
-                        nodes: storeGen()
+                        type: "dataUpdate"
                     }
                 }, "*");
             });

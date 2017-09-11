@@ -2,7 +2,6 @@
 // the UI layer of devtools
 import Regular from "regularjs";
 import CircularJSON from "../shared/circular-json";
-import he from 'he';
 import log from '../shared/log';
 import {enter, input, mouseenter, mouseleave} from './events';
 import {
@@ -82,26 +81,25 @@ devtools
     })
     .$on("clickElement", function(uuid) {
         if (uuid !== sidebarView.data.currentNode.uuid) {
-            var node = findElementByUuid(this.data.nodes, uuid);
             sidebarView.$emit('updateData', uuid);
-            // sidebarView.$update();
         }
         printInConsole(uuid);
     })
     .$on("stateViewReRender", function(nodesStr) {
         log("On stateViewRender.");
-        let nodes = CircularJSON.parse(nodesStr);
-        this.data.nodes = nodes;
-        var currNode = findElementByUuid(nodes, sidebarView.data.currentNode.uuid);
-        if (currNode) {
-            sidebarView.data.currentNode = currNode;
-            sidebarView.$emit('updateOthersData', currNode.uuid);
-            sidebarView.$update();
-        } else {
-            sidebarView.data.currentNode = nodes[0];
-            sidebarView.$emit('updateOthersData', nodes[0].uuid);
-            sidebarView.$update();
-        }
+        sidebarView.$emit('updateData', sidebarView.data.currentNode.uuid);
+        // let nodes = CircularJSON.parse(nodesStr);
+        // this.data.nodes = nodes;
+        // var currNode = findElementByUuid(nodes, sidebarView.data.currentNode.uuid);
+        // if (currNode) {
+        //     sidebarView.data.currentNode = currNode;
+        //     sidebarView.$emit('updateOthersData', currNode.uuid);
+        //     sidebarView.$update();
+        // } else {
+        //     sidebarView.data.currentNode = nodes[0];
+        //     sidebarView.$emit('updateOthersData', nodes[0].uuid);
+        //     sidebarView.$update();
+        // }
     })
     .$on("elementViewReRender", function(nodesStr) {
         log("On elementViewRerender.");
@@ -158,7 +156,8 @@ sidebarView
 
 backgroundPageConnection.onMessage.addListener(function(message) {
     if (message.type === "dataUpdate") {
-        // devtools.$emit("stateViewReRender", message.nodes);
+        console.log("here")
+        devtools.$emit("stateViewReRender");
     } else if (message.type === "reRender") {
         devtools.$emit("elementViewReRender", message.nodes);
     } else if (message.type === "initNodes") {        
