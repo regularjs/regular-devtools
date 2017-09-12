@@ -37,7 +37,35 @@ window.devtoolsModel = (function() {
     var getDomNode;
     var getNodesByUUID;
     var setLabelPositon;
-    
+    var highLightNode;
+    var highLighter;
+    var clearMask;
+    var inspectMode = false;
+    var inspectResult = "";
+
+    function onMouseOver(e) {
+        let result = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.contain(e.target);
+        if (result) {
+            if (inspectResult !== result) {
+                inspectResult = result;
+                highLightNode(e.target, e.target.tagName.toLowerCase());
+                window.postMessage({
+                    type: "FROM_PAGE",
+                    data: {
+                        type: "currNodeChange",
+                        uuid: inspectResult
+                    }
+                }, "*");
+            }
+        }
+    }
+
+    function onClick(e) {
+        if (inspectResult) {
+            
+        }
+        console.log(inspectResult);
+    }
 
     var stringifyStore = function(store) {
         return CircularJSON.stringify(store, function(key, item) {
@@ -46,36 +74,36 @@ window.devtoolsModel = (function() {
                     return "[Circular]";
                 } else if (isNode(item) || isElement(item)) {
                     return "[DOM node]";
-                } 
+                }
                 return item;
-            }else if (isFunction(item)) {
-              return "Function";
+            } else if (isFunction(item)) {
+                return "Function";
             }
             return item;
         });
-    }
+    };
 
     fetchComputedProps = function(ins) {
         var computed = {};
         Object.keys(ins.computed).forEach(function(v) {
             try {
                 computed[v] = ins.$get(v);
-            }catch (e) {
+            } catch (e) {
                 log("Fetch computed props error:", e);
             }
         });
         return computed;
     };
-    
+
     function isFunction(o) {
-      return Object.prototype.toString.call(o) === "[object Function]"
+        return Object.prototype.toString.call(o) === "[object Function]"
     }
 
     // Returns true if it is a DOM node
     function isNode(o) {
         return (
             typeof Node === "object" ? o instanceof Node :
-            o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
+                o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
         );
     }
 
@@ -83,7 +111,7 @@ window.devtoolsModel = (function() {
     function isElement(o) {
         return (
             typeof HTMLElement === "object" ? o instanceof HTMLElement :
-            o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
+                o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
         );
     }
     // setObjectByPath start
@@ -145,13 +173,13 @@ window.devtoolsModel = (function() {
                 }
             }
         }
-        
+
         return container;
     };
 
     getNodesByUUID = function(uuid) {
         return findElementByUuid(store, uuid).node;
-    } 
+    };
 
     function isASTElement(node) {
         return node.type && node.group;
@@ -187,7 +215,7 @@ window.devtoolsModel = (function() {
                 childNodes: [],
                 inspectable: false
             };
-            
+
             n.node = getDomNode(node);
 
             if (node.$outer) {
@@ -200,22 +228,22 @@ window.devtoolsModel = (function() {
             if (node.group) {
                 treeGen(node, n.childNodes);
             }
-            
+
             if (n.node.length === 0) {
                 // if (n.name === "dashboardProvider") {
                 //     debugger
                 // }
-                for (let i=0;i<n.childNodes.length;i++) {
+                for (let i = 0; i < n.childNodes.length; i++) {
                     if (n.childNodes[i].node.length > 0) {
                         n.node = n.childNodes[i].node;
                         break;
                     }
                 }
             }
-            
+
             if (n.node.length) {
                 n.inspectable = true;
-            } 
+            }
 
             container.push(n);
         } else if (isASTElement(node)) {
@@ -264,7 +292,6 @@ window.devtoolsModel = (function() {
     };
 
     var storeGen = function(flag) {
-        
         var node;
         store = [];
         for (var i = 0; i < ins.length; i++) {
@@ -286,8 +313,8 @@ window.devtoolsModel = (function() {
                         }
                     }
                 } else {
-                    if (ins[i].parentNode) {
-                      node.node.push(ins[i].parentNode);
+                    if(ins[i].parentNode) {
+                        node.node.push(ins[i].parentNode);
                     }
                 }
                 ins[i].visited = true;
@@ -299,19 +326,11 @@ window.devtoolsModel = (function() {
         return stringifyStore(store);
     };
 
-    var highLighter = function(uuid) {
-
+    highLighter = function(uuid) {
         if (!uuid) {
-            if (maskNode) {
-                document.querySelector("body").removeChild(maskNode);
-                document.querySelector("body").removeChild(labelNode);
-                maskNode = null;
-                labelNode = null;
-            }
-            return;
+            clearMask();
         }
-
-        var node = ins.filter(function(n) {
+        var node = ins.filter(n => {
             return n.uuid === uuid;
         })[0];
 
@@ -321,14 +340,22 @@ window.devtoolsModel = (function() {
             return;
         }
 
-        var rect = domNode.getBoundingClientRect();
+        highLightNode(domNode, node.name || "Anonymous");
+    };
+
+    clearMask = function() {
         if (maskNode) {
             document.querySelector("body").removeChild(maskNode);
             document.querySelector("body").removeChild(labelNode);
             maskNode = null;
             labelNode = null;
         }
-        
+    };
+
+    highLightNode = function(domNode, name) {
+        var rect = domNode.getBoundingClientRect();
+        clearMask();
+
         // draw mask
         maskNode = document.createElement("div");
         maskNode.style.position = "absolute";
@@ -338,12 +365,13 @@ window.devtoolsModel = (function() {
         maskNode.style.height = rect.height + "px";
         maskNode.style.backgroundColor = "rgba(145, 183, 228, 0.6)";
         maskNode.style.zIndex = 999;
+        maskNode.style.pointerEvents = "none";
         document.querySelector("body").appendChild(maskNode);
 
         // draw label
         var demensionStr = "\n" + rect.width.toFixed(0) + "×" + rect.height.toFixed(0);
         labelNode = document.createElement("div");
-        labelNode.textContent = (node.name || "Anonymous") + demensionStr;
+        labelNode.textContent = name + demensionStr;
         labelNode.style.backgroundColor = "#272931";
         labelNode.style.color = "#fff";
         labelNode.style.position = "absolute";
@@ -465,6 +493,23 @@ window.devtoolsModel = (function() {
                     break;
                 }
             }
+        },
+        enterInspectMode: function() {
+            if (inspectMode) {
+                return;
+            }
+            inspectMode = true;
+            window.document.body.addEventListener("mouseover", onMouseOver);
+            window.document.body.addEventListener("click", onClick);
+        },
+        exitInspectMode: function() {
+            if (!inspectMode) {
+                return;
+            }
+            clearMask();
+            window.document.body.removeEventListener("mouseover", onMouseOver);
+            window.document.body.removeEventListener("click", onClick);
+            inspectMode = false;
         },
         highLighter: highLighter,
         stringify: stringifyStore,

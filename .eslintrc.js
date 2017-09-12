@@ -17,6 +17,7 @@ module.exports = {
         "Regular":true,
         "CircularJSON":true,
         "lastSelected":true,
-        "sidebarView":true
+        "sidebarView":true,
+        "componentHandler":true
     }
 };

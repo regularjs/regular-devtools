@@ -26,9 +26,9 @@ Regular.use(mouseenter);
 Regular.use(mouseleave);
 
 // directive for MDL component registeration
-Regular.directive('r-md', function(elem, value){
-  componentHandler.upgradeElement(elem);
-})
+Regular.directive('r-md', function(elem, value) {
+    componentHandler.upgradeElement(elem);
+});
 
 // variables
 let ready = false;
@@ -37,6 +37,7 @@ let ready = false;
 const backgroundPageConnection = chrome.runtime.connect({
     name: "devToBackCon_" + chrome.devtools.inspectedWindow.tabId
 });
+
 // devtools
 const devtools = new DevtoolsViewComponent({
     data: {
@@ -71,15 +72,24 @@ devtools
         log("On initNodes.");
         let nodes = CircularJSON.parse(nodesStr);
         this.data.nodes = nodes;
-        sidebarView.data.currentNode = nodes[0];
+
         elementView.data.loading = false;
         elementView.data.nodes = makeElementTree(nodes, []);
-        sidebarView.$emit('updateData', nodes[0].uuid);
         elementView.$update();
+
+        // init sidebar
+        sidebarView.data.currentNode.name = nodes[0].name;
+        sidebarView.data.currentNode.uuid = nodes[0].uuid;
+        sidebarView.data.currentNode.inspectable = nodes[0].inspectable;
+        sidebarView.$emit('updateData', nodes[0].uuid);
         ready = true;
     })
     .$on("clickElement", function(uuid) {
         if (uuid !== sidebarView.data.currentNode.uuid) {
+            let currentNode = findElementByUuid(devtools.data.nodes, uuid);
+            sidebarView.data.currentNode.name = currentNode.name;
+            sidebarView.data.currentNode.inspectable = currentNode.inspectable;
+            sidebarView.data.currentNode.uuid = uuid;
             sidebarView.$emit('updateData', uuid);
             sidebarView.$emit('updateOthersData', uuid);
         }
@@ -92,7 +102,8 @@ devtools
     .$on("elementViewReRender", function(nodesStr) {
         log("On elementViewRerender.");
         let nodes = CircularJSON.parse(nodesStr);
-        
+
+        // need refactor
         /* eslint-disable no-unused-vars */
         var oldArr = elementView.data.nodes;
         var newArr = makeElementTree(nodes, []);
@@ -125,15 +136,19 @@ sidebarView
         inspectNodeByUUID(uuid);
     })
     .$on("highlightNode", ({uuid, inspectable}) => {
-        highlightNode(uuid, inspectable);
+        if (sidebarView.data.lockHighlight) {
+            highlightNode(uuid, inspectable);
+        }
     })
     .$on("updateData", uuid => {
         getData(uuid).then(data => {
             let currentNode = CircularJSON.parse(data);
-            console.log(currentNode);
-            sidebarView.data.currentNode = currentNode;
+            sidebarView.data.currentNode.data = currentNode.data;
             sidebarView.$update();
         });
+    })
+    .$on("lockHighlight", flag => {
+        sidebarView.data.lockHighlight = flag;
     })
     .$on("updateOthersData", uuid => {
         getOthersData(uuid).then(data => {
@@ -144,12 +159,14 @@ sidebarView
 
 backgroundPageConnection.onMessage.addListener(function(message) {
     if (message.type === "dataUpdate") {
-        console.log("here")
         devtools.$emit("stateViewReRender");
     } else if (message.type === "reRender") {
         devtools.$emit("elementViewReRender", message.nodes);
-    } else if (message.type === "initNodes") {        
+    } else if (message.type === "initNodes") {
         devtools.$emit("initNodes", message.nodes);
+    } else if (message.type === "currNodeChange" && ready) {
+        console.log("currNodeChange", message);
+        devtools.$emit("currentNodeChange", message.uuid);
     } else if (message.type === "pageReload") {
         elementView.data.loading = true;
         elementView.$update();

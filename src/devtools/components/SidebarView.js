@@ -65,6 +65,7 @@ const SidebarView = Regular.extend({
         }];
         // defaults to `data` pane
         this.data.tabSelected = 'data';
+        this.data.lockHighlight = false;
     },
     computed: {
         currentTabIndex: {

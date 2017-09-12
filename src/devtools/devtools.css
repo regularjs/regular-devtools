@@ -68,6 +68,11 @@ body {
 .devtoolsHeader-refresh {
   height: 100%;
   cursor: pointer;
+  outline: none;
+}
+
+.devtoolsHeader-container .inspecting {
+  fill: black;
 }
 
 

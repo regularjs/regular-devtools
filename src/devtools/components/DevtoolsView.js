@@ -1,7 +1,7 @@
 import Regular from 'regularjs';
 import SidebarView from './SidebarView';
 import ElementView from './ElementView';
-import {findElementByUuid, searchPath, printInConsole} from '../utils';
+import {searchPath, printInConsole, enter, exit} from '../utils';
 
 // Regular components for devtools' UI
 const DevtoolsViewComponent = Regular.extend({
@@ -12,6 +12,8 @@ const DevtoolsViewComponent = Regular.extend({
                     Regular Devtools
                 </div>
                 <div class="devtoolsHeader-container refresh">
+                    <div  class="mdl-tooltip" data-mdl-for="tt3">Select a DOM node to inspect it's component</div>
+                    <img r-md="" id='tt3' src="/assets/target{inspecting ? '_active':'' }.svg" on-click={this.onInspect()} class="devtoolsHeader-refresh"/>
                     <div  class="mdl-tooltip" data-mdl-for="tt1">Reload</div>
                     <img r-md="" id='tt1' src='/assets/refresh.svg' on-click={this.onRefresh()} class='devtoolsHeader-refresh'/>
                 </div>
@@ -22,14 +24,27 @@ const DevtoolsViewComponent = Regular.extend({
             </div>
         </div>
     `,
+    data: {
+        inspecting: false
+    },
+    onInspect: function() {
+        if (this.data.inspecting) {
+            this.data.inspecting = false;
+            this.$refs.sidebarView.$emit("lockHighLight", false);
+            exit();
+        } else {
+            this.data.inspecting = true;
+            this.$refs.sidebarView.$emit("lockHighLight", true);
+            enter();
+        }
+        this.$update();
+    },
     onRefresh: function() {
         chrome.devtools.inspectedWindow.reload();
     },
     focusNode: function(uuid) {
         const elementViewDOM = document.querySelector(".elementTree");
         const {height: evHeight} = elementViewDOM.getBoundingClientRect();
-
-        const sidebarView = this.$refs.sidebarView;
         const elementView = this.$refs.elementView;
 
         // unselect last selected
@@ -38,8 +53,7 @@ const DevtoolsViewComponent = Regular.extend({
         }
 
         // update sidebarView
-        sidebarView.data.currentNode = findElementByUuid(this.data.nodes, uuid);
-        sidebarView.$update();
+        this.$emit("clickElement", uuid);
 
         // update elementView
         const path = [];
