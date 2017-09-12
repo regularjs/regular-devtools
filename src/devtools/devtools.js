@@ -75,7 +75,6 @@ devtools
         elementView.data.loading = false;
         elementView.data.nodes = makeElementTree(nodes, []);
         sidebarView.$emit('updateData', nodes[0].uuid);
-        // sidebarView.$update();
         elementView.$update();
         ready = true;
     })
@@ -88,18 +87,6 @@ devtools
     .$on("stateViewReRender", function(nodesStr) {
         log("On stateViewRender.");
         sidebarView.$emit('updateData', sidebarView.data.currentNode.uuid);
-        // let nodes = CircularJSON.parse(nodesStr);
-        // this.data.nodes = nodes;
-        // var currNode = findElementByUuid(nodes, sidebarView.data.currentNode.uuid);
-        // if (currNode) {
-        //     sidebarView.data.currentNode = currNode;
-        //     sidebarView.$emit('updateOthersData', currNode.uuid);
-        //     sidebarView.$update();
-        // } else {
-        //     sidebarView.data.currentNode = nodes[0];
-        //     sidebarView.$emit('updateOthersData', nodes[0].uuid);
-        //     sidebarView.$update();
-        // }
     })
     .$on("elementViewReRender", function(nodesStr) {
         log("On elementViewRerender.");

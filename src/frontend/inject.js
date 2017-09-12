@@ -1,5 +1,6 @@
 import CircularJSON from "../shared/circular-json";
 import { findElementByUuid } from '../devtools/utils';
+import log from '../shared/log';
 
 window.CircularJSON = CircularJSON;
 
@@ -45,8 +46,10 @@ window.devtoolsModel = (function() {
                     return "[Circular]";
                 } else if (isNode(item) || isElement(item)) {
                     return "[DOM node]";
-                }
+                } 
                 return item;
+            }else if (isFunction(item)) {
+              return "Function";
             }
             return item;
         });
@@ -58,11 +61,15 @@ window.devtoolsModel = (function() {
             try {
                 computed[v] = ins.$get(v);
             }catch (e) {
-                computed[v] = undefined;
+                log("Fetch computed props error:", e);
             }
         });
         return computed;
     };
+    
+    function isFunction(o) {
+      return Object.prototype.toString.call(o) === "[object Function]"
+    }
 
     // Returns true if it is a DOM node
     function isNode(o) {
@@ -460,7 +467,8 @@ window.devtoolsModel = (function() {
             }
         },
         highLighter: highLighter,
-        stringify: stringifyStore 
+        stringify: stringifyStore,
+        fetchComputedProps: fetchComputedProps
     };
 })();
 

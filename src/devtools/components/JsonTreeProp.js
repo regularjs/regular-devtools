@@ -17,7 +17,13 @@ const JsonTreeProp = Regular.extend({
                 {#if !editing}
                     {#if this.isPrimitive(value)}
                         {#if type === 'String'}
-                            <span class='item string'>"{value}"</span>
+                            {#if value === 'Function'} 
+                              <span class='item function'>f()</span>
+                            {#elseif value === '[DOM node]'} 
+                            <span class='item dom'>DOM Node</span>
+                            {#else}
+                              <span class='item string'>"{value}"</span>
+                            {/if}
                         {#else}
                             <span class='item primitive'>{value}</span>
                         {/if}

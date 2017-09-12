@@ -8,7 +8,8 @@ function getData(uuid) {
     return window.devtoolsModel.stringify({
         name: node.name || "Anonymous Component",
         uuid: uuid,
-        data: node.data
+        data: node.data,
+        computed: window.devtoolsModel.fetchComputedProps(node)
     });
 }
 

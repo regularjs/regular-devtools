@@ -317,6 +317,15 @@ body {
   padding-right: 15px;
 }
 
+.json-tree-data .function {
+  color: rgb(13, 34, 170);
+  font-style: italic;
+}
+
+.json-tree-data .dom {
+  font-style: italic;
+}
+
 .json-tree-data .gray {
   color: rgb(155, 147, 160);
   padding-right: 15px;
