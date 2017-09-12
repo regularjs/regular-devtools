@@ -50,6 +50,8 @@ const SidebarView = Regular.extend({
         this.data.currentNode = {
             name: "",
             uuid: "",
+            inspectable: false,
+            computed: {},
             data: {}
         };
         // others for currentNode

@@ -81,6 +81,7 @@ devtools
     .$on("clickElement", function(uuid) {
         if (uuid !== sidebarView.data.currentNode.uuid) {
             sidebarView.$emit('updateData', uuid);
+            sidebarView.$emit('updateOthersData', uuid);
         }
         printInConsole(uuid);
     })
