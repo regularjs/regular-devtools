@@ -44,9 +44,8 @@ const DevtoolsViewComponent = Regular.extend({
     },
     focusNode: function(uuid) {
         const elementViewDOM = document.querySelector(".elementTree");
-        const {height: evHeight} = elementViewDOM.getBoundingClientRect();
         const elementView = this.$refs.elementView;
-
+        const relativeOffset = elementView._children[0].group.children[0].last().getBoundingClientRect().top;
         // unselect last selected
         if (this.data.lastSelected) {
             this.data.lastSelected.data.selected = false;
@@ -68,13 +67,8 @@ const DevtoolsViewComponent = Regular.extend({
 
         // scroll into view
         const currTop = path[0].group.children[0].last().getBoundingClientRect().top;
-        if ((currTop > evHeight) || (currTop < 0)) {
-            if (currTop < 0) {
-                elementViewDOM.scrollTop = Math.abs(currTop);
-            } else {
-                elementViewDOM.scrollTop += (currTop - evHeight);
-            }
-        }
+        console.log(currTop);
+        elementViewDOM.scrollTop = currTop - relativeOffset;
     }
 });
 
