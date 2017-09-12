@@ -7,7 +7,9 @@ const Tabs = Regular.extend({
                 <div class="tabs-header-items">
                     {#list source as s}
                         {#if s.key === "data" }
-                          <div class="mdl-tooltip roboto" data-mdl-for="ttl2">The data object is passed to Devtools by IPC, so DOM object and function in data object can't be viewed here. Please inspect $r in the console for the original data object.</div>
+                          <div class="mdl-tooltip roboto" data-mdl-for="ttl2">
+                            the data displayed here is passed from inspected page by IPC, which means only JSON-ifiable object is allowed. If you want to inspect DOM or function in data, please using $r in console
+                          </div>
                           <div r-md=""  class="tabs-header-item" id="ttl2" on-click="{ this.onTabClick( s.key ) }">
                           { s.text }
                           </div>

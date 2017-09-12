@@ -6,16 +6,16 @@ import {searchPath, printInConsole, enter, exit} from '../utils';
 // Regular components for devtools' UI
 const DevtoolsViewComponent = Regular.extend({
     template: `
-        <div class='regualrDevtools'>
-            <div class='devtoolsHeader roboto'>
-                <div class="devtoolsHeader-container logo">
+        <div class="regualrDevtools">
+            <div class="devtoolsHeader roboto">
+                <div class="devtoolsHeader__logo">
                     Regular Devtools
                 </div>
-                <div class="devtoolsHeader-container refresh">
-                    <div  class="mdl-tooltip" data-mdl-for="tt3">Select a DOM node to inspect it's component</div>
-                    <img r-md="" id='tt3' src="/assets/target{inspecting ? '_active':'' }.svg" on-click={this.onInspect()} class="devtoolsHeader-refresh"/>
-                    <div  class="mdl-tooltip" data-mdl-for="tt1">Reload</div>
-                    <img r-md="" id='tt1' src='/assets/refresh.svg' on-click={this.onRefresh()} class='devtoolsHeader-refresh'/>
+                <div class="devtoolsHeader__toolbar">
+                    <div class="mdl-tooltip" data-mdl-for="tt3">Select a DOM node to inspect its component</div>
+                    <img r-md="" id='tt3' src="/assets/target{inspecting ? '_active' : '' }.svg" on-click={this.onInspect()} class="devtoolsHeader-item"/>
+                    <div class="mdl-tooltip" data-mdl-for="tt1">Reload</div>
+                    <img r-md="" id='tt1' src='/assets/refresh.svg' on-click={this.onRefresh()} class="devtoolsHeader-item"/>
                 </div>
             </div>
             <div class="devtoolsMain">

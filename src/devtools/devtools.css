@@ -45,7 +45,7 @@ body {
   padding: 10px 20px;
 }
 
-.devtoolsHeader-container.logo {
+.devtoolsHeader__logo {
   display: flex;
   align-items: center;
   flex: 1;
@@ -60,18 +60,19 @@ body {
   cursor: default;
 }
 
-.devtoolsHeader-container.refresh {
+.devtoolsHeader__toolbar {
   height: 70%;
   align-self: center;
 }
 
-.devtoolsHeader-refresh {
+.devtoolsHeader-item {
   height: 100%;
   cursor: pointer;
   outline: none;
+  margin-left: 10px;
 }
 
-.devtoolsHeader-container .inspecting {
+.devtoolsHeader__toolbar .inspecting {
   fill: black;
 }
 
@@ -440,6 +441,7 @@ body {
   justify-content: center;
   color: #5a5a5a;
   font-family: '.SFNSDisplay-Regular', 'Helvetica Neue', 'Lucida Grande', sans-serif;
+  outline: none;
 }
 
 .tabs-header-item:hover {
