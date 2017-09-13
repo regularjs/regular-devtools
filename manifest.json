@@ -22,16 +22,16 @@
     },
 
     "web_accessible_resources": [
-        "/src/frontend/inject.js", 
-        "/src/frontend/content.js", 
-        "/src/frontend/hook.js", 
+        "/src/frontend/inject.js",
+        "/src/frontend/content.js",
+        "/src/frontend/hook.js",
         "/dist/inject.bundle.js",
         "/lib/material.min.js",
         "/lib/material.min.css",
         "/lib/Roboto-Regular.ttf"
     ],
 
-    "permissions": ["<all_urls>", "debugger"],
+    "permissions": ["<all_urls>", "tabs", "debugger"],
 
     "content_scripts": [{
         "matches": ["<all_urls>"],
