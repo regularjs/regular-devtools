@@ -1,4 +1,5 @@
 import Regular from 'regularjs';
+import Header from './Header';
 import SidebarView from './SidebarView';
 import ElementView from './ElementView';
 import {searchPath, printInConsole, enter, exit, openNewTab} from '../utils';
@@ -6,28 +7,22 @@ import {searchPath, printInConsole, enter, exit, openNewTab} from '../utils';
 // Regular components for devtools' UI
 const DevtoolsViewComponent = Regular.extend({
     template: `
-        <div class="header roboto">
-            <div class="header__logo">Regular Devtools</div>
-
-            <div class="header__toolbar">
-                <img class="header__inspect" r-md="" id='tt3' src="/assets/target{inspecting ? '_active' : '' }.svg" on-click={this.onInspect()} />
-                <img class="header__refresh" r-md="" id='tt1' src='/assets/refresh.svg' on-click={this.onRefresh()} />
-                <img class="header__github" r-md="" id='tt4' src='/assets/github.svg' on-click={this.onGithubClicked()} />
-                <div class="mdl-tooltip" data-mdl-for="tt3">Select a DOM node to inspect its component</div>
-                <div class="mdl-tooltip" data-mdl-for="tt1">Reload</div>
-                <div class="mdl-tooltip" data-mdl-for="tt4">Visit project homepage for detailed documentation</div>
-            </div>
-        </div>
+        <devtools-header
+            inspecting="{ inspecting }"
+            on-inspect="{ this.onInspect() }"
+            on-refresh="{ this.onRefresh() }"
+            on-visit-github="{ this.onVisitGithub() }"
+        ></devtools-header>
 
         <div class="devtoolsMain">
-            <ElementView ref=elementView isolate />
-            <SidebarView ref=sidebarView isolate />
+            <devtools-element ref=elementView isolate />
+            <devtools-sidebar ref=sidebarView isolate />
         </div>
     `,
     data: {
         inspecting: false
     },
-    onGithubClicked: function() {
+    onVisitGithub: function() {
         openNewTab("https://github.com/regularjs/regular-devtools");
     },
     onInspect: function() {
@@ -75,7 +70,8 @@ const DevtoolsViewComponent = Regular.extend({
     }
 });
 
-DevtoolsViewComponent.component('SidebarView', SidebarView);
-DevtoolsViewComponent.component('ElementView', ElementView);
+DevtoolsViewComponent.component('devtools-header', Header);
+DevtoolsViewComponent.component('devtools-sidebar', SidebarView);
+DevtoolsViewComponent.component('devtools-element', ElementView);
 
 export default DevtoolsViewComponent;
