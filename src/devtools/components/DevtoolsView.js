@@ -6,22 +6,20 @@ import {searchPath, printInConsole, enter, exit} from '../utils';
 // Regular components for devtools' UI
 const DevtoolsViewComponent = Regular.extend({
     template: `
-        <div class="regualrDevtools">
-            <div class="devtoolsHeader roboto">
-                <div class="devtoolsHeader__logo">
-                    Regular Devtools
-                </div>
-                <div class="devtoolsHeader__toolbar">
-                    <div class="mdl-tooltip" data-mdl-for="tt3">Select a DOM node to inspect its component</div>
-                    <img r-md="" id='tt3' src="/assets/target{inspecting ? '_active' : '' }.svg" on-click={this.onInspect()} class="devtoolsHeader-item"/>
-                    <div class="mdl-tooltip" data-mdl-for="tt1">Reload</div>
-                    <img r-md="" id='tt1' src='/assets/refresh.svg' on-click={this.onRefresh()} class="devtoolsHeader-item"/>
-                </div>
+        <div class="header roboto">
+            <div class="header__logo">Regular Devtools</div>
+
+            <div class="header__toolbar">
+                <img class="header__inspect" r-md="" id='tt3' src="/assets/target{inspecting ? '_active' : '' }.svg" on-click={this.onInspect()} />
+                <img class="header__refresh" r-md="" id='tt1' src='/assets/refresh.svg' on-click={this.onRefresh()} />
+                <div class="mdl-tooltip" data-mdl-for="tt3">Select a DOM node to inspect its component</div>
+                <div class="mdl-tooltip" data-mdl-for="tt1">Reload</div>
             </div>
-            <div class="devtoolsMain">
-                <ElementView ref=elementView isolate />
-                <SidebarView ref=sidebarView isolate />
-            </div>
+        </div>
+
+        <div class="devtoolsMain">
+            <ElementView ref=elementView isolate />
+            <SidebarView ref=sidebarView isolate />
         </div>
     `,
     data: {

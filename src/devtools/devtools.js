@@ -44,7 +44,7 @@ const devtools = new DevtoolsViewComponent({
         nodes: [],
         lastSelected: null
     }
-}).$inject("#devtoolsInject");
+}).$inject("#app");
 // left element view
 const elementView = devtools.$refs.elementView;
 // right sidebar view
