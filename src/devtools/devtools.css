@@ -61,7 +61,7 @@ body {
   align-self: center;
 }
 
-.header__inspect, .header__refresh {
+.header__inspect, .header__refresh, .header__github {
   height: 100%;
   cursor: pointer;
   outline: none;

@@ -1,7 +1,7 @@
 import Regular from 'regularjs';
 import SidebarView from './SidebarView';
 import ElementView from './ElementView';
-import {searchPath, printInConsole, enter, exit} from '../utils';
+import {searchPath, printInConsole, enter, exit, openNewTab} from '../utils';
 
 // Regular components for devtools' UI
 const DevtoolsViewComponent = Regular.extend({
@@ -12,8 +12,10 @@ const DevtoolsViewComponent = Regular.extend({
             <div class="header__toolbar">
                 <img class="header__inspect" r-md="" id='tt3' src="/assets/target{inspecting ? '_active' : '' }.svg" on-click={this.onInspect()} />
                 <img class="header__refresh" r-md="" id='tt1' src='/assets/refresh.svg' on-click={this.onRefresh()} />
+				<img class="header__github" r-md="" id='tt4' src='/assets/github.svg' on-click={this.onGithubClicked()} />
                 <div class="mdl-tooltip" data-mdl-for="tt3">Select a DOM node to inspect its component</div>
                 <div class="mdl-tooltip" data-mdl-for="tt1">Reload</div>
+				<div class="mdl-tooltip" data-mdl-for="tt4">Visit project homepage for detailed documentation</div>
             </div>
         </div>
 
@@ -24,6 +26,9 @@ const DevtoolsViewComponent = Regular.extend({
     `,
     data: {
         inspecting: false
+    },
+    onGithubClicked: function() {
+        openNewTab("https://github.com/regularjs/regular-devtools");
     },
     onInspect: function() {
         if (this.data.inspecting) {

@@ -3,7 +3,7 @@ import log from '../../shared/log';
 function inspectComponent(type) {
     if (type === "enter") {
         window.devtoolsModel.enterInspectMode();
-    }else {
+    } else {
         window.devtoolsModel.exitInspectMode();
     }
 }
