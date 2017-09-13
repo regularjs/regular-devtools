@@ -314,10 +314,10 @@ window.devtoolsModel = (function() {
                         node.node.push(ins[i].parentNode);
                     }
                 }
+                ins[i].visited = true;
+                treeGen(ins[i], node.childNodes);
+                store.push(node);
             }
-            ins[i].visited = true;
-            treeGen(ins[i], node.childNodes);
-            store.push(node);
         }
         return stringifyStore(store);
     };

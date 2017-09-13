@@ -21,6 +21,8 @@ const JsonTreeProp = Regular.extend({
                               <span class='item function'>f()</span>
                             {#elseif value === '[DOM node]'} 
                             <span class='item dom'>DOM Node</span>
+                            {#elseif value === '[Circular]'} 
+                            <span class='item dom'>Circular Reference</span>
                             {#else}
                               <span class='item string'>"{value}"</span>
                             {/if}

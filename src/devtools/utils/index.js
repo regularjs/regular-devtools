@@ -11,6 +11,7 @@ import getData from './getData';
 import getOthersData from './getOthersData';
 import makeElementTree from './makeElementTree';
 import syncArr from './syncArr';
+import openNewTab from './openNewTab';
 
 export {
     isPrimitive,
@@ -28,5 +29,6 @@ export {
     makeElementTree,
     syncArr,
     enter,
-    exit
+    exit,
+    openNewTab
 };
