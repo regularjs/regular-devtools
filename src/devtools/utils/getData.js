@@ -1,7 +1,6 @@
 import log from '../../shared/log';
 
 function getData(uuid) {
-
     var node = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins.filter(function(n) {
         return n.uuid === uuid;
     })[0];

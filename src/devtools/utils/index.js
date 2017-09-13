@@ -6,7 +6,7 @@ import {findElementByUuid, findElementByName, findElementByUuidNonRecursive} fro
 import {inspectNodeByUUID} from './inspectNode';
 import {highlightNode} from './highlightNode';
 import {updateInstanceByUUIDAndPath} from './updateInstance';
-import { enter, exit } from './inspectComponent';
+import {enter, exit} from './inspectComponent';
 import getData from './getData';
 import getOthersData from './getOthersData';
 import makeElementTree from './makeElementTree';

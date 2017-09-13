@@ -69,19 +69,19 @@ const SidebarView = Regular.extend({
     },
     computed: {
         currentTabIndex: {
-            get: function(){
-               return this.getCurrentTabIndex()
-            }
-        } 
-    },
-    getCurrentTabIndex(){
-        const source = this.data.tabSource
-        for (let i=0;i<source.length;i++) {
-            if (this.data.tabSelected === source[i].key) {
-                return i
+            get: function() {
+                return this.getCurrentTabIndex();
             }
         }
-        return 0
+    },
+    getCurrentTabIndex() {
+        const source = this.data.tabSource;
+        for (let i = 0; i < source.length; i++) {
+            if (this.data.tabSelected === source[i].key) {
+                return i;
+            }
+        }
+        return 0;
     },
     onTabChange(key) {
         this.data.tabSelected = key;

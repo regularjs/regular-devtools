@@ -1,5 +1,5 @@
 import CircularJSON from "../shared/circular-json";
-import { findElementByUuid } from '../devtools/utils';
+import {findElementByUuid} from '../devtools/utils';
 import log from '../shared/log';
 
 window.CircularJSON = CircularJSON;
@@ -60,11 +60,8 @@ window.devtoolsModel = (function() {
         }
     }
 
+    // reserve for future use
     function onClick(e) {
-        if (inspectResult) {
-            
-        }
-        console.log(inspectResult);
     }
 
     var stringifyStore = function(store) {
@@ -96,7 +93,7 @@ window.devtoolsModel = (function() {
     };
 
     function isFunction(o) {
-        return Object.prototype.toString.call(o) === "[object Function]"
+        return Object.prototype.toString.call(o) === "[object Function]";
     }
 
     // Returns true if it is a DOM node
@@ -306,23 +303,22 @@ window.devtoolsModel = (function() {
                     inspectable: !!ins[i].parentNode
                 };
                 var body = document.body;
-                if (ins[i].parentNode === body) {
-                    for (var j = 0; j < ins[i].group.children.length; j++) {
-                        if (ins[i].group.get(j).type) {
-                            node.node.push(ins[i].group.get(j).node());
+                if (ins[i].parentNode) {
+                    if (ins[i].parentNode === body) {
+                        for (var j = 0; j < ins[i].group.children.length; j++) {
+                            if (ins[i].group.get(j).type) {
+                                node.node.push(ins[i].group.get(j).node());
+                            }
                         }
-                    }
-                } else {
-                    if(ins[i].parentNode) {
+                    } else {
                         node.node.push(ins[i].parentNode);
                     }
                 }
-                ins[i].visited = true;
-                treeGen(ins[i], node.childNodes);
-                store.push(node);
             }
+            ins[i].visited = true;
+            treeGen(ins[i], node.childNodes);
+            store.push(node);
         }
-
         return stringifyStore(store);
     };
 
