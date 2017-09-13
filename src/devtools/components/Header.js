@@ -16,12 +16,12 @@ export default Regular.extend({
         </div>
     `,
     onInspect() {
-        this.$emit( 'inspect' );
+        this.$emit('inspect');
     },
     onRefresh() {
-        this.$emit( 'refresh' );
+        this.$emit('refresh');
     },
     onVisitGithub() {
-        this.$emit( 'visit-github' );
+        this.$emit('visit-github');
     }
-})
+});

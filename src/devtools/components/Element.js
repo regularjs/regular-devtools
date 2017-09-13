@@ -45,8 +45,7 @@ const Element = Regular.extend({
                 return;
             }
 
-            if (!findElementByUuid(this.$root.data.nodes,
-                    lastSelected.data.node.uuid)) {
+            if (!findElementByUuid(this.$root.data.nodes, lastSelected.data.node.uuid)) {
                 this.$root.data.lastSelected = null;
             } else {
                 lastSelected.data.selected = false;
