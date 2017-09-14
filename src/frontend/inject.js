@@ -208,7 +208,7 @@ window.devtoolsModel = (function() {
             }
             n = {
                 uuid: node.uuid,
-                name: node.name || "Anonymous Component",
+                name: node.name || "[anonymous]",
                 childNodes: [],
                 inspectable: false
             };
@@ -297,7 +297,7 @@ window.devtoolsModel = (function() {
                 // var computed = fetchComputedProps(ins[i]);
                 node = {
                     uuid: ins[i].uuid,
-                    name: ins[i].name || "Anonymous Component",
+                    name: ins[i].name || "[anonymous]",
                     childNodes: [],
                     node: [],
                     inspectable: !!ins[i].parentNode
@@ -336,7 +336,7 @@ window.devtoolsModel = (function() {
             return;
         }
         domNode.scrollIntoView();
-        highLightNode(domNode, node.name || "Anonymous");
+        highLightNode(domNode, node.name || "[anonymous]");
     };
 
     clearMask = function() {

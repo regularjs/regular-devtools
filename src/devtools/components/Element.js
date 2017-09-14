@@ -11,8 +11,7 @@ const Element = Regular.extend({
             alt="arrow" on-click={opened = !opened}
             class="arrow ele-item {opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}"/>
             <span class="tag ele-item">&lt;</span>
-            <span class="tagname ele-item">{node.name}
-            </span>
+            <span class="tagname ele-item { node.name === '[anonymous]' ? 'is-anonymous' : '' }">{node.name}</span>
             <span class="tag ele-item">&gt;{#if node.shadowFlag }<span class="ele-include">#inc</span>{/if}</span>
         </div>
         {#if node.childNodes.length > 0} {#list node.childNodes as n}
@@ -25,7 +24,7 @@ const Element = Regular.extend({
         <div class="element purple"
         style="padding-left:{level*30}px;{opened ? null : 'display:none;'}">
             <span class="tag ele-item">&lt;/</span>
-            <span class="tagname ele-item">{node.name}</span>
+            <span class="tagname ele-item { node.name === '[anonymous]' ? 'is-anonymous' : '' }">{node.name}</span>
             <span class="tag ele-item">&gt;</span>
         </div>
         {/if}

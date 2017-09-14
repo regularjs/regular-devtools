@@ -5,7 +5,7 @@ function getData(uuid) {
         return n.uuid === uuid;
     })[0];
     return window.devtoolsModel.stringify({
-        name: node.name || "Anonymous Component",
+        name: node.name || "[anonymous]",
         uuid: uuid,
         data: node.data,
         computed: window.devtoolsModel.fetchComputedProps(node)

@@ -119,14 +119,19 @@ body {
 }
 
 .elementView .ele-item {
-  font-size: 16px;
+  font-size: 13px;
   display: inline-block;
   vertical-align: middle;
 }
 
+.elementView .tagname.is-anonymous {
+  font-style: italic;
+}
+
 .elementView .ele-include {
-  font-size: 13px;
-  color: rgb(48, 57, 66);
+  font-size: 11px;
+  margin-left: 5px;
+  color: #999;
 }
 
 .elementView .arrow-down {

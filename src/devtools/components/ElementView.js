@@ -13,8 +13,7 @@ const ElementView = Regular.extend({
                 {#else}
                 {#if nodes.length > 0}
                     {#list nodes as node}
-                        <element node={node} level={1} >
-                        </element>
+                        <element node={node} level={1}></element>
                     {/list}
                 {#else}
                     <div class="warnning roboto">There is no Regular instance detected. Please check if you are using the latest version of Regularjs. Or try reloading Regular Devtools</div>
@@ -36,4 +35,3 @@ const ElementView = Regular.extend({
 .component('searchView', SearchView);
 
 export default ElementView;
-
