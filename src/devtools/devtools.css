@@ -171,6 +171,10 @@ body {
   color: #fff;
 }
 
+.elementView .selected .ele-include {
+  color: #fff;
+}
+
 .elementView .hide {
   display: none;
 }
