@@ -9,7 +9,7 @@ import {
     findElementByUuid,
     inspectNodeByUUID,
     updateInstanceByUUIDAndPath,
-    highlightNode,
+    evalHighLightNode,
     getData,
     getOthersData,
     makeElementTree,
@@ -142,7 +142,7 @@ sidebarView
     })
     .$on("highlightNode", ({uuid, inspectable}) => {
         if (!sidebarView.data.lockHighlight) {
-            highlightNode(uuid, inspectable);
+            evalHighLightNode(uuid, inspectable);
         }
     })
     .$on("updateData", uuid => {

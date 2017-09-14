@@ -1,6 +1,6 @@
 import log from '../../shared/log';
 
-export function highlightNode(uuid, inspectable) {
+export function evalHighLightNode(uuid, inspectable) {
     var evalStr = inspectable ? "devtoolsModel.highLighter('" + uuid + "')" : "devtoolsModel.highLighter()";
     chrome.devtools.inspectedWindow.eval(
         evalStr,

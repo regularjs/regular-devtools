@@ -4,14 +4,14 @@ import searchPath from './searchPath.js';
 import printInConsole from './printInConsole.js';
 import {findElementByUuid, findElementByName, findElementByUuidNonRecursive} from './findElement.js';
 import {inspectNodeByUUID} from './inspectNode';
-import {highlightNode} from './highlightNode';
+import {evalHighLightNode} from './highlightNode';
+import {clearMask, highLightNode} from './highLighter';
 import {updateInstanceByUUIDAndPath} from './updateInstance';
 import {enter, exit} from './inspectComponent';
 import getData from './getData';
 import getOthersData from './getOthersData';
 import makeElementTree from './makeElementTree';
 import syncArr from './syncArr';
-import openNewTab from './openNewTab';
 
 export {
     isPrimitive,
@@ -23,12 +23,13 @@ export {
     findElementByUuidNonRecursive,
     inspectNodeByUUID,
     updateInstanceByUUIDAndPath,
-    highlightNode,
+    evalHighLightNode,
+    highLightNode,
+    clearMask,
     getData,
     getOthersData,
     makeElementTree,
     syncArr,
     enter,
-    exit,
-    openNewTab
+    exit
 };
