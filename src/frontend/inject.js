@@ -412,9 +412,9 @@ window.devtoolsModel = (function() {
             if (!inspectMode) {
                 return;
             }
-            clearMask();
             window.document.body.removeEventListener("mouseover", onMouseOver);
             window.document.body.removeEventListener("click", onClick);
+            clearMask();
             inspectMode = false;
         },
         highLighter: highLighter,

@@ -152,7 +152,7 @@ sidebarView
             sidebarView.$update();
         });
     })
-    .$on("lockHighlight", flag => {
+    .$on("lockHighLight", flag => {
         sidebarView.data.lockHighlight = flag;
     })
     .$on("updateOthersData", uuid => {
