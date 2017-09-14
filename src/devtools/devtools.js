@@ -126,6 +126,11 @@ devtools
             injectContentScript(event.tabId);
             setTimeout(displayWarning, 4000);
         }, 2000);
+    })
+    .$on("openNewTab", function(url) {
+        backgroundPageConnection.postMessage({
+            url: url
+        });
     });
 
 sidebarView

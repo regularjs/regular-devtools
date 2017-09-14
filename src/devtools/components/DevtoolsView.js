@@ -2,7 +2,7 @@ import Regular from 'regularjs';
 import Header from './Header';
 import SidebarView from './SidebarView';
 import ElementView from './ElementView';
-import {searchPath, printInConsole, enter, exit, openNewTab} from '../utils';
+import {searchPath, printInConsole, enter, exit} from '../utils';
 
 // Regular components for devtools' UI
 const DevtoolsViewComponent = Regular.extend({
@@ -23,7 +23,7 @@ const DevtoolsViewComponent = Regular.extend({
         inspecting: false
     },
     onVisitGithub: function() {
-        openNewTab("https://github.com/regularjs/regular-devtools");
+        this.$emit("openNewTab", "https://github.com/regularjs/regular-devtools");
     },
     onInspect: function() {
         if (this.data.inspecting) {
