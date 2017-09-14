@@ -20,6 +20,10 @@ Some GIFs to show you how Regular Devtools works. You can:
 
 ![rdt-demo](http://wx3.sinaimg.cn/large/64c45edcgy1fjj9dxzp5yg21280q27l0.gif)
 
+*Inspecting mode allow user to select a DOM node and view its corresponding component in Devtools Panel*
+
+![rdt-demo](http://wx1.sinaimg.cn/large/64c45edcgy1fjjael50bvg21fk0qo7wh.gif)
+
 ### Features
 
 
@@ -31,11 +35,11 @@ Some GIFs to show you how Regular Devtools works. You can:
 + Inspecting Regular components hierarchy tree in element view.
 + Inspecting data, filters, directives, animations of selected component in sidebar.
 + Data changes made with Regular components will be reflected in both element view and sidebar in real-time.
-+ Sidebar data is editable, changes will be applied to the coresponding component in page.
++ Sidebar data is editable, changes will be applied to the corresponding component in page.
 + Searching component in element view.
 + Included contents will be annotated with `#inc`.
 + Click `inspect` button in the sidebar to inspect DOM node of selected component in Elements tab.
-+ **Inspecting mode** allow user to inspect DOM node, and the coresponding component will be focused in Developer Tool. 
++ **Inspecting mode** allow user to inspect DOM node, and the corresponding component will be focused in Developer Tool. 
 + **Pro Tip One**: When inspecting DOM node in Elements tab, switch to Regular tab, if the DOM node you are inspecting is rendered from a Regular component, the Regular Devtools will automatically focus on that component. It's like the reverse version of the last feature.
 + **Pro Tip Two**: When selecting component in element view, the component instance is available as `$r` in your console.
 

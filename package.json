@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "regular-devtools",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Regular Developer Tools is a Chrome Extension that allows real-time inspection of [Regular](http://regularjs.github.io/) components.",
   "scripts": {
     "build": "npm run devtool-build && npm run inject-build",

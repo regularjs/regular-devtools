@@ -1,3 +1,7 @@
+#### v0.9.2 2017-09-14
+
++ Fix `lockHightLight` bug
+
 #### v0.9.1 2017-09-14
 
 + Improve element view UI
