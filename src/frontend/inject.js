@@ -335,7 +335,7 @@ window.devtoolsModel = (function() {
         if (!domNode) {
             return;
         }
-
+        domNode.scrollIntoView();
         highLightNode(domNode, node.name || "Anonymous");
     };
 
@@ -360,7 +360,7 @@ window.devtoolsModel = (function() {
         maskNode.style.width = rect.width + window.scrollX + "px";
         maskNode.style.height = rect.height + "px";
         maskNode.style.backgroundColor = "rgba(145, 183, 228, 0.6)";
-        maskNode.style.zIndex = 999;
+        maskNode.style.zIndex = 999999;
         maskNode.style.pointerEvents = "none";
         document.querySelector("body").appendChild(maskNode);
 
@@ -376,7 +376,7 @@ window.devtoolsModel = (function() {
         labelNode.style.lineHeight = "24px";
         labelNode.style.fontSize = "12px";
         labelNode.style.borderRadius = "2px";
-        labelNode.style.zIndex = 999;
+        labelNode.style.zIndex = 999999;
         setLabelPositon(labelNode, rect);
         document.querySelector("body").appendChild(labelNode);
     };

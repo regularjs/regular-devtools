@@ -136,7 +136,7 @@ sidebarView
         inspectNodeByUUID(uuid);
     })
     .$on("highlightNode", ({uuid, inspectable}) => {
-        if (sidebarView.data.lockHighlight) {
+        if (!sidebarView.data.lockHighlight) {
             highlightNode(uuid, inspectable);
         }
     })
