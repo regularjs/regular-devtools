@@ -2,17 +2,31 @@
 
 > Regular Developer Tools is a Chrome Extension that allows real-time inspection of [Regular](http://regularjs.github.io/) components.
 
-*Regular Developer Tools v2.0 is under active development, any feedback is welcome* :clap:
+*Regular Developer Tools is under active development, any feedback is welcome* :clap:
 
 ### Overview
 
-Some GIFs to show you how Regular Devtools works.
+Some GIFs to show you how Regular Devtools works. You can:
 
-![rdt-demo](https://raw.githubusercontent.com/zxc0328/regular-devtools/master/gifs/rdt_demo_ss.gif)
+*View component tree structure, and select a component to get its data, computed data, filters and directives*
 
-![rdt-demo](https://raw.githubusercontent.com/zxc0328/regular-devtools/master/gifs/rdt_demo_dom_ss.gif)
+![rdt-demo](http://wx2.sinaimg.cn/large/64c45edcgy1fjj9dy0gh5g21280q21kx.gif)
+
+*Data changes are synchronized in a bi-direction way*
+
+![rdt-demo](http://wx1.sinaimg.cn/large/64c45edcgy1fjj9dxzma8g21280q2nof.gif)
+
+*Select a component, and inspect its instance by evaluating `$r` in the console*
+
+![rdt-demo](http://wx3.sinaimg.cn/large/64c45edcgy1fjj9dxzp5yg21280q27l0.gif)
 
 ### Features
+
+
+> **New in v0.9**  
+> Now you can enter the brand new **inspecting mode** by the hitting the  "target" button in navbar.
+
+
 
 + Inspecting Regular components hierarchy tree in element view.
 + Inspecting data, filters, directives, animations of selected component in sidebar.
@@ -20,13 +34,14 @@ Some GIFs to show you how Regular Devtools works.
 + Sidebar data is editable, changes will be applied to the coresponding component in page.
 + Searching component in element view.
 + Included contents will be annotated with `#inc`.
-+ Click `inspect` button to inspect DOM node of selected component in Elements tab.
++ Click `inspect` button in the sidebar to inspect DOM node of selected component in Elements tab.
++ **Inspecting mode** allow user to inspect DOM node, and the coresponding component will be focused in Developer Tool. 
 + **Pro Tip One**: When inspecting DOM node in Elements tab, switch to Regular tab, if the DOM node you are inspecting is rendered from a Regular component, the Regular Devtools will automatically focus on that component. It's like the reverse version of the last feature.
 + **Pro Tip Two**: When selecting component in element view, the component instance is available as `$r` in your console.
 
 ### Prerequisition
 
-Your project must use a custom build of regularjs(before Regular v0.5.0 is released). You can find it in [`/lib/regular.js`](https://github.com/regularjs/regular-devtools/blob/master/lib/regular.js)
+Require [regularjs](https://github.com/regularjs/regular) **v0.5.0** or newer.
 
 ### Installation
 
