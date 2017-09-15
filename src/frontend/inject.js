@@ -2,8 +2,6 @@ import CircularJSON from "../shared/circular-json";
 import {findElementByUuid, highLightNode, clearMask} from '../devtools/utils';
 import log from '../shared/log';
 
-window.CircularJSON = CircularJSON;
-
 // listen for message from content script
 // ensure only executing window.addEventListener once
 if (!window.devtoolsModel) {
@@ -239,9 +237,6 @@ window.devtoolsModel = (function() {
             }
 
             if (n.node.length === 0) {
-                // if (n.name === "dashboardProvider") {
-                //     debugger
-                // }
                 for (let i = 0; i < n.childNodes.length; i++) {
                     if (n.childNodes[i].node.length > 0) {
                         n.node = n.childNodes[i].node;
