@@ -44,7 +44,8 @@ window.devtoolsModel = (function() {
             return n.uuid === uuid;
         })[0];
 
-        var domNode = getNodesByUUID(uuid)[0];
+        var domNode = getNodesByUUID(uuid);
+        domNode = domNode && domNode[0];
 
         if (!domNode) {
             return;
@@ -185,7 +186,8 @@ window.devtoolsModel = (function() {
     };
 
     getNodesByUUID = function(uuid) {
-        return findElementByUuid(store, uuid).node;
+        const element = findElementByUuid(store, uuid);
+        return element && element.node;
     };
 
     function isASTElement(node) {

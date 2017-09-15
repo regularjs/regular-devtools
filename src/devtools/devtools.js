@@ -15,6 +15,8 @@ import {
     makeElementTree,
     syncArr
 } from './utils';
+import port from './port';
+import agent from './agent';
 
 // components
 import DevtoolsViewComponent from './components/DevtoolsView';
@@ -33,11 +35,6 @@ Regular.directive('r-md', function(elem, value) {
 // variables
 let ready = false;
 
-// Create a current inspected page unique connection to the background page, by its tabId
-const backgroundPageConnection = chrome.runtime.connect({
-    name: "devToBackCon_" + chrome.devtools.inspectedWindow.tabId
-});
-
 // devtools
 const devtools = new DevtoolsViewComponent({
     data: {
@@ -53,7 +50,7 @@ const sidebarView = devtools.$refs.sidebarView;
 const searchView = elementView.$refs.searchView;
 
 function injectContentScript(tabId) {
-    backgroundPageConnection.postMessage({
+    port.postMessage({
         tabId: tabId || chrome.devtools.inspectedWindow.tabId,
         file: "/src/frontend/content.js"
     });
@@ -128,7 +125,7 @@ devtools
         }, 2000);
     })
     .$on("openNewTab", function(url) {
-        backgroundPageConnection.postMessage({
+        port.postMessage({
             url: url
         });
     });
@@ -162,23 +159,18 @@ sidebarView
         });
     });
 
-backgroundPageConnection.onMessage.addListener(function(message) {
-    if (message.type === "dataUpdate") {
-        devtools.$emit("stateViewReRender");
-    } else if (message.type === "reRender") {
-        devtools.$emit("elementViewReRender", message.nodes);
-    } else if (message.type === "initNodes") {
-        devtools.$emit("initNodes", message.nodes);
-    } else if (message.type === "currNodeChange" && ready) {
-        console.log("currNodeChange", message);
-        devtools.$emit("currentNodeChange", message.uuid);
-    } else if (message.type === "pageReload") {
-        elementView.data.loading = true;
-        elementView.$update();
-        devtools.$emit("reload", {
-            tabId: message.tabId
-        });
+agent.on('dataUpdate', () => devtools.$emit("stateViewReRender"));
+agent.on('reRender', nodes => devtools.$emit("elementViewReRender", nodes));
+agent.on('initNodes', nodes => devtools.$emit("initNodes", nodes));
+agent.on('currNodeChange', uuid => {
+    if (ready) {
+        devtools.$emit("currentNodeChange", uuid);
     }
+});
+agent.on('pageReload', tabId => {
+    elementView.data.loading = true;
+    elementView.$update();
+    devtools.$emit("reload", {tabId});
 });
 
 // listen for messge when switch from element tab to regular tab
