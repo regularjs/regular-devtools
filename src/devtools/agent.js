@@ -41,6 +41,10 @@ class Agent {
             file: "/src/frontend/content.js"
         });
     }
+
+    openInNewTab(url) {
+        port.postMessage({url});
+    }
 }
 
 export default new Agent();

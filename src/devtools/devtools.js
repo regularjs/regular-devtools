@@ -15,7 +15,6 @@ import {
     makeElementTree,
     syncArr
 } from './utils';
-import port from './port';
 import agent from './agent';
 
 // components
@@ -118,9 +117,7 @@ devtools
         }, 2000);
     })
     .$on("openNewTab", function(url) {
-        port.postMessage({
-            url: url
-        });
+        agent.openInNewTab(url);
     });
 
 sidebarView
