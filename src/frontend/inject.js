@@ -39,7 +39,9 @@ window.devtoolsModel = (function() {
     highLighter = function(uuid) {
         if (!uuid) {
             clearMask();
+            return;
         }
+
         var node = ins.filter(n => {
             return n.uuid === uuid;
         })[0];

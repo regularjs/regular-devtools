@@ -1,3 +1,7 @@
+#### v0.9.3 2017-09-15
+
++ Fix currenNode undefined bug
+
 #### v0.9.2 2017-09-14
 
 + Fix `lockHightLight` bug

@@ -6,7 +6,7 @@ export function evalHighLightNode(uuid, inspectable) {
         evalStr,
         function(result, isException) {
             if (isException) {
-                log("Inspect Error: ", isException);
+                log("HightLight Error: ", isException);
             }
         }
     );
