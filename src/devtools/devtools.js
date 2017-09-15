@@ -49,13 +49,6 @@ const sidebarView = devtools.$refs.sidebarView;
 // searchView
 const searchView = elementView.$refs.searchView;
 
-function injectContentScript(tabId) {
-    port.postMessage({
-        tabId: tabId || chrome.devtools.inspectedWindow.tabId,
-        file: "/src/frontend/content.js"
-    });
-}
-
 function displayWarning() {
     if (elementView.data.loading) {
         elementView.data.loading = false;
@@ -120,7 +113,7 @@ devtools
         searchView.reset();
         // wait for the page to fully intialize
         setTimeout(function() {
-            injectContentScript(event.tabId);
+            agent.injectContentScript(event.tabId);
             setTimeout(displayWarning, 4000);
         }, 2000);
     })
@@ -173,14 +166,7 @@ agent.on('pageReload', tabId => {
     devtools.$emit("reload", {tabId});
 });
 
-// listen for messge when switch from element tab to regular tab
-window.addEventListener("message", function(event) {
-    if (event.data.type === "currNodeChange" && ready) {
-        devtools.$emit("currentNodeChange", event.data.uuid);
-    }
-}, false);
-
-injectContentScript();
+agent.injectContentScript();
 
 // waiting 4000ms, if still loading, remove loading and show warning
 setTimeout(displayWarning, 4000);

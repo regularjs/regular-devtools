@@ -26,6 +26,20 @@ class Agent {
                 // skip
             }
         });
+
+        // listen for messge when switch from element tab to regular tab
+        window.addEventListener("message", event => {
+            if (event.data.type === "currNodeChange") {
+                this.emit("currNodeChange", event.data.uuid);
+            }
+        }, false);
+    }
+
+    injectContentScript(tabId) {
+        port.postMessage({
+            tabId: tabId || chrome.devtools.inspectedWindow.tabId,
+            file: "/src/frontend/content.js"
+        });
     }
 }
 
