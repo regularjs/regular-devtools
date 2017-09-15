@@ -23,7 +23,7 @@ body {
 }
 
 .roboto {
-	font-family: "Roboto";
+  font-family: "Roboto";
 }
 
 /* header start */
@@ -378,6 +378,10 @@ body {
   font-size: 20px;
 }
 
+.sidebar__tools {
+  padding: 0 10px;
+}
+
 .sidebar__inspect {
   display: inline-block;
   background-image: url(/assets/inspect.svg);
@@ -385,10 +389,23 @@ body {
   background-size: 16px auto;
   background-repeat: no-repeat;
   padding-left: 18px;
-  font-size: 14px;
+  font-size: 11px;
   color: #333;
   cursor: pointer;
-  margin: 10px;
+  margin: 10px 0;
+}
+
+.sidebar__definition {
+  display: inline-block;
+  background-image: url(/assets/at-sign.svg);
+  background-position: 0 center;
+  background-size: 14px auto;
+  background-repeat: no-repeat;
+  padding-left: 16px;
+  font-size: 11px;
+  color: #333;
+  cursor: pointer;
+  margin: 10px 0;
 }
 
 .sidebar__inspect:hover {

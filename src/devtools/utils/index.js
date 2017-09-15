@@ -4,6 +4,7 @@ import searchPath from './searchPath.js';
 import printInConsole from './printInConsole.js';
 import {findElementByUuid, findElementByName, findElementByUuidNonRecursive} from './findElement.js';
 import {inspectNodeByUUID} from './inspectNode';
+import showDefinitionByUUID from './showDefinitionByUUID';
 import {evalHighLightNode} from './highlightNode';
 import {clearMask, highLightNode} from './highLighter';
 import {updateInstanceByUUIDAndPath} from './updateInstance';
@@ -22,6 +23,7 @@ export {
     findElementByName,
     findElementByUuidNonRecursive,
     inspectNodeByUUID,
+    showDefinitionByUUID,
     updateInstanceByUUIDAndPath,
     evalHighLightNode,
     highLightNode,

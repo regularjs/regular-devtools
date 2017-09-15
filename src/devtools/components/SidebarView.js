@@ -16,11 +16,17 @@ const SidebarView = Regular.extend({
             <div class="sidebar__content">
                 {#if tabSelected == 'data'}
                 <div>
-                    {#if currentNode.inspectable }
-                        <div class="sidebar__inspect" on-click={this.onInspectNode(currentNode.uuid)}>
-                            inspect
+                    <div class="sidebar__tools">
+                        {#if currentNode.inspectable }
+                            <div class="sidebar__inspect" on-click={this.onInspectNode(currentNode.uuid)}>
+                                inspect
+                            </div>
+                        {/if}
+
+                        <div class="sidebar__definition" on-click={this.onShowDefinition(currentNode.uuid)}>
+                            definition
                         </div>
-                    {/if}
+                    </div>
                     <SidebarPane title="Normal">
                         <JsonTree source="{ currentNode.data }" on-change="{ this.onDataChange($event) }" />
                     </SidebarPane>
@@ -94,6 +100,9 @@ const SidebarView = Regular.extend({
     },
     onInspectNode(uuid) {
         this.$emit('inspectNode', uuid);
+    },
+    onShowDefinition(uuid) {
+        this.$emit('showDefinition', uuid);
     },
     highLightNode(uuid, inspectable) {
         this.$emit('highLightNode', {uuid, inspectable});

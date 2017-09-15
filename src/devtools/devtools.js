@@ -8,6 +8,7 @@ import {
     printInConsole,
     findElementByUuid,
     inspectNodeByUUID,
+    showDefinitionByUUID,
     updateInstanceByUUIDAndPath,
     evalHighLightNode,
     getData,
@@ -126,6 +127,9 @@ sidebarView
     })
     .$on("inspectNode", uuid => {
         inspectNodeByUUID(uuid);
+    })
+    .$on("showDefinition", uuid => {
+        showDefinitionByUUID(uuid);
     })
     .$on("highLightNode", ({uuid, inspectable}) => {
         if (!sidebarView.data.lockHighlight) {
