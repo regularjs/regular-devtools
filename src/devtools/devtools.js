@@ -75,7 +75,7 @@ devtools
     })
     .$on("clickElement", function(uuid) {
         if (uuid !== sidebarView.data.currentNode.uuid) {
-            let currentNode = findElementByUuid(devtools.data.nodes, uuid);
+            let currentNode = findElementByUuid(elementView.data.nodes, uuid);
             sidebarView.data.currentNode.name = currentNode.name;
             sidebarView.data.currentNode.inspectable = currentNode.inspectable;
             sidebarView.data.currentNode.uuid = uuid;
