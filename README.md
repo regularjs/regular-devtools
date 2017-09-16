@@ -39,13 +39,13 @@ Some GIFs to show you how Regular Devtools works. You can:
 + Searching component in element view.
 + Included contents will be annotated with `#inc`.
 + Click `inspect` button in the sidebar to inspect DOM node of selected component in Elements tab.
-+ **Inspecting mode** allow user to inspect DOM node, and the corresponding component will be focused in Developer Tool. 
++ **Inspecting mode** allow user to inspect DOM node, and the corresponding component will be focused in Developer Tool.
 + **Pro Tip One**: When inspecting DOM node in Elements tab, switch to Regular tab, if the DOM node you are inspecting is rendered from a Regular component, the Regular Devtools will automatically focus on that component. It's like the reverse version of the last feature.
 + **Pro Tip Two**: When selecting component in element view, the component instance is available as `$r` in your console.
 
 ### Prerequisition
 
-Require [regularjs](https://github.com/regularjs/regular) **v0.5.0** or newer.
+Require [regularjs](https://github.com/regularjs/regular) **v0.5.0+**.
 
 ### Installation
 
