@@ -1,6 +1,7 @@
 // the real devtools script
 // the UI layer of devtools
 import Regular from "regularjs";
+import 'material-design-lite';
 import CircularJSON from "../shared/circular-json";
 import log from '../shared/log';
 import {enter, input, mouseenter, mouseleave} from './events';
@@ -17,9 +18,10 @@ import {
     syncArr
 } from './utils';
 import agent from './agent';
-
-// components
 import DevtoolsViewComponent from './components/DevtoolsView';
+
+import 'material-design-lite/dist/material.min.css';
+import './devtools.css';
 
 // register custom events
 Regular.use(enter);

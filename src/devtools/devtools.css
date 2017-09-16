@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Roboto";
-  src:url("../../lib/Roboto-Regular.ttf");
+  src:url("./fonts/Roboto-Regular.ttf");
 }
 
 html {
@@ -13,7 +13,7 @@ body {
   font-family: Consolas, Lucida Console, Menlo, monospace, '.SFNSDisplay-Regular', 'Helvetica Neue', 'Lucida Grande', sans-serif;
 }
 
-.devtools {
+#app {
   box-sizing: border-box;
   padding-top: 60px;
   width: 100%;

@@ -4,12 +4,12 @@
   "version": "0.9.3",
   "description": "Regular Developer Tools is a Chrome Extension that allows real-time inspection of [Regular](http://regularjs.github.io/) components.",
   "scripts": {
-    "build": "npm run devtool-build && npm run inject-build",
-    "devtool-build": "bili src/devtools/devtools.js --out-dir dist --name devtools.bundle --format umd --exports none",
-    "inject-build": "bili src/frontend/inject.js --out-dir dist --name inject.bundle --format umd --exports none",
-    "watch": "concurrently \"npm run devtool-watch\" \"npm run inject-watch\"",
-    "devtool-watch": "npm run devtool-build -- --watch",
-    "inject-watch": "npm run inject-build -- --watch",
+    "build": "npm run build:devtools && npm run build:inject",
+    "build:devtools": "poi build --config scripts/devtools.config.js",
+    "build:inject": "poi build --config scripts/devtools.config.js",
+    "watch": "concurrently \"npm run watch:devtools\" \"npm run watch:inject\"",
+    "watch:devtools": "poi watch --config scripts/devtools.config.js",
+    "watch:inject": "poi watch --config scripts/inject.config.js",
     "test": "npm run lint",
     "lint": "eslint src --quiet",
     "precommit": "lint-staged"
@@ -34,7 +34,9 @@
     "eslint-config-google": "^0.6.0",
     "husky": "^0.14.3",
     "lint-staged": "^4.1.3",
+    "material-design-lite": "^1.3.0",
     "mitt": "^1.1.2",
+    "poi": "^9.3.5",
     "regularjs": "0.5.2"
   },
   "dependencies": {}

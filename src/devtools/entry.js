@@ -1,7 +1,7 @@
 // create new panel for devtools
 chrome.devtools.panels.create("Regular",
-    "./assets/regular.png",
-    "./src/devtools/panel.html",
+    "/assets/regular.png",
+    "/dist/index.html",
     function(panel) {
         panel.onShown.addListener(function(extPanelWindow) {
             chrome.devtools.inspectedWindow.eval(
