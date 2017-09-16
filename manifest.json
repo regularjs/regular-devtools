@@ -13,12 +13,12 @@
     },
 
     "browser_action": {
-        "default_icon": "/assets/regular.png"
+        "default_icon": "/regular.png"
     },
     "icons": {
-        "16": "/assets/regular.png",
-		"48": "/assets/regular.png",
-		"128": "/assets/regular.png"
+        "16": "/regular.png",
+		"48": "/regular.png",
+		"128": "/regular.png"
     },
 
     "web_accessible_resources": [
