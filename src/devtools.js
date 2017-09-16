@@ -1,5 +1,6 @@
 // create new panel for devtools
-chrome.devtools.panels.create("Regular",
+chrome.devtools.panels.create(
+    "Regular",
     "/regular.png",
     "/dist/index.html",
     function(panel) {

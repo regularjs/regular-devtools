@@ -4,7 +4,7 @@
     "name": "Regular Developer Tools",
     "description": "A Chrome extension for inspecting regularjs components",
     "version": "0.9.3",
-    "devtools_page": "devtools.html",
+    "devtools_page": "/src/devtools.html",
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 
     "background": {
