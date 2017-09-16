@@ -1,6 +1,7 @@
 import Regular from 'regularjs';
 import Element from './Element';
 import SearchView from './SearchView';
+import './ElementView.css';
 
 const ElementView = Regular.extend({
     template: `

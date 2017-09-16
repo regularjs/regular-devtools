@@ -1,5 +1,6 @@
 import Regular from 'regularjs';
 import {isPrimitive, type} from '../utils';
+import './JsonTreeProp.css';
 
 const JsonTreeProp = Regular.extend({
     template: `
@@ -17,11 +18,11 @@ const JsonTreeProp = Regular.extend({
                 {#if !editing}
                     {#if this.isPrimitive(value)}
                         {#if type === 'String'}
-                            {#if value === 'Function'} 
+                            {#if value === 'Function'}
                               <span class='item function'>f()</span>
-                            {#elseif value === '[DOM node]'} 
+                            {#elseif value === '[DOM node]'}
                             <span class='item dom'>DOM Node</span>
-                            {#elseif value === '[Circular]'} 
+                            {#elseif value === '[Circular]'}
                             <span class='item dom'>Circular Reference</span>
                             {#else}
                               <span class='item string'>"{value}"</span>

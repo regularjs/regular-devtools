@@ -1,4 +1,5 @@
 import Regular from 'regularjs';
+import './Header.css';
 
 export default Regular.extend({
     template: `

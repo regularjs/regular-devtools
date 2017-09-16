@@ -1,0 +1,60 @@
+.sidebar {
+  display: inline-block;
+  width: 50%;
+  height: 100%;
+}
+
+.sidebar__header {
+  font-size: 15px;
+  line-height: 30px;
+  display: flex;
+  padding: 0 10px;
+}
+
+.sidebar__header-left {
+  flex-grow: 1;
+}
+
+.sidebar__header-right {
+  font-size: 13px;
+}
+
+.sidebar__content {
+  height: -webkit-calc(100% - 61px);
+  overflow-y: auto;
+  font-size: 20px;
+}
+
+.sidebar__tools {
+  padding: 0 10px;
+}
+
+.sidebar__inspect {
+  display: inline-block;
+  background-image: url(/dist/static/media/inspect.svg);
+  background-position: 0 center;
+  background-size: 16px auto;
+  background-repeat: no-repeat;
+  padding-left: 18px;
+  font-size: 11px;
+  color: #333;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+.sidebar__definition {
+  display: inline-block;
+  background-image: url(/dist/static/media/at-sign.svg);
+  background-position: 0 center;
+  background-size: 14px auto;
+  background-repeat: no-repeat;
+  padding-left: 16px;
+  font-size: 11px;
+  color: #333;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+.sidebar__inspect:hover {
+  color: #000;
+}

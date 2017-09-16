@@ -1,0 +1,18 @@
+.sidebar-pane-header {
+  display: flex;
+  align-items: center;
+  background-color: #eee;
+  height: 20px;
+  padding: 3px 10px;
+  border-top: 1px solid #dadada;
+  border-bottom: 1px solid #dadada;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #222;
+  font-size: 12px;
+  font-family: '.SFNSDisplay-Regular', 'Helvetica Neue', 'Lucida Grande', sans-serif;
+}
+
+.sidebar-pane-content {
+  font-size: 13px;
+}

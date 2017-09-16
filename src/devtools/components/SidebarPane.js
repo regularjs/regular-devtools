@@ -1,4 +1,5 @@
 import Regular from 'regularjs';
+import './SidebarPane.css';
 
 const SidebarPane = Regular.extend({
     template: `

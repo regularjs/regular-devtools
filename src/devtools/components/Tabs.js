@@ -1,4 +1,5 @@
 import Regular from 'regularjs';
+import './Tabs.css';
 
 const Tabs = Regular.extend({
     template: `

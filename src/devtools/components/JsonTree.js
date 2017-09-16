@@ -1,5 +1,6 @@
 import Regular from 'regularjs';
 import JsonTreeProp from './JsonTreeProp';
+import './JsonTree.css';
 
 const JsonTree = Regular.extend({
     template: `

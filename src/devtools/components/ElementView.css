@@ -1,0 +1,103 @@
+.elementView {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  font-size: 20px;
+  color: #000;
+  vertical-align: top;
+  height: 100%;
+  border-right: 1px solid #e3e3e3;
+}
+
+.elementView .element {
+  line-height: 18px;
+  font-size: 0;
+  padding: 0 20px 3px;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.elementView .warnning {
+  padding: 20px;
+  font-size: 15px;
+}
+
+.elementView .tag {
+  color: rgb(168, 148, 166)
+}
+
+.elementView .arrow {
+  height: 12px;
+  width: 12px;
+}
+
+.elementView .ele-item {
+  font-size: 13px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.elementView .tagname.is-anonymous {
+  font-style: italic;
+}
+
+.elementView .ele-include {
+  font-size: 11px;
+  margin-left: 5px;
+  color: #999;
+}
+
+.elementView .arrow-down {
+  transform: rotate(90deg);
+}
+
+.elementView .loading-img {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -15px;
+  margin-top: -15px;
+}
+
+@keyframes loading-animation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.element-tag:hover {
+  background-color: #e5e5e5;
+}
+
+.selected {
+  background-color: #44a1ff;
+}
+
+.flush-animation {}
+
+.elementView .selected .ele-item {
+  color: #fff;
+}
+
+.elementView .selected .ele-include {
+  color: #fff;
+}
+
+.elementView .hide {
+  display: none;
+}
+
+.elementTree {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  padding: 20px 0;
+  box-sizing: border-box;
+}
