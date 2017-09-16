@@ -46,7 +46,7 @@ body {
   align-items: center;
   flex: 1;
   padding-left: 50px;
-  background-image: url(/assets/regular.png);
+  background-image: url(/dist/static/media/regular.png);
   background-repeat: no-repeat;
   background-size: auto 100%;
   white-space: nowrap;
@@ -384,7 +384,7 @@ body {
 
 .sidebar__inspect {
   display: inline-block;
-  background-image: url(/assets/inspect.svg);
+  background-image: url(/dist/static/media/inspect.svg);
   background-position: 0 center;
   background-size: 16px auto;
   background-repeat: no-repeat;
@@ -397,7 +397,7 @@ body {
 
 .sidebar__definition {
   display: inline-block;
-  background-image: url(/assets/at-sign.svg);
+  background-image: url(/dist/static/media/at-sign.svg);
   background-position: 0 center;
   background-size: 14px auto;
   background-repeat: no-repeat;

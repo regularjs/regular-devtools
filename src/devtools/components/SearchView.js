@@ -18,9 +18,9 @@ const SearchView = Regular.extend({
                         {/if}
                     {/if}
                 </div>
-                <img src="/assets/search.svg" class="searchView-btn" on-click={this.search()} alt="search" title="Search"/>
-                <img src="/assets/prev.svg" class="searchView-btn" on-click={this.next(-1)} alt="prev" title="Previous result"/>
-                <img src="/assets/next.svg" class="searchView-btn" on-click={this.next(1)} alt="next" title="Next result"/>
+                <img src="/dist/static/media/search.svg" class="searchView-btn" on-click={this.search()} alt="search" title="Search"/>
+                <img src="/dist/static/media/prev.svg" class="searchView-btn" on-click={this.next(-1)} alt="prev" title="Previous result"/>
+                <img src="/dist/static/media/next.svg" class="searchView-btn" on-click={this.next(1)} alt="next" title="Next result"/>
             </div>
         </div>
     `,

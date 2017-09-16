@@ -6,7 +6,7 @@ const Element = Regular.extend({
         <div class="element purple {selected ? 'selected' : 'element-tag'}"
         style="padding-left:{level*30}px;}" on-click={this.onClick(node)} on-mouseenter={this.onMouseEnter(node.uuid, node.inspectable)}>
             <div class="borderline"></div>
-            <img src="/assets/arrow.svg"
+            <img src="/dist/static/media/arrow.svg"
             style="margin-left: -10px;"
             alt="arrow" on-click={opened = !opened}
             class="arrow ele-item {opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}"/>

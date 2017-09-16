@@ -3,13 +3,13 @@
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
     <title>jsonTree</title>
     <link rel="stylesheet" href="./jsonTree.css" />
-    
+
 </head>
 <body>
     <div id="app"></div>
-    
-    <script type="text/javascript" src="../lib/regular.js"></script>
-    
+
+    <script type="text/javascript" src="https://unpkg.com/regularjs/dist/regular.js"></script>
+
     <script type='template/regular' id='jsonTree'>
         <div class='json-tree'>
             {#list Object.keys(source) as k}
@@ -27,7 +27,7 @@
                     on-click={opened = !opened}
                 />
                 <span class="key item" on-click={opened = !opened}>{key + ':'}</span>
-                
+
                 <span on-dblclick="{ this.onEdit() }">
                 {#if !editing}
                     {#if this.isPrimitive(value)}
