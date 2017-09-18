@@ -26,11 +26,11 @@ function getOthersData(uuid) {
                     tempArr.forEach(function(value) {
                         if (!tempObj[value]) { // same command big level not show
                             if (curUI.constructor._addProtoInheritCache) {
-                                tempObj[value] = "regular";
+                                tempObj[value] = "[regular]";
                             } else if (curUI.reset && !curUI.__proto__.reset && curUI.__proto__.constructor._addProtoInheritCache) {
                                 var funStr = curUI.reset.toString();
                                 if (funStr.indexOf("this.data = {}") !== -1 && funStr.indexOf("this.config()") !== -1) {
-                                    tempObj[value] = "regularUI"; // very low possible be developer's Component
+                                    tempObj[value] = "[regular-ui]"; // very low possible be developer's Component
                                 } else {
                                     tempObj[value] = curUI.name === undefined ? '' : curUI.name;
                                 }
