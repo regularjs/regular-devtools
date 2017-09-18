@@ -10,26 +10,25 @@ Some GIFs to show you how Regular Devtools works. You can:
 
 <details>
 	<summary>View component tree structure, and select a component to get its data, computed data, filters and directives</summary>
-	![rdt-demo](http://wx2.sinaimg.cn/large/64c45edcgy1fjj9dy0gh5g21280q21kx.gif)
+	<img src="http://wx2.sinaimg.cn/large/64c45edcgy1fjj9dy0gh5g21280q21kx.gif" alt="devtools-demo" />
 </details>
 
 <details>
 	<summary>Data changes are synchronized in a bi-direction way</summary>
-	![rdt-demo](http://wx1.sinaimg.cn/large/64c45edcgy1fjj9dxzma8g21280q2nof.gif)
+	<img src="http://wx1.sinaimg.cn/large/64c45edcgy1fjj9dxzma8g21280q2nof.gif" alt="devtools-demo" />
 </details>
 
 <details>
 	<summary>Select a component, and inspect its instance by evaluating `$r` in the console</summary>
-	![rdt-demo](http://wx3.sinaimg.cn/large/64c45edcgy1fjj9dxzp5yg21280q27l0.gif)
+	<img src="http://wx3.sinaimg.cn/large/64c45edcgy1fjj9dxzp5yg21280q27l0.gif" alt="devtools-demo" />
 </details>
 
 <details>
 	<summary>Inspecting mode allow user to select a DOM node and view its corresponding component in Devtools Panel</summary>
-	![rdt-demo](http://wx1.sinaimg.cn/large/64c45edcgy1fjjael50bvg21fk0qo7wh.gif)
+	<img src="http://wx1.sinaimg.cn/large/64c45edcgy1fjjael50bvg21fk0qo7wh.gif" alt="devtools-demo" />
 </details>
 
 ### Features
-
 
 > **New in v0.9**  
 > Now you can enter the brand new **inspecting mode** by the hitting the  "target" button in navbar.
