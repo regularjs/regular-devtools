@@ -16,7 +16,7 @@
   align-items: center;
   flex: 1;
   padding-left: 50px;
-  background-image: url(/dist/static/media/regular.png);
+  background-image: url(/static/media/regular.png);
   background-repeat: no-repeat;
   background-size: auto 100%;
   white-space: nowrap;

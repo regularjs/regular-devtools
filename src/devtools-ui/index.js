@@ -21,7 +21,7 @@ import agent from './agent';
 import DevtoolsViewComponent from './components/DevtoolsView';
 
 import 'material-design-lite/dist/material.min.css';
-import './devtools.css';
+import './index.css';
 
 // register custom events
 Regular.use(enter);

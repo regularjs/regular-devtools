@@ -7,7 +7,7 @@ const JsonTreeProp = Regular.extend({
         <div class='json-tree-data'>
             <div class='json-tree-data-key'>
                 <img
-                    src="/dist/static/media/arrow.svg"
+                    src="/static/media/arrow.svg"
                     alt="arrow"
                     class="arrow item {opened ? 'arrow-down' : null} {hasChildren ? '': 'hide'}"
                     on-click={opened = !opened}

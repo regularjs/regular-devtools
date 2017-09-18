@@ -38,7 +38,7 @@ class Agent {
     injectContentScript(tabId) {
         port.postMessage({
             tabId: tabId || chrome.devtools.inspectedWindow.tabId,
-            file: "/src/frontend/content.js"
+            file: "/content.js"
         });
     }
 

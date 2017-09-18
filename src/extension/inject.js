@@ -1,5 +1,5 @@
 import CircularJSON from "../shared/circular-json";
-import {findElementByUuid, highLightNode, clearMask} from '../devtools/utils';
+import {findElementByUuid, highLightNode, clearMask} from '../devtools-ui/utils';
 import log from '../shared/log';
 
 // listen for message from content script

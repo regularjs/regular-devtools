@@ -28,4 +28,4 @@ window.addEventListener("message", function(event) {
     }
 }, false);
 
-injectScript(chrome.extension.getURL('/dist/inject.bundle.js'), 'body');
+injectScript(chrome.extension.getURL('/inject.bundle.js'), 'body');

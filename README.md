@@ -54,9 +54,10 @@ Install from [Chrome Web Store](https://chrome.google.com/webstore/detail/regula
 ### Manual Installation
 
 + **Step 1** Clone this repo.
-+ **Step 2** Open Google Chrome and navigate to `chrome://extensions/`.
-+ **Step 3** Check Developement mode checkbox in right corner.
-+ **Step 4** Click `Load unpacked extension` and load the folder you just cloned.
++ **Step 2** run `npm i && npm run build` in command line, you will get `dist` folder in current working directory
++ **Step 3** Open Google Chrome and navigate to `chrome://extensions/`.
++ **Step 4** Check Developement mode checkbox in right corner.
++ **Step 5** Click `Load unpacked extension` and load the `dist` folder.
 
 ### Development
 

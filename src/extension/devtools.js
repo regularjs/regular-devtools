@@ -2,7 +2,7 @@
 chrome.devtools.panels.create(
     "Regular",
     "/regular.png",
-    "/dist/index.html",
+    "/index.html",
     function(panel) {
         panel.onShown.addListener(function(extPanelWindow) {
             chrome.devtools.inspectedWindow.eval(

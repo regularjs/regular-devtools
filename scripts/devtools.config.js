@@ -1,13 +1,12 @@
 module.exports = {
-    entry: './src/devtools/devtools.js',
+    entry: './src/devtools-ui/index.js',
     copy: [
         {
-            from: 'src/devtools/media',
+            from: 'src/devtools-ui/media',
             to: 'static/media',
         },
     ],
     webpack( config ) {
-        config.output.publicPath = '/dist/';
         config.resolve.alias[ 'regularjs' ] = require.resolve( 'regularjs/dist/regular.js' );
         return config;
     },
