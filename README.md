@@ -1,4 +1,9 @@
-# Regular Developer Tools [![build][build-image]][build-url]
+# Regular Developer Tools
+
+[![version][version-image]][version-url]
+[![build][build-image]][build-url]
+[![download][download-image]][download-url]
+[![rating][rating-image]][rating-url]
 
 > Regular Developer Tools is a Chrome Extension that allows real-time inspection of [Regular](http://regularjs.github.io/) components.
 
@@ -83,3 +88,12 @@ $ npm run build
 
 [build-image]: https://img.shields.io/circleci/project/regularjs/regular-devtools/master.svg?style=flat-square
 [build-url]: https://circleci.com/gh/regularjs/regular-devtools
+
+[version-image]: https://img.shields.io/chrome-web-store/v/ehlcoecgkhfjffhmdhmhbjkjjpaecmam.svg?style=flat-square
+[version-url]: https://chrome.google.com/webstore/detail/regular-developer-tools/ehlcoecgkhfjffhmdhmhbjkjjpaecmam
+
+[download-image]: https://img.shields.io/chrome-web-store/d/ehlcoecgkhfjffhmdhmhbjkjjpaecmam.svg?style=flat-square
+[download-url]: https://chrome.google.com/webstore/detail/regular-developer-tools/ehlcoecgkhfjffhmdhmhbjkjjpaecmam
+
+[rating-image]: https://img.shields.io/chrome-web-store/rating/ehlcoecgkhfjffhmdhmhbjkjjpaecmam.svg?style=flat-square
+[rating-url]: https://chrome.google.com/webstore/detail/regular-developer-tools/ehlcoecgkhfjffhmdhmhbjkjjpaecmam
