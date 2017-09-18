@@ -8,21 +8,25 @@
 
 Some GIFs to show you how Regular Devtools works. You can:
 
-*View component tree structure, and select a component to get its data, computed data, filters and directives*
+<details>
+	<summary>View component tree structure, and select a component to get its data, computed data, filters and directives</summary>
+	![rdt-demo](http://wx2.sinaimg.cn/large/64c45edcgy1fjj9dy0gh5g21280q21kx.gif)
+</details>
 
-![rdt-demo](http://wx2.sinaimg.cn/large/64c45edcgy1fjj9dy0gh5g21280q21kx.gif)
+<details>
+	<summary>Data changes are synchronized in a bi-direction way</summary>
+	![rdt-demo](http://wx1.sinaimg.cn/large/64c45edcgy1fjj9dxzma8g21280q2nof.gif)
+</details>
 
-*Data changes are synchronized in a bi-direction way*
+<details>
+	<summary>Select a component, and inspect its instance by evaluating `$r` in the console</summary>
+	![rdt-demo](http://wx3.sinaimg.cn/large/64c45edcgy1fjj9dxzp5yg21280q27l0.gif)
+</details>
 
-![rdt-demo](http://wx1.sinaimg.cn/large/64c45edcgy1fjj9dxzma8g21280q2nof.gif)
-
-*Select a component, and inspect its instance by evaluating `$r` in the console*
-
-![rdt-demo](http://wx3.sinaimg.cn/large/64c45edcgy1fjj9dxzp5yg21280q27l0.gif)
-
-*Inspecting mode allow user to select a DOM node and view its corresponding component in Devtools Panel*
-
-![rdt-demo](http://wx1.sinaimg.cn/large/64c45edcgy1fjjael50bvg21fk0qo7wh.gif)
+<details>
+	<summary>Inspecting mode allow user to select a DOM node and view its corresponding component in Devtools Panel</summary>
+	![rdt-demo](http://wx1.sinaimg.cn/large/64c45edcgy1fjjael50bvg21fk0qo7wh.gif)
+</details>
 
 ### Features
 
