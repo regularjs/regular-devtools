@@ -377,7 +377,10 @@ window.devtoolsModel = (function() {
         updateInstance: function(uuid, path, value) {
             // find instance by uuid
             var instance;
-            for (var i = 0, len = ins.length; i < len; i++) {
+            var i;
+            var len;
+
+            for (i = 0, len = ins.length; i < len; i++) {
                 if (ins[i].uuid === uuid) {
                     instance = ins[i];
                     break;
@@ -389,6 +392,12 @@ window.devtoolsModel = (function() {
             // update instance data by path
             setObjectByPath(instance.data, path, value);
             instance.$update();
+
+            for (i = 0, len = ins.length; i < len; i++) {
+                if (ins[i].parentNode) {
+                    ins[i].$update();
+                }
+            }
         },
         print: function(uuid) {
             var i;
