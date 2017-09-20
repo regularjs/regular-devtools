@@ -1,10 +1,10 @@
-export function findElementByUuid(nodes, uuid) {
+export function findElementByUUID(nodes, uuid) {
     for (var i = 0; i < nodes.length; i++) {
         if (nodes[i].uuid === uuid) {
             return nodes[i];
         }
         if (nodes[i].childNodes.length) {
-            var result = findElementByUuid(nodes[i].childNodes, uuid);
+            var result = findElementByUUID(nodes[i].childNodes, uuid);
             if (result) {
                 return result;
             }
@@ -12,7 +12,7 @@ export function findElementByUuid(nodes, uuid) {
     }
 }
 
-export function findElementByUuidNonRecursive(nodes, uuid) {
+export function findElementByUUIDNonRecursive(nodes, uuid) {
     for (var i = 0; i < nodes.length; i++) {
         if (nodes[i].uuid === uuid) {
             return nodes[i];

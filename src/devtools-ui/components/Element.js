@@ -1,5 +1,5 @@
 import Regular from 'regularjs';
-import {findElementByUuid} from '../utils';
+import {findElementByUUID} from '../utils';
 
 const Element = Regular.extend({
     template: `
@@ -44,7 +44,7 @@ const Element = Regular.extend({
                 return;
             }
 
-            if (!findElementByUuid(this.$root.data.nodes, lastSelected.data.node.uuid)) {
+            if (!findElementByUUID(this.$root.data.nodes, lastSelected.data.node.uuid)) {
                 this.$root.data.lastSelected = null;
             } else {
                 lastSelected.data.selected = false;

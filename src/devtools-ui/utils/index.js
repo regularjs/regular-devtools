@@ -2,7 +2,7 @@ import isPrimitive from './isPrimitive';
 import type from './type.js';
 import searchPath from './searchPath.js';
 import printInConsole from './printInConsole.js';
-import {findElementByUuid, findElementByName, findElementByUuidNonRecursive} from './findElement.js';
+import {findElementByUUID, findElementByName, findElementByUUIDNonRecursive} from './findElement.js';
 import {inspectNodeByUUID} from './inspectNode';
 import showDefinitionByUUID from './showDefinitionByUUID';
 import {evalHighLightNode} from './highlightNode';
@@ -19,9 +19,9 @@ export {
     type,
     searchPath,
     printInConsole,
-    findElementByUuid,
+    findElementByUUID,
     findElementByName,
-    findElementByUuidNonRecursive,
+    findElementByUUIDNonRecursive,
     inspectNodeByUUID,
     showDefinitionByUUID,
     updateInstanceByUUIDAndPath,

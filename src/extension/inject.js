@@ -1,5 +1,5 @@
 import CircularJSON from "../shared/circular-json";
-import {findElementByUuid, highLightNode, clearMask} from '../devtools-ui/utils';
+import {findElementByUUID, highLightNode, clearMask} from '../devtools-ui/utils';
 import log from '../shared/log';
 
 // listen for message from content script
@@ -188,7 +188,7 @@ window.devtoolsModel = (function() {
     };
 
     getNodesByUUID = function(uuid) {
-        const element = findElementByUuid(store, uuid);
+        const element = findElementByUUID(store, uuid);
         return element && element.node;
     };
 

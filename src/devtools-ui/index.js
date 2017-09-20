@@ -7,7 +7,7 @@ import log from '../shared/log';
 import {enter, input, mouseenter, mouseleave} from './events';
 import {
     printInConsole,
-    findElementByUuid,
+    findElementByUUID,
     inspectNodeByUUID,
     showDefinitionByUUID,
     updateInstanceByUUIDAndPath,
@@ -78,7 +78,7 @@ devtools
     })
     .$on("clickElement", function(uuid) {
         if (uuid !== sidebarView.data.currentNode.uuid) {
-            let currentNode = findElementByUuid(this.data.nodes, uuid);
+            let currentNode = findElementByUUID(this.data.nodes, uuid);
             sidebarView.data.currentNode.name = currentNode.name;
             sidebarView.data.currentNode.inspectable = currentNode.inspectable;
             sidebarView.data.currentNode.uuid = uuid;
