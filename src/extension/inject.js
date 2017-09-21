@@ -24,6 +24,7 @@ if (!window.devtoolsModel) {
 // this script serves as the model layer of the devtools
 // this lives in origin page context
 window.devtoolsModel = (function() {
+    let Regular;
     let hook = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__;
     let ins = window.__REGULAR_DEVTOOLS_GLOBAL_HOOK__.ins || [];
     let store = [];
@@ -31,6 +32,7 @@ window.devtoolsModel = (function() {
     let walker;
     let treeGen;
     let getDomNode;
+    let searchGroupChildrenForDomNode;
     let getNodesByUUID;
     let highLighter;
     let inspectMode = false;
@@ -174,17 +176,24 @@ window.devtoolsModel = (function() {
 
     getDomNode = function(node) {
         var container = [];
-        if (node.node && (typeof node.node === "object")) {
-            container.push(node.node);
-        } else if (node.group) {
-            for (let i = 0; i < node.group.children.length; i++) {
-                if (node.group.get(i).type) {
-                    container.push(node.group.get(i).node());
+        if (node.group) {
+            searchGroupChildrenForDomNode(node.group, container);
+        }
+        return container;
+    };
+
+    searchGroupChildrenForDomNode = function(group, container) {
+        for (let i = 0; i < group.children.length; i++) {
+            if (group.get(i).type === "element") {
+                container.push(group.get(i).last());
+            } else if (group.get(i).children) {
+                searchGroupChildrenForDomNode(group.get(i), container);
+            } else if (group.get(i) instanceof Regular) {
+                if (group.get(i).group) {
+                    searchGroupChildrenForDomNode(group.get(i).group, container);
                 }
             }
         }
-
-        return container;
     };
 
     getNodesByUUID = function(uuid) {
@@ -201,7 +210,7 @@ window.devtoolsModel = (function() {
     }
 
     function isRegularInstance(node) {
-        return node.uuid;
+        return node instanceof Regular;
     }
 
     walker = function(node, container, flag) {
@@ -238,15 +247,6 @@ window.devtoolsModel = (function() {
             node.visited = true;
             if (node.group) {
                 treeGen(node, n.childNodes);
-            }
-
-            if (n.node.length === 0) {
-                for (let i = 0; i < n.childNodes.length; i++) {
-                    if (n.childNodes[i].node.length > 0) {
-                        n.node = n.childNodes[i].node;
-                        break;
-                    }
-                }
             }
 
             if (n.node.length) {
@@ -340,6 +340,15 @@ window.devtoolsModel = (function() {
             if (ins.length === 0) {
                 return;
             }
+
+            /* eslint-disable no-proto */
+            let proto = ins[0].__proto__;
+            while (proto.__proto__ !== Object.prototype) {
+                proto = proto.__proto__;
+            }
+             /* eslint-enable no-proto */
+            Regular = proto.constructor;
+
             hook.on("flushMessage", function() {
                 window.postMessage({
                     type: "FROM_PAGE",
