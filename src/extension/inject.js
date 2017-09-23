@@ -264,7 +264,7 @@ window.devtoolsModel = (function() {
         return tree;
     };
 
-    var guid = function() {
+    var uuid = function() {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)
                 .toString(16)
@@ -276,7 +276,7 @@ window.devtoolsModel = (function() {
 
     var assignUUID = function(obj) {
         if (!obj.uuid) {
-            obj.uuid = guid();
+            obj.uuid = uuid();
         }
     };
 
