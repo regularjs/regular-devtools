@@ -12,10 +12,10 @@ const Element = Regular.extend({
             class="arrow ele-item {opened ? 'arrow-down' : null} {node.childNodes.length > 0 ? '': 'hide'}"/>
             <span class="tag ele-item">&lt;</span>
             <span class="tagname ele-item { node.name === '[anonymous]' ? 'is-anonymous' : '' }">{node.name}</span>
-            <span class="tag ele-item">{#if node.childNodes.length === 0} /{/if}&gt;{#if node.shadowFlag }<span class="ele-include">#inc</span>{/if}</span>
+            <span class="tag ele-item">{#if node.childNodes.length === 0} /{/if}&gt;{#if node.isIncluded }<span class="ele-include">#inc</span>{/if}</span>
         </div>
         {#if node.childNodes.length > 0} {#list node.childNodes as n}
-        <div style={opened ? '' : "display:none;"} class={node.shadowFlag ? 'include-border':null}>
+        <div style={opened ? '' : "display:none;"} class={node.isIncluded ? 'include-border':null}>
             <element node={n} level={level+1} ></element>
         </div>
         {/list}

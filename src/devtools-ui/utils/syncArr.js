@@ -7,7 +7,7 @@ export default function syncArr(oldArr, newArr, container) {
         if (oldNode) {
             if (JSON.stringify(oldNode) !== JSON.stringify(newNode)) {
                 oldNode.name = newNode.name;
-                oldNode.shadowFlag = newNode.shadowFlag;
+                oldNode.isIncluded = newNode.isIncluded;
                 oldNode.childNodes = syncArr(oldNode.childNodes, newNode.childNodes, []);
             }
             container.push(oldNode);

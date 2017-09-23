@@ -228,7 +228,7 @@ window.devtoolsModel = (function() {
             n.node = getDomNode(node);
 
             if (node.$outer) {
-                n.shadowFlag = true;
+                n.isIncluded = true;
             }
 
             // fetch all computed props

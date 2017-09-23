@@ -3,7 +3,7 @@ export default function makeElementTree(nodes, container) {
         var node = {
             name: nodes[i].name,
             uuid: nodes[i].uuid,
-            shadowFlag: nodes[i].shadowFlag,
+            isIncluded: nodes[i].isIncluded,
             inspectable: nodes[i].inspectable,
             childNodes: []
         };
