@@ -274,16 +274,16 @@ window.devtoolsModel = (function() {
             s4() + '-' + s4() + s4() + s4();
     };
 
-    var uuidGen = function(obj) {
+    var assignUUID = function(obj) {
         if (!obj.uuid) {
             obj.uuid = guid();
         }
     };
 
-    var uuidGenArr = function(arr) {
+    var assignUUIDMany = function(arr) {
         for (var i = 0; i < arr.length; i++) {
             if (!arr[i].uuid) {
-                uuidGen(arr[i]);
+                assignUUID(arr[i]);
             }
         }
     };
@@ -323,7 +323,7 @@ window.devtoolsModel = (function() {
     };
 
     // generate uuid for the first time
-    uuidGenArr(ins);
+    assignUUIDMany(ins);
     return {
         init: function() {
             if (ins.length === 0) {
@@ -348,7 +348,7 @@ window.devtoolsModel = (function() {
             });
 
             hook.on("addNodeMessage", function(obj) {
-                uuidGen(obj);
+                assignUUID(obj);
             });
 
             hook.on("reRender", function(obj) {
