@@ -218,20 +218,9 @@ window.devtoolsModel = (function() {
         var i;
 
         if (isRegularInstance(node)) {
-            // if node.name not exists, find node name defined using Compnoent.component() on parent component
-            if (!node.name && node.$parent) {
-                let obj = node.$parent.constructor._components;
-                let keys = Object.keys(obj);
-                for (let i = 0; i < keys.length; i++) {
-                    if (obj[keys[i]] === node.constructor) {
-                        node.name = keys[i];
-                        break;
-                    }
-                }
-            }
             n = {
                 uuid: node.uuid,
-                name: node.name || "[anonymous]",
+                name: node.name || findComponentRegisteredName(node) || '[anonymous]',
                 childNodes: [],
                 inspectable: false
             };
@@ -441,3 +430,20 @@ window.devtoolsModel = (function() {
 })();
 
 window.devtoolsModel.init();
+
+function findComponentRegisteredName(node) {
+    let name;
+
+    if (node.$parent) {
+        let obj = node.$parent.constructor._components;
+        let keys = Object.keys(obj);
+        for (let i = 0; i < keys.length; i++) {
+            if (obj[keys[i]] === node.constructor) {
+                name = keys[i];
+                break;
+            }
+        }
+    }
+
+    return name;
+}
