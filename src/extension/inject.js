@@ -222,7 +222,9 @@ window.devtoolsModel = (function() {
                 uuid: node.uuid,
                 name: node.name || findComponentRegisteredName(node) || '[anonymous]',
                 childNodes: [],
-                inspectable: false
+                inspectable: false,
+                hasTemplate: !!node.template,
+                hasInjected: true
             };
 
             n.node = getDomNode(node);
@@ -292,15 +294,19 @@ window.devtoolsModel = (function() {
         var node;
         store = [];
         for (var i = 0; i < ins.length; i++) {
+            // standalone instances
             if (ins[i].$root === ins[i]) {
                 // fetch all computed props
                 // var computed = fetchComputedProps(ins[i]);
+                const nodes = getGroupNode(ins[i]);
                 node = {
                     uuid: ins[i].uuid,
                     name: ins[i].name || "[anonymous]",
                     childNodes: [],
                     node: [],
-                    inspectable: !!ins[i].parentNode
+                    inspectable: !!ins[i].parentNode,
+                    hasTemplate: !!ins[i].template,
+                    hasInjected: !!nodes && !!(Array.isArray(nodes) ? nodes[0].parentNode : nodes.parentNode)
                 };
                 var body = document.body;
                 if (ins[i].parentNode) {
@@ -446,4 +452,31 @@ function findComponentRegisteredName(node) {
     }
 
     return name;
+}
+
+function getGroupNode(item) {
+    let node;
+    let nodes;
+    if (!item) return;
+    if (typeof item.node === "function") return item.node();
+    if (typeof item.nodeType === "number") return item;
+    if (item.group) return getGroupNode(item.group);
+
+    item = item.children || item;
+    if (Array.isArray(item)) {
+        const len = item.length;
+        if (len === 1) {
+            return getGroupNode(item[0]);
+        }
+        nodes = [];
+        for (let i = 0, len = item.length; i < len; i++) {
+            node = getGroupNode(item[i]);
+            if (Array.isArray(node)) {
+                nodes.push.apply(nodes, node);
+            } else if (node) {
+                nodes.push(node);
+            }
+        }
+        return nodes;
+    }
 }

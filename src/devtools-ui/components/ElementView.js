@@ -14,7 +14,9 @@ const ElementView = Regular.extend({
                 {#else}
                 {#if nodes.length > 0}
                     {#list nodes as node}
+                        {#if node.hasTemplate && node.hasInjected}
                         <element node={node} level={1}></element>
+                        {/if}
                     {/list}
                 {#else}
                     <div class="warnning roboto">There is no Regular instance detected. Please check if you are using the latest version of Regularjs. Or try reloading Regular Devtools</div>

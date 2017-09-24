@@ -61,8 +61,8 @@ function displayWarning() {
 // listen for custom events
 devtools
     .$on("initNodes", function(nodesStr) {
-        log("On initNodes.");
         let nodes = CircularJSON.parse(nodesStr);
+        log("initNodes", nodes);
         this.data.nodes = nodes;
 
         elementView.data.loading = false;
