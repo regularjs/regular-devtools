@@ -1,0 +1,9 @@
+.element__wrapper {
+	position: relative;
+}
+
+.element__joint {
+	position: absolute;
+	width: 0;
+	border-right: dashed 1px #ddd;
+}
