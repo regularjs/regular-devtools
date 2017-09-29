@@ -17,7 +17,14 @@ const SidebarView = Regular.extend({
                 </div>
                 <div class="sidebar__header-right">$r in the console</div>
             </div>
-            <Tabs currentIndex={ currentTabIndex } source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></Tabs>
+
+            <Tabs
+                currentIndex={ currentTabIndex }
+                source="{ tabSource }"
+                selected="{ tabSelected }"
+                on-change="{ this.onTabChange( $event ) }"
+            ></Tabs>
+
             <div class="sidebar__content">
                 {#if tabSelected == 'data'}
                 <div>
