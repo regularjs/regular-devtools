@@ -1,11 +1,11 @@
 import Regular from 'regularjs';
 import Header from './Header';
-import SidebarView from './SidebarView';
-import ElementView from './ElementView';
+import Sidebar from './SidebarView';
+import Elements from './ElementView';
 import {searchPath, printInConsole, enter, exit} from '../utils';
 
 // Regular components for devtools' UI
-const DevtoolsViewComponent = Regular.extend({
+const Devtools = Regular.extend({
     template: `
         <devtools-header
             inspecting="{ inspecting }"
@@ -15,7 +15,7 @@ const DevtoolsViewComponent = Regular.extend({
         ></devtools-header>
 
         <div class="devtoolsMain">
-            <devtools-element ref=elementView isolate />
+            <devtools-elements ref=elementView isolate />
             <devtools-sidebar ref=sidebarView isolate />
         </div>
     `,
@@ -70,8 +70,8 @@ const DevtoolsViewComponent = Regular.extend({
     }
 });
 
-DevtoolsViewComponent.component('devtools-header', Header);
-DevtoolsViewComponent.component('devtools-sidebar', SidebarView);
-DevtoolsViewComponent.component('devtools-element', ElementView);
+Devtools.component('devtools-header', Header);
+Devtools.component('devtools-sidebar', Sidebar);
+Devtools.component('devtools-elements', Elements);
 
-export default DevtoolsViewComponent;
+export default Devtools;
