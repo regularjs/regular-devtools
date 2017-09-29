@@ -38,7 +38,7 @@ const Devtools = Regular.extend({
         this.$update();
     },
     onRefresh: function() {
-        chrome.devtools.inspectedWindow.reload();
+        this.$emit('refresh');
     },
     focusNode: function(uuid) {
         const elementViewDOM = document.querySelector(".elementTree");

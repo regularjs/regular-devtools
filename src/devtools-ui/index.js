@@ -119,6 +119,9 @@ devtools
             setTimeout(displayWarning, 4000);
         }, 2000);
     })
+    .$on("refresh", () => {
+        chrome.devtools.inspectedWindow.reload();
+    })
     .$on("openNewTab", function(url) {
         agent.openInNewTab(url);
     });
