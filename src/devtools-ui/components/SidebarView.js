@@ -10,7 +10,11 @@ const SidebarView = Regular.extend({
     template: `
         <div class="sidebar">
             <div class="sidebar__header roboto">
-                <div class="sidebar__header-left">&lt;{currentNode.name}&gt;</div>
+                <div class="sidebar__header-left">
+                    {#if currentNode.name}
+                        &lt;{currentNode.name}&gt;
+                    {/if}
+                </div>
                 <div class="sidebar__header-right">$r in the console</div>
             </div>
             <Tabs currentIndex={ currentTabIndex } source="{ tabSource }" selected="{ tabSelected }" on-change="{ this.onTabChange( $event ) }"></Tabs>
