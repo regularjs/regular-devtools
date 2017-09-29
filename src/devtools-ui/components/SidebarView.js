@@ -74,22 +74,17 @@ const SidebarView = Regular.extend({
         };
         // others for currentNode
         this.data.others = {};
-        this.data.tabSource = [{
-            text: "Data",
-            key: "data"
-        }, {
-            text: 'Others',
-            key: 'others'
-        }];
+        this.data.tabSource = [
+            {text: "Data", key: "data"},
+            {text: 'Others', key: 'others'}
+        ];
         // defaults to `data` pane
         this.data.tabSelected = 'data';
         this.data.lockHighlight = false;
     },
     computed: {
         currentTabIndex: {
-            get: function() {
-                return this.getCurrentTabIndex();
-            }
+            get: () => this.getCurrentTabIndex()
         }
     },
     getCurrentTabIndex() {
