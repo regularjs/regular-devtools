@@ -6,7 +6,7 @@ import Tabs from './Tabs';
 import log from '../../shared/log';
 import './SidebarView.css';
 
-const SidebarView = Regular.extend({
+const Sidebar = Regular.extend({
     template: `
         <div class="sidebar">
             <div class="sidebar__header roboto">
@@ -84,17 +84,16 @@ const SidebarView = Regular.extend({
     },
     computed: {
         currentTabIndex: {
-            get: () => this.getCurrentTabIndex()
-        }
-    },
-    getCurrentTabIndex() {
-        const source = this.data.tabSource;
-        for (let i = 0; i < source.length; i++) {
-            if (this.data.tabSelected === source[i].key) {
-                return i;
+            get() {
+                const source = this.data.tabSource;
+                for (let i = 0; i < source.length; i++) {
+                    if (this.data.tabSelected === source[i].key) {
+                        return i;
+                    }
+                }
+                return 0;
             }
         }
-        return 0;
     },
     onTabChange(key) {
         this.data.tabSelected = key;
@@ -116,9 +115,9 @@ const SidebarView = Regular.extend({
     }
 });
 
-SidebarView.component('SidebarPane', SidebarPane);
-SidebarView.component('SimpleJsonTree', SimpleJsonTree);
-SidebarView.component('Tabs', Tabs);
-SidebarView.component('JsonTree', JsonTree);
+Sidebar.component('SidebarPane', SidebarPane);
+Sidebar.component('SimpleJsonTree', SimpleJsonTree);
+Sidebar.component('Tabs', Tabs);
+Sidebar.component('JsonTree', JsonTree);
 
-export default SidebarView;
+export default Sidebar;
