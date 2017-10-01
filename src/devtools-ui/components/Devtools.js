@@ -1,7 +1,7 @@
 import Regular from 'regularjs';
 import Header from './Header';
-import Sidebar from './SidebarView';
-import Elements from './ElementView';
+import Sidebar from './Sidebar';
+import Elements from './Elements';
 import {searchPath, printInConsole, enter, exit} from '../utils';
 
 // Regular components for devtools' UI

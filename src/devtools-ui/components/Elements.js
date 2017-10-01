@@ -1,9 +1,9 @@
 import Regular from 'regularjs';
 import Element from './Element';
-import SearchView from './SearchView';
-import './ElementView.css';
+import Search from './Search';
+import './Elements.css';
 
-const ElementView = Regular.extend({
+const Elements = Regular.extend({
     template: `
         <div class='elementView' on-mouseleave={this.onMouseLeave()}>
             <div class="elementTree">
@@ -23,7 +23,7 @@ const ElementView = Regular.extend({
                 {/if}
             {/if}
             </div>
-            <searchView isolate ref=searchView ></searchView>
+            <search isolate ref=searchView />
         </div>
     `,
     data: {
@@ -33,8 +33,9 @@ const ElementView = Regular.extend({
     onMouseLeave: function() {
         this.$root.$refs.sidebarView.highLightNode(null, false);
     }
-})
-.component('element', Element)
-.component('searchView', SearchView);
+});
 
-export default ElementView;
+Elements.component('element', Element);
+Elements.component('search', Search);
+
+export default Elements;

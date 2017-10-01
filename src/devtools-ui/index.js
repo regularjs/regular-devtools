@@ -18,7 +18,7 @@ import {
     syncArr
 } from './utils';
 import agent from './agent';
-import DevtoolsViewComponent from './components/DevtoolsView';
+import Devtools from './components/Devtools';
 
 import 'material-design-lite/dist/material.min.css';
 import './index.css';
@@ -38,7 +38,7 @@ Regular.directive('r-md', function(elem, value) {
 let ready = false;
 
 // devtools
-const devtools = new DevtoolsViewComponent({
+const devtools = new Devtools({
     data: {
         nodes: [],
         lastSelected: null

@@ -1,6 +1,6 @@
 import Regular from 'regularjs';
 import {findElementByName} from '../utils';
-import './SearchView.css';
+import './Search.css';
 
 const SearchView = Regular.extend({
     template: `

@@ -4,7 +4,7 @@ import SimpleJsonTree from './SimpleJsonTree';
 import JsonTree from './JsonTree';
 import Tabs from './Tabs';
 import log from '../../shared/log';
-import './SidebarView.css';
+import './Sidebar.css';
 
 const Sidebar = Regular.extend({
     template: `
