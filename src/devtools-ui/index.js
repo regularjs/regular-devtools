@@ -15,7 +15,7 @@ import {
     getData,
     getOthersData,
     makeElementTree,
-    syncArr
+    patch
 } from './utils';
 import agent from './agent';
 import Devtools from './components/Devtools';
@@ -99,7 +99,7 @@ devtools
         /* eslint-disable no-unused-vars */
         var oldArr = elementView.data.nodes;
         var newArr = makeElementTree(nodes, []);
-        elementView.data.nodes = syncArr(oldArr, newArr, []);
+        elementView.data.nodes = patch(oldArr, newArr);
         /* eslint-enable no-unused-vars */
         elementView.$update();
     })

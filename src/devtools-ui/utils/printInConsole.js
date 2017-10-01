@@ -5,7 +5,7 @@ export default function(uuid) {
         `devtoolsModel.print(${JSON.stringify(uuid)})`,
         function(result, isException) {
             if (isException) {
-                log("Inspect Error: ", isException);
+                log("Print Error: ", isException);
             }
         }
     );

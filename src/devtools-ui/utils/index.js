@@ -12,7 +12,7 @@ import {enter, exit} from './inspectComponent';
 import getData from './getData';
 import getOthersData from './getOthersData';
 import makeElementTree from './makeElementTree';
-import syncArr from './syncArr';
+import patch from './patch';
 
 export {
     isPrimitive,
@@ -31,7 +31,7 @@ export {
     getData,
     getOthersData,
     makeElementTree,
-    syncArr,
+    patch,
     enter,
     exit
 };

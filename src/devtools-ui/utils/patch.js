@@ -1,6 +1,8 @@
 import {findElementByUUIDNonRecursive} from "./findElement";
 
-export default function syncArr(oldArr, newArr, container) {
+// reuse old nodes
+export default function patch(oldArr, newArr) {
+    const container = [];
     for (var i = 0; i < newArr.length; i++) {
         var newNode = newArr[i];
         var oldNode = findElementByUUIDNonRecursive(oldArr, newArr[i].uuid);
@@ -8,7 +10,7 @@ export default function syncArr(oldArr, newArr, container) {
             if (JSON.stringify(oldNode) !== JSON.stringify(newNode)) {
                 oldNode.name = newNode.name;
                 oldNode.isIncluded = newNode.isIncluded;
-                oldNode.childNodes = syncArr(oldNode.childNodes, newNode.childNodes, []);
+                oldNode.childNodes = patch(oldNode.childNodes, newNode.childNodes, []);
             }
             container.push(oldNode);
         } else {
